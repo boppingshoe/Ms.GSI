@@ -1,20 +1,34 @@
 
 
+#' Preparing multistage GSI input data
+#'
+#' @param mixture_data Individual fish with loci for both tier one and tier two. Mixture data in GCL or rubias format.
+#' @param baseline1_data Tier one baseline data in GCL or rubias format.
+#' @param baseline2_data Tier two baseline data in GCL or rubias format.
+#' @param pop1_info Population information for tier one. A tibble with columns collection (collection names), repunit (reporting unit names), grpvec (group numbers), origin (wild/hatchery).
+#' @param pop2_info Population information for tier two. A tibble with columns collection (collection names), repunit (reporting unit names), grpvec (group numbers).
+#' @param sub_group Group numbers for groups of interest. Group id numbers in tier one that identify groups in tier two.
+#' @param file_path Where you want to save a copy of input data. Leave it blank if you don't want to save a copy.
+#' @param loci1 Optional. Provide loci (for tier one) as a fail-safe check.
+#' @param loci2 Optional. Provide loci (for tier two) as a fail-safe check.
+#'
+#' @return A list objects as the input data for msgsi_mdl()
+#' @export
+#'
+#' @examples
+#' msgsi_dat <- prep_msgsi_data(mixture_data = mix.gcl, baseline1_data = base_gcl, pop1_info = uci_pops55, pop2_info = ucigtseq_pops66 %>% filter(grpvec != 6), sub_group = c(1,2,4:6), file_path = "uci_chinook/rabies/msgsi_dat_uci.RData", loci1 = loci34, loci2 = loci_gtseq)
+
+
 prep_msgsi_data <-
-  function(mixture_data, # indiv fish with loci for both tier 1 and tier 2
-           baseline1_data, # tier 1
-           baseline2_data, # tier 2
-           pop1_info, # tibble with columns collection, repunit, grpvec, origin (wild/hatchery)
-           pop2_info,
-           sub_group, # group id numbers in tier 1 that identify groups in tier 2
-           file_path = NULL, # declare if want to save a copy
-           loci1 = NULL, # provide loci (for tier 1) as a fail-safe check
-           loci2 = NULL) {
+  function(mixture_data, baseline1_data, baseline2_data,
+           pop1_info, pop2_info, sub_group,
+           file_path = NULL,
+           loci1 = NULL, loci2 = NULL) {
 
     # if(!require("pacman")) install.packages("pacman")
     # pacman::p_load(tidyverse)
 
-    # get allele frequency for each locus
+    # Calculate allele frequency for each locus
     # for individual fish or a collection/population
     allefreq <- function(gble_in, gble_ref, loci, collect_by = indiv) {
 

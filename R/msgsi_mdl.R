@@ -1,4 +1,22 @@
 
+#' Run multistage GSI model
+#'
+#' @param dat_in Name of the input data.
+#' @param nreps Total number of iterations (includes burn-ins).
+#' @param nburn Number of warm-up runs.
+#' @param thin Frequency to thin the output.
+#' @param nchains Number of independent MCMC processes.
+#' @param nadapt Number of adaptation run (default is 0). Only available when running model in fully Bayesian mode.
+#' @param keep_burn To save the burn-ins or not (default is FALSE).
+#' @param cond_gsi To run the model in conditional GSI mode (default is TRUE).
+#' @param out_path File path to save the output. Leave it empty is you don't want to save the output. Default is NULL (no saving).
+#' @param seed Random seed for reproducibility. Default is NULL (no random seed).
+#'
+#' @return A list contains reporting group proportion summary and trace for tier one (summ_t1, trace_t1), tier two (summ_t2, trace_t2) and combined two tiers (summ_comb, trace_comb), and record of individual assignment during first tier for each individual (idens).
+#' @export
+#'
+#' @examples
+#' msgsi_out <- msgsi_mdl(msgsi_data, nreps = 25000, nburn = 15000, thin = 10, nchains = 5, nadapt = 0, keep_burn = FALSE, cond_gsi = TRUE, out_path = "v:/serious_analysis_files/gsi/msgsi_output.RData", seed = 555)
 
 msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn = FALSE, cond_gsi = TRUE, out_path = NULL, seed = NULL) {
 
@@ -359,6 +377,7 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
   return(msgsi_out)
 
 }
+
 
 
 
