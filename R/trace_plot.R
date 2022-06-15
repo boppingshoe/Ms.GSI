@@ -34,6 +34,8 @@ ggtr_plt <- function (obj, nburn = 0, thin = 1, name_order = NULL) {
 
 } # nburn = 0 if keep_burn = FALSE
 
+utils::globalVariables(c("chain", "itr", "name", "value"))
+
 
 
 

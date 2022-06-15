@@ -30,10 +30,10 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
   categories <- c("Live, Werk, Pose", "Bring It Like Royalty", "Face", "Best Mother", "Best Dressed", "High Class In A Fur Coat", "Snow Ball", "Butch Queen Body", "Weather Girl", "Labels", "Mother-Daughter Realness", "Working Girl", "Linen Vs. Silk", "Perfect Tens", "Modele Effet", "Stone Cold Face", "Realness", "Intergalatic Best Dressed", "House Vs. House", "Femme Queen Vogue", "High Fashion In Feathers", "Femme Queen Runway", "Lofting", "Higher Than Heaven", "Once Upon A Time")
 
   ### data input ### ----
-  x <- dat_in$x %>% dplyr::select(-indiv) %>% as.matrix() # mixture 1
-  x2 <- dat_in$x2 %>% dplyr::select(-indiv) %>% as.matrix() # mixture 2
-  y <- dat_in$y %>% dplyr::select(ends_with(as.character(0:9))) %>% dplyr::select(order(colnames(.))) %>% as.matrix() # base 1
-  y2 <- dat_in$y2 %>% dplyr::select(ends_with(as.character(0:9))) %>% dplyr::select(order(colnames(.))) %>% as.matrix() # base 2
+  x <- dat_in$x %>% dplyr::select(dplyr::ends_with(as.character(0:9))) %>% as.matrix() # mixture 1
+  x2 <- dat_in$x2 %>% dplyr::select(dplyr::ends_with(as.character(0:9))) %>% as.matrix() # mixture 2
+  y <- dat_in$y %>% dplyr::select(dplyr::ends_with(as.character(0:9))) %>% dplyr::select(order(colnames(.))) %>% as.matrix() # base 1
+  y2 <- dat_in$y2 %>% dplyr::select(dplyr::ends_with(as.character(0:9))) %>% dplyr::select(order(colnames(.))) %>% as.matrix() # base 2
 
   if (is.null(dat_in$iden)) {
     iden <- rep(NA, nrow(x))
@@ -66,7 +66,7 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
   ### specifications ### ----
   rdirich <- function(alpha0) {
     if (sum(alpha0)) {
-      vec = rgamma(length(alpha0), alpha0, 1)
+      vec = stats::rgamma(length(alpha0), alpha0, 1)
       vec = vec / sum(vec)
       vec[vec == 0] = .Machine$double.xmin
       vec
@@ -277,7 +277,7 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
     lapply(out_list1,
            function(ol) ol %>%
              dplyr::select(1:(ncol(.)-2)) %>%
-             setNames(grp_names_t1))
+             stats::setNames(grp_names_t1))
 
   mc_pop1 <- coda::as.mcmc.list(
     lapply(p1_combo,
@@ -294,7 +294,7 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
     lapply(out_list2,
            function(ol) ol %>%
              dplyr::select(1:(ncol(.)-2)) %>%
-             setNames(grp_names_t2))
+             stats::setNames(grp_names_t2))
 
   mc_pop2 <- coda::as.mcmc.list(
     lapply(p2_combo,
@@ -311,7 +311,7 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
     lapply(out_list,
            function(ol) ol %>%
              dplyr::select(1:(ncol(.)-2)) %>%
-             setNames(grp_names))
+             stats::setNames(grp_names))
 
   mc_pop <- coda::as.mcmc.list(
     lapply(p_combo,
@@ -325,17 +325,17 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
   msgsi_out$summ_t1 <- summ_pop1
   msgsi_out$trace_t1 <- out_list1 %>%
     dplyr::bind_rows() %>%
-    setNames(c(grp_names_t1, "itr", "chain"))
+    stats::setNames(c(grp_names_t1, "itr", "chain"))
 
   msgsi_out$summ_t2 <- summ_pop2
   msgsi_out$trace_t2 <- out_list2 %>%
     dplyr::bind_rows() %>%
-    setNames(c(grp_names_t2, "itr", "chain"))
+    stats::setNames(c(grp_names_t2, "itr", "chain"))
 
   msgsi_out$summ_comb <- summ_pop
   msgsi_out$trace_comb <- out_list %>%
     dplyr::bind_rows() %>%
-    setNames(c(grp_names, "itr", "chain"))
+    stats::setNames(c(grp_names, "itr", "chain"))
 
   msgsi_out$idens <-
     lapply(out_list0,
@@ -358,14 +358,14 @@ summ_func <- function(combo_file, keeplist, mc_file, groupnames, n_ch) {
   summ <-
     lapply(combo_file, function(rlist) rlist[keeplist,]) %>%
     dplyr::bind_rows() %>%
-    tidyr::pivot_longer(cols = everything()) %>%
+    tidyr::pivot_longer(cols = tidyr::everything()) %>%
     dplyr::group_by(name) %>%
     dplyr::summarise(
-      mean = mean(value),
-      median = median(value),
-      sd = sd(value),
-      ci.05 = quantile(value, 0.05),
-      ci.95 = quantile(value, 0.95),
+      mean = base::mean(value),
+      median = stats::median(value),
+      sd = stats::sd(value),
+      ci.05 = stats::quantile(value, 0.05),
+      ci.95 = stats::quantile(value, 0.95),
       .groups = "drop"
     ) %>%
     dplyr::mutate(
@@ -387,6 +387,8 @@ summ_func <- function(combo_file, keeplist, mc_file, groupnames, n_ch) {
   return(summ)
 
 }
+
+utils::globalVariables(c(".", "ch", "chain", "itr", "name", "name_fac", "value"))
 
 
 

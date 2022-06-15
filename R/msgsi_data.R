@@ -74,12 +74,12 @@ prep_msgsi_data <-
     # tally allele for each baseline and mixture sample
     base1 = allefreq(baseline1_data, baseline1_data, loci_tier1, collect_by = collection) %>%
       dplyr::right_join(pop1_info, by = c("collection" = "collection"), keep = FALSE) %>%
-      dplyr::relocate(!ends_with(as.character(0:9)), .after = collection) %>%
-      dplyr::mutate(across(ends_with(as.character(0:9)), ~tidyr::replace_na(., 0)))
+      dplyr::relocate(!dplyr::ends_with(as.character(0:9)), .after = collection) %>%
+      dplyr::mutate(dplyr::across(dplyr::ends_with(as.character(0:9)), ~tidyr::replace_na(., 0)))
 
     base2 = allefreq(baseline2_data, baseline2_data, loci_tier2, collect_by = collection) %>%
       dplyr::right_join(pop2_info, by = c("collection" = "collection"), keep = FALSE) %>%
-      dplyr::relocate(!ends_with(as.character(0:9)), .after = collection)
+      dplyr::relocate(!dplyr::ends_with(as.character(0:9)), .after = collection)
 
     mix1 = allefreq(mixture_data, baseline1_data, loci_tier1)
 
@@ -96,19 +96,19 @@ prep_msgsi_data <-
       dplyr::group_by(locus) %>%
       dplyr::summarise(n_allele = max(as.numeric(altyp)), .groups = "drop")
 
-    n_alleles_t1 = nalleles_tier1 %>% dplyr::pull(n_allele) %>% setNames(nalleles_tier1$locus)
+    n_alleles_t1 = nalleles_tier1 %>% dplyr::pull(n_allele) %>% stats::setNames(nalleles_tier1$locus)
 
     nalleles_tier2 = lapply(loci_tier2, function(loc) {
       dplyr::tibble(locus = loc,
                     call = baseline2_data %>%
                       dplyr::select(dplyr::all_of(loc), paste0(loc, ".1")) %>%
-                      dplyr::pull() %>% unique() %>% .[!is.na(.)],
+                      dplyr::pull %>% unique() %>% .[!is.na(.)],
                     altyp = seq.int(dplyr::n_distinct(call)) %>% factor)
     }) %>% dplyr::bind_rows() %>%
       dplyr::group_by(locus) %>%
       dplyr::summarise(n_allele = max(as.numeric(altyp)), .groups = "drop")
 
-    n_alleles_t2 = nalleles_tier2 %>% dplyr::pull(n_allele) %>% setNames(nalleles_tier2$locus)
+    n_alleles_t2 = nalleles_tier2 %>% dplyr::pull(n_allele) %>% stats::setNames(nalleles_tier2$locus)
 
     # group names for each stage
     grp1_nms = base1 %>% dplyr::arrange(grpvec) %>% dplyr::pull(repunit) %>% unique()
@@ -117,7 +117,7 @@ prep_msgsi_data <-
 
     # iden if specified in mixture data
     if(any(grepl("known_", names(mixture_data)))) {
-      iden = mixture_data %>% dplyr::select(contains("known_")) %>% dplyr::pull()
+      iden = mixture_data %>% dplyr::select(tidyr::contains("known_")) %>% dplyr::pull()
     } else {iden = NULL}
 
     # wild or hatchery
@@ -163,7 +163,7 @@ allefreq <- function(gble_in, gble_ref, loci, collect_by = indiv) {
   alleles = lapply(loci, function(loc) {
     dplyr::tibble(locus = loc,
                   call = gble_ref %>%
-                    dplyr::select(all_of(loc), paste0(loc, ".1")) %>%
+                    dplyr::select(dplyr::all_of(loc), paste0(loc, ".1")) %>%
                     dplyr::pull() %>% unique() %>% .[!is.na(.)],
                   altyp = seq.int(dplyr::n_distinct(call)) %>% factor)
   }) %>% dplyr::bind_rows()
@@ -176,7 +176,7 @@ allefreq <- function(gble_in, gble_ref, loci, collect_by = indiv) {
     as.vector()
 
   frq_tib <- gble_in %>%
-    dplyr::select(c({{collect_by}}, all_of(scores_cols))) %>%
+    dplyr::select(c({{collect_by}}, dplyr::all_of(scores_cols))) %>%
     tidyr::pivot_longer(
       cols = -{{collect_by}},
       names_to = "locus",
@@ -203,5 +203,20 @@ allefreq <- function(gble_in, gble_ref, loci, collect_by = indiv) {
   return(frq_tib)
 
 }
+
+utils::globalVariables(c(".", "SILLY_CODE", "SillySource", "altyp", "collection",
+                         "grpvec", "indiv", "locus", "n",
+                         # "ch", "chain", "itr", "name", "name_fac", "value",
+                         "n_allele", "origin", "repunit"))
+
+
+
+
+
+
+
+
+
+
 
 
