@@ -45,5 +45,5 @@ A list contains reporting group proportion summary and trace for tier one (summ_
 Run multistage GSI model
 }
 \examples{
-msgsi_out <- msgsi_mdl(msgsi_data, nreps = 25000, nburn = 15000, thin = 10, nchains = 5, nadapt = 0, keep_burn = FALSE, cond_gsi = TRUE, out_path = "v:/serious_analysis_files/gsi/msgsi_output.RData", seed = 555)
+msgsi_out <- msgsi_mdl(msgsi_data, nreps = 25, nburn = 15, thin = 1, nchains = 5, nadapt = 0, keep_burn = FALSE, cond_gsi = TRUE, out_path = "v:/serious_analysis_files/gsi/msgsi_output.RData", seed = 555)
 }

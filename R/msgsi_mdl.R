@@ -13,10 +13,14 @@
 #' @param seed Random seed for reproducibility. Default is NULL (no random seed).
 #'
 #' @return A list contains reporting group proportion summary and trace for tier one (summ_t1, trace_t1), tier two (summ_t2, trace_t2) and combined two tiers (summ_comb, trace_comb), and record of individual assignment during first tier for each individual (idens).
+#'
 #' @export
+#' @importFrom magrittr %>%
+#' @importFrom doRNG %dorng%
+#' @importFrom foreach %dopar%
 #'
 #' @examples
-#' msgsi_out <- msgsi_mdl(msgsi_data, nreps = 25000, nburn = 15000, thin = 10, nchains = 5, nadapt = 0, keep_burn = FALSE, cond_gsi = TRUE, out_path = "v:/serious_analysis_files/gsi/msgsi_output.RData", seed = 555)
+#' msgsi_out <- msgsi_mdl(msgsi_data, nreps = 25, nburn = 15, thin = 1, nchains = 5, nadapt = 0, keep_burn = FALSE, cond_gsi = TRUE, out_path = "v:/serious_analysis_files/gsi/msgsi_output.RData", seed = 555)
 
 msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn = FALSE, cond_gsi = TRUE, out_path = NULL, seed = NULL) {
 
@@ -171,7 +175,7 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
   p2 <- rdirich(table(iden2) + pPrior2)
 
   ### parallel chains ### ----
-  out_list0 <- foreach::foreach(ch = chains, .packages = c("tidyverse")) %dorng% {
+  out_list0 <- foreach::foreach(ch = chains, .packages = c("magrittr", "tidyr", "dplyr")) %dorng% {
 
     p_out <- p2_out <- pp2_out <- iden_out <- list()
 
@@ -180,7 +184,9 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
 
       if (!cond_gsi & rep > nadapt) { # no cond gsi or passed adapt stage
 
-        x_sum <-
+        x_sum <- matrix(0L, nrow = nrow(y), ncol = ncol(y))
+
+        x_sum[as.integer(sort(unique(iden))),] <-
           rowsum(x, iden) %>%
           tidyr::replace_na(0) # colsums for new assignment
 
@@ -192,7 +198,9 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
 
         freq[na_i, wildpops] <- exp(x[na_i,] %*% log(t_q[, 1:K]))
 
-        x2_sum <-
+        x2_sum <- matrix(0L, nrow = nrow(y2), ncol = ncol(y2))
+
+        x2_sum[as.integer(sort(unique(iden2))),] <-
           rowsum(x2[iden %in% which(grps %in% sub_grp), ], iden2) %>%
           tidyr::replace_na(0) # colsums for new assignment
 
@@ -247,10 +255,10 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
 
     } # end gibbs loop
 
-    out_ch <- list(p = sapply(p_out, rbind) %>% t() %>% dplyr::as_tibble,
-                   p2 = sapply(p2_out, rbind) %>% t() %>% dplyr::as_tibble,
-                   pp2 = sapply(pp2_out, rbind) %>% t() %>% dplyr::as_tibble,
-                   idens = sapply(iden_out, rbind) %>% t() %>% dplyr::as_tibble)
+    out_ch <- lapply(list(p_out, p2_out, pp2_out, iden_out), function(out) {
+      sapply(out, rbind) %>% t() %>% dplyr::as_tibble()
+    })
+
     out_ch
 
   } # end parallel chains
@@ -258,41 +266,6 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
   parallel::stopCluster(cl)
 
   ### prepare output ### ----
-  summ_func <- function(combo_file, keeplist, mc_file, groupnames) {
-
-    summ <-
-      lapply(combo_file, function(rlist) rlist[keeplist,]) %>%
-      dplyr::bind_rows %>%
-      tidyr::pivot_longer(cols = everything()) %>%
-      dplyr::group_by(name) %>%
-      dplyr::summarise(
-        mean = mean(value),
-        median = median(value),
-        sd = sd(value),
-        ci.05 = quantile(value, 0.05),
-        ci.95 = quantile(value, 0.95),
-        .groups = "drop"
-      ) %>%
-      dplyr::mutate(
-        GR = {if (nchains > 1) {
-          coda::gelman.diag(mc_file,
-                            transform = FALSE,
-                            autoburnin = FALSE,
-                            multivariate = FALSE)$psrf[,"Point est."] %>%
-            .[order(groupnames)]
-        } else {NA}},
-        n_eff = coda::effectiveSize(mc_file) %>%
-          .[order(groupnames)]
-      ) %>%
-      dplyr::mutate(name_fac = factor(name, levels = groupnames)) %>%
-      dplyr::arrange(name_fac) %>%
-      dplyr::select(-name_fac) %>%
-      dplyr::rename(group = name)
-
-    return(summ)
-
-  }
-
   keep_list <- ((nburn*keep_burn + 1):(nreps - nburn*isFALSE(keep_burn)))[!((nburn*keep_burn + 1):(nreps - nburn*isFALSE(keep_burn))) %% thin] / thin
 
   # tier 1
@@ -310,7 +283,7 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
     lapply(p1_combo,
            function(rlist) coda::mcmc(rlist[keep_list,])) )
 
-  summ_pop1 <- summ_func(p1_combo, keep_list, mc_pop1, grp_names_t1)
+  summ_pop1 <- summ_func(p1_combo, keep_list, mc_pop1, grp_names_t1, nchains)
 
   # tier 2
   out_list2 <-
@@ -327,7 +300,7 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
     lapply(p2_combo,
            function(rlist) coda::mcmc(rlist[keep_list,])) )
 
-  summ_pop2 <- summ_func(p2_combo, keep_list, mc_pop2, grp_names_t2)
+  summ_pop2 <- summ_func(p2_combo, keep_list, mc_pop2, grp_names_t2, nchains)
 
   # combine tiers
   out_list <-
@@ -344,30 +317,30 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
     lapply(p_combo,
            function(rlist) coda::mcmc(rlist[keep_list,])) )
 
-  summ_pop <- summ_func(p_combo, keep_list, mc_pop, grp_names)
+  summ_pop <- summ_func(p_combo, keep_list, mc_pop, grp_names, nchains)
 
   # get output together
   msgsi_out <- list()
 
   msgsi_out$summ_t1 <- summ_pop1
   msgsi_out$trace_t1 <- out_list1 %>%
-    bind_rows() %>%
+    dplyr::bind_rows() %>%
     setNames(c(grp_names_t1, "itr", "chain"))
 
   msgsi_out$summ_t2 <- summ_pop2
   msgsi_out$trace_t2 <- out_list2 %>%
-    coda::bind_rows() %>%
+    dplyr::bind_rows() %>%
     setNames(c(grp_names_t2, "itr", "chain"))
 
   msgsi_out$summ_comb <- summ_pop
   msgsi_out$trace_comb <- out_list %>%
-    coda::bind_rows() %>%
+    dplyr::bind_rows() %>%
     setNames(c(grp_names, "itr", "chain"))
 
   msgsi_out$idens <-
     lapply(out_list0,
            function(ol) ol[[4]] ) %>%
-    coda::bind_rows()
+    dplyr::bind_rows()
 
   if(!is.null(out_path)) save(msgsi_out, file = out_path)
 
@@ -379,32 +352,41 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
 }
 
 
+# make summary output
+summ_func <- function(combo_file, keeplist, mc_file, groupnames, n_ch) {
 
+  summ <-
+    lapply(combo_file, function(rlist) rlist[keeplist,]) %>%
+    dplyr::bind_rows() %>%
+    tidyr::pivot_longer(cols = everything()) %>%
+    dplyr::group_by(name) %>%
+    dplyr::summarise(
+      mean = mean(value),
+      median = median(value),
+      sd = sd(value),
+      ci.05 = quantile(value, 0.05),
+      ci.95 = quantile(value, 0.95),
+      .groups = "drop"
+    ) %>%
+    dplyr::mutate(
+      GR = {if (n_ch > 1) {
+        coda::gelman.diag(mc_file,
+                          transform = FALSE,
+                          autoburnin = FALSE,
+                          multivariate = FALSE)$psrf[,"Point est."] %>%
+          .[order(groupnames)]
+      } else {NA}},
+      n_eff = coda::effectiveSize(mc_file) %>%
+        .[order(groupnames)]
+    ) %>%
+    dplyr::mutate(name_fac = factor(name, levels = groupnames)) %>%
+    dplyr::arrange(name_fac) %>%
+    dplyr::select(-name_fac) %>%
+    dplyr::rename(group = name)
 
+  return(summ)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+}
 
 
 

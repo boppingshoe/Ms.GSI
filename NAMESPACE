@@ -3,3 +3,6 @@
 export(ggtr_plt)
 export(msgsi_mdl)
 export(prep_msgsi_data)
+importFrom(doRNG,"%dorng%")
+importFrom(foreach,"%dopar%")
+importFrom(magrittr,"%>%")
