@@ -9,10 +9,10 @@
 #' @param nadapt Number of adaptation run (default is 0). Only available when running model in fully Bayesian mode.
 #' @param keep_burn To save the burn-ins or not (default is FALSE).
 #' @param cond_gsi To run the model in conditional GSI mode (default is TRUE).
-#' @param out_path File path to save the output. Leave it empty is you don't want to save the output. Default is NULL (no saving).
+#' @param out_path File path to save the output. Leave it empty is you don't want to save the output.
 #' @param seed Random seed for reproducibility. Default is NULL (no random seed).
 #'
-#' @return A list contains reporting group proportion summary and trace for tier one (summ_t1, trace_t1), tier two (summ_t2, trace_t2) and combined two tiers (summ_comb, trace_comb), and record of individual assignment during first tier for each individual (idens).
+#' @return A list contains reporting group proportion summary and trace for tier 1 (summ_t1, trace_t1), tier 2 (summ_t2, trace_t2) and two tiers combined (summ_comb, trace_comb), and record of individual assignment during first tier for each individual (idens).
 #'
 #' @export
 #' @importFrom magrittr %>%
@@ -20,7 +20,14 @@
 #' @importFrom foreach %dopar%
 #'
 #' @examples
-#' msgsi_out <- msgsi_mdl(msgsi_data, nreps = 25, nburn = 15, thin = 1, nchains = 5, nadapt = 0, keep_burn = FALSE, cond_gsi = TRUE, out_path = "v:/serious_analysis_files/gsi/msgsi_output.RData", seed = 555)
+#' # setup input data
+#' msgsi_dat <-
+#'   prep_msgsi_data(mixture_data = mix,
+#'   baseline1_data = base_templin, baseline2_data = base_yukon,
+#'   pop1_info = templin_pops211, pop2_info = yukon_pops50, sub_group = 3:5)
+#'
+#' # run multistage model
+#' msgsi_out <- msgsi_mdl(msgsi_dat, nreps = 25, nburn = 15, thin = 1, nchains = 1)
 
 msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn = FALSE, cond_gsi = TRUE, out_path = NULL, seed = NULL) {
 
@@ -30,8 +37,8 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
   categories <- c("Live, Werk, Pose", "Bring It Like Royalty", "Face", "Best Mother", "Best Dressed", "High Class In A Fur Coat", "Snow Ball", "Butch Queen Body", "Weather Girl", "Labels", "Mother-Daughter Realness", "Working Girl", "Linen Vs. Silk", "Perfect Tens", "Modele Effet", "Stone Cold Face", "Realness", "Intergalatic Best Dressed", "House Vs. House", "Femme Queen Vogue", "High Fashion In Feathers", "Femme Queen Runway", "Lofting", "Higher Than Heaven", "Once Upon A Time")
 
   ### data input ### ----
-  x <- dat_in$x %>% dplyr::select(dplyr::ends_with(as.character(0:9))) %>% as.matrix() # mixture 1
-  x2 <- dat_in$x2 %>% dplyr::select(dplyr::ends_with(as.character(0:9))) %>% as.matrix() # mixture 2
+  x <- dat_in$x %>% dplyr::select(dplyr::ends_with(as.character(0:9))) %>% dplyr::select(order(colnames(.))) %>% as.matrix() # mixture 1
+  x2 <- dat_in$x2 %>% dplyr::select(dplyr::ends_with(as.character(0:9))) %>% dplyr::select(order(colnames(.))) %>% as.matrix() # mixture 2
   y <- dat_in$y %>% dplyr::select(dplyr::ends_with(as.character(0:9))) %>% dplyr::select(order(colnames(.))) %>% as.matrix() # base 1
   y2 <- dat_in$y2 %>% dplyr::select(dplyr::ends_with(as.character(0:9))) %>% dplyr::select(order(colnames(.))) %>% as.matrix() # base 2
 

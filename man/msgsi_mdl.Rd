@@ -34,16 +34,23 @@ msgsi_mdl(
 
 \item{cond_gsi}{To run the model in conditional GSI mode (default is TRUE).}
 
-\item{out_path}{File path to save the output. Leave it empty is you don't want to save the output. Default is NULL (no saving).}
+\item{out_path}{File path to save the output. Leave it empty is you don't want to save the output.}
 
 \item{seed}{Random seed for reproducibility. Default is NULL (no random seed).}
 }
 \value{
-A list contains reporting group proportion summary and trace for tier one (summ_t1, trace_t1), tier two (summ_t2, trace_t2) and combined two tiers (summ_comb, trace_comb), and record of individual assignment during first tier for each individual (idens).
+A list contains reporting group proportion summary and trace for tier 1 (summ_t1, trace_t1), tier 2 (summ_t2, trace_t2) and two tiers combined (summ_comb, trace_comb), and record of individual assignment during first tier for each individual (idens).
 }
 \description{
 Run multistage GSI model
 }
 \examples{
-msgsi_out <- msgsi_mdl(msgsi_data, nreps = 25, nburn = 15, thin = 1, nchains = 5, nadapt = 0, keep_burn = FALSE, cond_gsi = TRUE, out_path = "v:/serious_analysis_files/gsi/msgsi_output.RData", seed = 555)
+# setup input data
+msgsi_dat <-
+  prep_msgsi_data(mixture_data = mix,
+  baseline1_data = base_templin, baseline2_data = base_yukon,
+  pop1_info = templin_pops211, pop2_info = yukon_pops50, sub_group = 3:5)
+
+# run multistage model
+msgsi_out <- msgsi_mdl(msgsi_dat, nreps = 25, nburn = 15, thin = 1, nchains = 1)
 }

@@ -17,23 +17,23 @@ prep_msgsi_data(
 )
 }
 \arguments{
-\item{mixture_data}{Individual fish with loci for both tier one and tier two. Mixture data in GCL or rubias format.}
+\item{mixture_data}{Individual fish with loci for both tier 1 and tier 2. Mixture data in GCL or \emph{rubias} format.}
 
-\item{baseline1_data}{Tier one baseline data in GCL or rubias format.}
+\item{baseline1_data}{Tier 1 baseline data in GCL or \emph{rubias} format.}
 
-\item{baseline2_data}{Tier two baseline data in GCL or rubias format.}
+\item{baseline2_data}{Tier 2 baseline data in GCL or \emph{rubias} format.}
 
-\item{pop1_info}{Population information for tier one. A tibble with columns collection (collection names), repunit (reporting unit names), grpvec (group numbers), origin (wild/hatchery).}
+\item{pop1_info}{Population information for tier 1. A tibble with columns collection (collection names), repunit (reporting unit names), grpvec (group numbers), origin (wild/hatchery).}
 
-\item{pop2_info}{Population information for tier two. A tibble with columns collection (collection names), repunit (reporting unit names), grpvec (group numbers).}
+\item{pop2_info}{Population information for tier 2. A tibble with columns collection (collection names), repunit (reporting unit names), grpvec (group numbers).}
 
-\item{sub_group}{Group numbers for groups of interest. Group id numbers in tier one that identify groups in tier two.}
+\item{sub_group}{Group numbers for groups of interest. Group id numbers in tier 1 that identify groups in tier 2.}
 
-\item{file_path}{Where you want to save a copy of input data. Leave it blank if you don't want to save a copy.}
+\item{file_path}{Where you want to save a copy of input data. Leave it empty if you don't want to save a copy.}
 
-\item{loci1}{Optional. Provide loci (for tier one) as a fail-safe check.}
+\item{loci1}{Optional. Provide loci (for tier 1) as a fail-safe check.}
 
-\item{loci2}{Optional. Provide loci (for tier two) as a fail-safe check.}
+\item{loci2}{Optional. Provide loci (for tier 2) as a fail-safe check.}
 }
 \value{
 A list objects as the input data for msgsi_mdl()
@@ -42,5 +42,8 @@ A list objects as the input data for msgsi_mdl()
 Preparing multistage GSI input data
 }
 \examples{
-msgsi_dat <- prep_msgsi_data(mixture_data = mix.gcl, baseline1_data = base_gcl, pop1_info = uci_pops55, pop2_info = ucigtseq_pops66 \%>\% filter(grpvec != 6), sub_group = c(1,2,4:6), file_path = "uci_chinook/rabies/msgsi_dat_uci.RData", loci1 = loci34, loci2 = loci_gtseq)
+msgsi_dat <-
+  prep_msgsi_data(mixture_data = mix,
+  baseline1_data = base_templin, baseline2_data = base_yukon,
+  pop1_info = templin_pops211, pop2_info = yukon_pops50, sub_group = 3:5)
 }

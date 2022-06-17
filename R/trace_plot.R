@@ -12,10 +12,18 @@
 #' @export
 #'
 #' @examples
-#' nu_order <- c("Kenai_Pen", "UCI_Northwest", "Susitna_Mainstem", "Knik_Turnagain", "Deshka", "Yentna")
-#' ggtr_plt(obj = msgsi_out$trace, nburn = 2500, thin = 5, name_order = nu_order)
+#' # set up input data and run multistage model
+#' msgsi_dat <-
+#'   prep_msgsi_data(mixture_data = mix,
+#'   baseline1_data = base_templin, baseline2_data = base_yukon,
+#'   pop1_info = templin_pops211, pop2_info = yukon_pops50, sub_group = 3:5)
+#'
+#' msgsi_out <- msgsi_mdl(msgsi_dat, nreps = 25, nburn = 15, thin = 1, nchains = 1)
+#'
+#' # trace plot
+#' tr_plot(obj = msgsi_out$trace_comb)
 
-ggtr_plt <- function (obj, nburn = 0, thin = 1, name_order = NULL) {
+tr_plot <- function (obj, nburn = 0, thin = 1, name_order = NULL) {
 
   if (is.null(name_order)) {
     name_order <- dplyr::select(obj, -c(itr, chain)) %>% colnames()

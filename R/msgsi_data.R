@@ -1,15 +1,15 @@
 
 #' Preparing multistage GSI input data
 #'
-#' @param mixture_data Individual fish with loci for both tier one and tier two. Mixture data in GCL or rubias format.
-#' @param baseline1_data Tier one baseline data in GCL or rubias format.
-#' @param baseline2_data Tier two baseline data in GCL or rubias format.
-#' @param pop1_info Population information for tier one. A tibble with columns collection (collection names), repunit (reporting unit names), grpvec (group numbers), origin (wild/hatchery).
-#' @param pop2_info Population information for tier two. A tibble with columns collection (collection names), repunit (reporting unit names), grpvec (group numbers).
-#' @param sub_group Group numbers for groups of interest. Group id numbers in tier one that identify groups in tier two.
-#' @param file_path Where you want to save a copy of input data. Leave it blank if you don't want to save a copy.
-#' @param loci1 Optional. Provide loci (for tier one) as a fail-safe check.
-#' @param loci2 Optional. Provide loci (for tier two) as a fail-safe check.
+#' @param mixture_data Individual fish with loci for both tier 1 and tier 2. Mixture data in GCL or *rubias* format.
+#' @param baseline1_data Tier 1 baseline data in GCL or *rubias* format.
+#' @param baseline2_data Tier 2 baseline data in GCL or *rubias* format.
+#' @param pop1_info Population information for tier 1. A tibble with columns collection (collection names), repunit (reporting unit names), grpvec (group numbers), origin (wild/hatchery).
+#' @param pop2_info Population information for tier 2. A tibble with columns collection (collection names), repunit (reporting unit names), grpvec (group numbers).
+#' @param sub_group Group numbers for groups of interest. Group id numbers in tier 1 that identify groups in tier 2.
+#' @param file_path Where you want to save a copy of input data. Leave it empty if you don't want to save a copy.
+#' @param loci1 Optional. Provide loci (for tier 1) as a fail-safe check.
+#' @param loci2 Optional. Provide loci (for tier 2) as a fail-safe check.
 #'
 #' @return A list objects as the input data for msgsi_mdl()
 #'
@@ -17,7 +17,10 @@
 #' @export
 #'
 #' @examples
-#' msgsi_dat <- prep_msgsi_data(mixture_data = mix.gcl, baseline1_data = base_gcl, pop1_info = uci_pops55, pop2_info = ucigtseq_pops66 %>% filter(grpvec != 6), sub_group = c(1,2,4:6), file_path = "uci_chinook/rabies/msgsi_dat_uci.RData", loci1 = loci34, loci2 = loci_gtseq)
+#' msgsi_dat <-
+#'   prep_msgsi_data(mixture_data = mix,
+#'   baseline1_data = base_templin, baseline2_data = base_yukon,
+#'   pop1_info = templin_pops211, pop2_info = yukon_pops50, sub_group = 3:5)
 
 
 prep_msgsi_data <-
@@ -30,6 +33,7 @@ prep_msgsi_data <-
     message("Working on it, may take a minute or two...")
 
     # identify loci for each stage
+    # make sure no colnames other than marker names have ".1" at the end
     loci_tier1 =
       dplyr::tibble(locus = names(baseline1_data)) %>%
       dplyr::filter(grepl("\\.1$", locus)) %>%
@@ -91,7 +95,7 @@ prep_msgsi_data <-
                     call = baseline1_data %>%
                       dplyr::select(dplyr::all_of(loc), paste0(loc, ".1")) %>%
                       dplyr::pull() %>% unique() %>% .[!is.na(.)],
-                    altyp = seq.int(dplyr::n_distinct(call)) %>% factor)
+                    altyp = seq.int(dplyr::n_distinct(call)) %>% factor())
     }) %>% dplyr::bind_rows() %>%
       dplyr::group_by(locus) %>%
       dplyr::summarise(n_allele = max(as.numeric(altyp)), .groups = "drop")
@@ -102,8 +106,8 @@ prep_msgsi_data <-
       dplyr::tibble(locus = loc,
                     call = baseline2_data %>%
                       dplyr::select(dplyr::all_of(loc), paste0(loc, ".1")) %>%
-                      dplyr::pull %>% unique() %>% .[!is.na(.)],
-                    altyp = seq.int(dplyr::n_distinct(call)) %>% factor)
+                      dplyr::pull() %>% unique() %>% .[!is.na(.)],
+                    altyp = seq.int(dplyr::n_distinct(call)) %>% factor())
     }) %>% dplyr::bind_rows() %>%
       dplyr::group_by(locus) %>%
       dplyr::summarise(n_allele = max(as.numeric(altyp)), .groups = "drop")
@@ -206,7 +210,6 @@ allefreq <- function(gble_in, gble_ref, loci, collect_by = indiv) {
 
 utils::globalVariables(c(".", "SILLY_CODE", "SillySource", "altyp", "collection",
                          "grpvec", "indiv", "locus", "n",
-                         # "ch", "chain", "itr", "name", "name_fac", "value",
                          "n_allele", "origin", "repunit"))
 
 
