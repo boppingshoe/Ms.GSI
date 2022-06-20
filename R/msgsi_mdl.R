@@ -6,13 +6,18 @@
 #' @param nburn Number of warm-up runs.
 #' @param thin Frequency to thin the output.
 #' @param nchains Number of independent MCMC processes.
-#' @param nadapt Number of adaptation run (default is 0). Only available when running model in fully Bayesian mode.
+#' @param nadapt Number of adaptation run (default is 0). Only available when
+#'   running model in fully Bayesian mode.
 #' @param keep_burn To save the burn-ins or not (default is FALSE).
 #' @param cond_gsi To run the model in conditional GSI mode (default is TRUE).
-#' @param out_path File path to save the output. Leave it empty is you don't want to save the output.
+#' @param out_path File path to save the output. Leave it empty is you don't
+#'   want to save the output.
 #' @param seed Random seed for reproducibility. Default is NULL (no random seed).
 #'
-#' @return A list contains reporting group proportion summary and trace for tier 1 (summ_t1, trace_t1), tier 2 (summ_t2, trace_t2) and two tiers combined (summ_comb, trace_comb), and record of individual assignment during first tier for each individual (idens).
+#' @return A list contains reporting group proportion summary and trace for
+#'   tier 1 (summ_t1, trace_t1), tier 2 (summ_t2, trace_t2) and two tiers
+#'   combined (summ_comb, trace_comb), and record of individual assignment
+#'   during first tier for each individual (idens).
 #'
 #' @export
 #' @importFrom magrittr %>%
@@ -28,7 +33,6 @@
 #'
 #' # run multistage model
 #' msgsi_out <- msgsi_mdl(msgsi_dat, nreps = 25, nburn = 15, thin = 1, nchains = 1)
-
 msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn = FALSE, cond_gsi = TRUE, out_path = NULL, seed = NULL) {
 
   ### load required packages ### ----
@@ -37,10 +41,22 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
   categories <- c("Live, Werk, Pose", "Bring It Like Royalty", "Face", "Best Mother", "Best Dressed", "High Class In A Fur Coat", "Snow Ball", "Butch Queen Body", "Weather Girl", "Labels", "Mother-Daughter Realness", "Working Girl", "Linen Vs. Silk", "Perfect Tens", "Modele Effet", "Stone Cold Face", "Realness", "Intergalatic Best Dressed", "House Vs. House", "Femme Queen Vogue", "High Fashion In Feathers", "Femme Queen Runway", "Lofting", "Higher Than Heaven", "Once Upon A Time")
 
   ### data input ### ----
-  x <- dat_in$x %>% dplyr::select(dplyr::ends_with(as.character(0:9))) %>% dplyr::select(order(colnames(.))) %>% as.matrix() # mixture 1
-  x2 <- dat_in$x2 %>% dplyr::select(dplyr::ends_with(as.character(0:9))) %>% dplyr::select(order(colnames(.))) %>% as.matrix() # mixture 2
-  y <- dat_in$y %>% dplyr::select(dplyr::ends_with(as.character(0:9))) %>% dplyr::select(order(colnames(.))) %>% as.matrix() # base 1
-  y2 <- dat_in$y2 %>% dplyr::select(dplyr::ends_with(as.character(0:9))) %>% dplyr::select(order(colnames(.))) %>% as.matrix() # base 2
+  x <- dat_in$x %>%
+    dplyr::select(dplyr::ends_with(as.character(0:9))) %>%
+    dplyr::select(order(colnames(.))) %>%
+    as.matrix() # mixture 1
+  x2 <- dat_in$x2 %>%
+    dplyr::select(dplyr::ends_with(as.character(0:9))) %>%
+    dplyr::select(order(colnames(.))) %>%
+    as.matrix() # mixture 2
+  y <- dat_in$y %>%
+    dplyr::select(dplyr::ends_with(as.character(0:9))) %>%
+    dplyr::select(order(colnames(.))) %>%
+    as.matrix() # base 1
+  y2 <- dat_in$y2 %>%
+    dplyr::select(dplyr::ends_with(as.character(0:9))) %>%
+    dplyr::select(order(colnames(.))) %>%
+    as.matrix() # base 2
 
   if (is.null(dat_in$iden)) iden <- rep(NA, nrow(x)) else iden <- dat_in$iden # iden info
   nalleles <- dat_in$nalleles # number of allele types
@@ -257,7 +273,9 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
     } # end gibbs loop
 
     out_ch <- lapply(list(p_out, p2_out, pp2_out, iden_out), function(out) {
-      sapply(out, rbind) %>% t() %>% dplyr::as_tibble()
+      sapply(out, rbind) %>%
+        t() %>%
+        dplyr::as_tibble()
     })
 
     out_ch
@@ -352,11 +370,20 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
 }
 
 
-# make summary output
+#' Summary function
+#'
+#' Calculate statistics for summary output.
+#'
+#' @param combo_file Trace file.
+#' @param keeplist Which iteration to keep in output.
+#' @param mc_file Trace formatted as MC file.
+#' @param groupnames Group names for specific stage.
+#' @param n_ch Number of MCMC chains
+#'
+#' @noRd
 summ_func <- function(combo_file, keeplist, mc_file, groupnames, n_ch) {
 
-  summ <-
-    lapply(combo_file, function(rlist) rlist[keeplist, ]) %>%
+  lapply(combo_file, function(rlist) rlist[keeplist, ]) %>%
     dplyr::bind_rows() %>%
     tidyr::pivot_longer(cols = tidyr::everything()) %>%
     dplyr::group_by(name) %>%
@@ -383,8 +410,6 @@ summ_func <- function(combo_file, keeplist, mc_file, groupnames, n_ch) {
     dplyr::arrange(name_fac) %>%
     dplyr::select(-name_fac) %>%
     dplyr::rename(group = name)
-
-  return(summ)
 
 }
 

@@ -2,9 +2,12 @@
 #' Plot MCMC trace
 #'
 #' @param obj Trace from the model output.
-#' @param nburn Number of burn-in you set up when you ran the model. Default is 0 if you didn't save the burn-ins (keep_burn = FALSE).
-#' @param thin Number of thinning you set up when you ran the model. Default is 1 (no thinning).
-#' @param name_order Arrange the reporting groups as you wish. Leave it empty if you want to accept the default.
+#' @param nburn Number of burn-in you set up when you ran the model.
+#'   Default is 0 if you didn't save the burn-ins (keep_burn = FALSE).
+#' @param thin Number of thinning you set up when you ran the model.
+#'   Default is 1 (no thinning).
+#' @param name_order Arrange the reporting groups as you wish. Leave it empty
+#'   if you want to accept the default.
 #'
 #' @return Trace plot in ggplot
 

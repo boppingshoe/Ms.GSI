@@ -1,13 +1,20 @@
 
 #' Preparing multistage GSI input data
 #'
-#' @param mixture_data Individual fish with loci for both tier 1 and tier 2. Mixture data in GCL or *rubias* format.
+#' @param mixture_data Individual fish with loci for both tier 1 and tier 2.
+#'   Mixture data in GCL or *rubias* format.
 #' @param baseline1_data Tier 1 baseline data in GCL or *rubias* format.
 #' @param baseline2_data Tier 2 baseline data in GCL or *rubias* format.
-#' @param pop1_info Population information for tier 1. A tibble with columns collection (collection names), repunit (reporting unit names), grpvec (group numbers), origin (wild/hatchery).
-#' @param pop2_info Population information for tier 2. A tibble with columns collection (collection names), repunit (reporting unit names), grpvec (group numbers).
-#' @param sub_group Group numbers for groups of interest. Group id numbers in tier 1 that identify groups in tier 2.
-#' @param file_path Where you want to save a copy of input data. Leave it empty if you don't want to save a copy.
+#' @param pop1_info Population information for tier 1. A tibble with columns
+#'   collection (collection names), repunit (reporting unit names),
+#'   grpvec (group numbers), origin (wild/hatchery).
+#' @param pop2_info Population information for tier 2. A tibble with columns
+#'   collection (collection names), repunit (reporting unit names),
+#'   grpvec (group numbers).
+#' @param sub_group Group numbers for groups of interest. Group id numbers in tier
+#'   1 that identify groups in tier 2.
+#' @param file_path Where you want to save a copy of input data. Leave it empty if
+#'   you don't want to save a copy.
 #' @param loci1 Optional. Provide loci (for tier 1) as a fail-safe check.
 #' @param loci2 Optional. Provide loci (for tier 2) as a fail-safe check.
 #'
@@ -21,8 +28,6 @@
 #'   prep_msgsi_data(mixture_data = mix,
 #'   baseline1_data = base_templin, baseline2_data = base_yukon,
 #'   pop1_info = templin_pops211, pop2_info = yukon_pops50, sub_group = 3:5)
-
-
 prep_msgsi_data <-
   function(mixture_data, baseline1_data, baseline2_data,
            pop1_info, pop2_info, sub_group,
@@ -170,15 +175,26 @@ prep_msgsi_data <-
   }
 
 
-# Calculate allele frequency for each locus
-# for individual fish or a collection/population
+#' Allele frequency
+#'
+#' Calculate allele frequency for each locus
+#'   for individual fish or a collection/population.
+#'
+#' @param gble_in Genotype table.
+#' @param gle_ref Reference genetypr table.
+#' @param loci loci names.
+#' @param collect_by At what level to group by.
+#'
+#' @noRd
 allefreq <- function(gble_in, gble_ref, loci, collect_by = indiv) {
 
   alleles = lapply(loci, function(loc) {
     dplyr::tibble(locus = loc,
                   call = gble_ref %>%
                     dplyr::select(dplyr::all_of(loc), paste0(loc, ".1")) %>%
-                    dplyr::pull() %>% unique() %>% .[!is.na(.)],
+                    dplyr::pull() %>%
+                    unique() %>%
+                    .[!is.na(.)],
                   altyp = seq.int(dplyr::n_distinct(call)) %>% factor)
     }) %>% dplyr::bind_rows()
 
@@ -191,7 +207,7 @@ allefreq <- function(gble_in, gble_ref, loci, collect_by = indiv) {
     }) %>%
     as.vector()
 
-  frq_tib <- gble_in %>%
+  gble_in %>%
     dplyr::select(c({{ collect_by }}, dplyr::all_of(scores_cols))) %>%
     tidyr::pivot_longer(
       cols = -{{ collect_by }},
@@ -215,8 +231,6 @@ allefreq <- function(gble_in, gble_ref, loci, collect_by = indiv) {
     tidyr::unite("altyp", c(locus, altyp)) %>%
     tidyr::pivot_wider(names_from = altyp, values_from = n) %>%
     dplyr::ungroup()
-
-  return(frq_tib)
 
 }
 

@@ -28,18 +28,23 @@ msgsi_mdl(
 
 \item{nchains}{Number of independent MCMC processes.}
 
-\item{nadapt}{Number of adaptation run (default is 0). Only available when running model in fully Bayesian mode.}
+\item{nadapt}{Number of adaptation run (default is 0). Only available when
+running model in fully Bayesian mode.}
 
 \item{keep_burn}{To save the burn-ins or not (default is FALSE).}
 
 \item{cond_gsi}{To run the model in conditional GSI mode (default is TRUE).}
 
-\item{out_path}{File path to save the output. Leave it empty is you don't want to save the output.}
+\item{out_path}{File path to save the output. Leave it empty is you don't
+want to save the output.}
 
 \item{seed}{Random seed for reproducibility. Default is NULL (no random seed).}
 }
 \value{
-A list contains reporting group proportion summary and trace for tier 1 (summ_t1, trace_t1), tier 2 (summ_t2, trace_t2) and two tiers combined (summ_comb, trace_comb), and record of individual assignment during first tier for each individual (idens).
+A list contains reporting group proportion summary and trace for
+tier 1 (summ_t1, trace_t1), tier 2 (summ_t2, trace_t2) and two tiers
+combined (summ_comb, trace_comb), and record of individual assignment
+during first tier for each individual (idens).
 }
 \description{
 Run multistage GSI model

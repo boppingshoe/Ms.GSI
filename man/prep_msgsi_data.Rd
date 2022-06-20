@@ -17,19 +17,26 @@ prep_msgsi_data(
 )
 }
 \arguments{
-\item{mixture_data}{Individual fish with loci for both tier 1 and tier 2. Mixture data in GCL or \emph{rubias} format.}
+\item{mixture_data}{Individual fish with loci for both tier 1 and tier 2.
+Mixture data in GCL or \emph{rubias} format.}
 
 \item{baseline1_data}{Tier 1 baseline data in GCL or \emph{rubias} format.}
 
 \item{baseline2_data}{Tier 2 baseline data in GCL or \emph{rubias} format.}
 
-\item{pop1_info}{Population information for tier 1. A tibble with columns collection (collection names), repunit (reporting unit names), grpvec (group numbers), origin (wild/hatchery).}
+\item{pop1_info}{Population information for tier 1. A tibble with columns
+collection (collection names), repunit (reporting unit names),
+grpvec (group numbers), origin (wild/hatchery).}
 
-\item{pop2_info}{Population information for tier 2. A tibble with columns collection (collection names), repunit (reporting unit names), grpvec (group numbers).}
+\item{pop2_info}{Population information for tier 2. A tibble with columns
+collection (collection names), repunit (reporting unit names),
+grpvec (group numbers).}
 
-\item{sub_group}{Group numbers for groups of interest. Group id numbers in tier 1 that identify groups in tier 2.}
+\item{sub_group}{Group numbers for groups of interest. Group id numbers in tier
+1 that identify groups in tier 2.}
 
-\item{file_path}{Where you want to save a copy of input data. Leave it empty if you don't want to save a copy.}
+\item{file_path}{Where you want to save a copy of input data. Leave it empty if
+you don't want to save a copy.}
 
 \item{loci1}{Optional. Provide loci (for tier 1) as a fail-safe check.}
 

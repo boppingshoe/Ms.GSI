@@ -9,11 +9,14 @@ tr_plot(obj, nburn = 0, thin = 1, name_order = NULL)
 \arguments{
 \item{obj}{Trace from the model output.}
 
-\item{nburn}{Number of burn-in you set up when you ran the model. Default is 0 if you didn't save the burn-ins (keep_burn = FALSE).}
+\item{nburn}{Number of burn-in you set up when you ran the model.
+Default is 0 if you didn't save the burn-ins (keep_burn = FALSE).}
 
-\item{thin}{Number of thinning you set up when you ran the model. Default is 1 (no thinning).}
+\item{thin}{Number of thinning you set up when you ran the model.
+Default is 1 (no thinning).}
 
-\item{name_order}{Arrange the reporting groups as you wish. Leave it empty if you want to accept the default.}
+\item{name_order}{Arrange the reporting groups as you wish. Leave it empty
+if you want to accept the default.}
 }
 \value{
 Trace plot in ggplot
