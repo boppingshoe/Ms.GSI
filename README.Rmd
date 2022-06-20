@@ -35,7 +35,7 @@ This example shows a basic work flow for running a multistage model. First thing
 
 The fake Chinook data sets are pre-loaded and included in the package. Here we prepare the input data:
 
-```{r example prep data}
+```{r example_prep_data}
 
 # library(Ms.GSI)
 devtools::load_all()
@@ -50,7 +50,7 @@ msgsi_dat <-
 
 Using the prepared input data, we run the model with 150 iterations. In reality, you should of course run it with more iterations. We set the first 50 iterations as the warm-ups (not kept in the final output). Here's the summary for the estimates and convergence diagnostics.
 
-```{r example run model}
+```{r example_run_model}
 
 msgsi_out <- msgsi_mdl(msgsi_dat, nreps = 150, nburn = 50, thin = 1, nchains = 4)
 
@@ -60,7 +60,7 @@ msgsi_out$summ_comb
 
 There's a function to make trace plots and inspect mixing of chains.
 
-```{r example trace plot}
+```{r example_trace_plot}
 
 tr_plot(obj = msgsi_out$trace_comb)
 

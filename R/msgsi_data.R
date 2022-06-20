@@ -34,51 +34,39 @@ prep_msgsi_data <-
            file_path = NULL,
            loci1 = NULL, loci2 = NULL) {
 
-    start_time = Sys.time()
-    message("Working on it, may take a minute or two...")
+    start_time <- Sys.time()
 
     # identify loci for each stage
     # make sure no colnames other than marker names have ".1" at the end
-    loci_tier1 =
+    loci_tier1 <-
       dplyr::tibble(locus = names(baseline1_data)) %>%
       dplyr::filter(grepl("\\.1$", locus)) %>%
       dplyr::mutate(locus = substr(locus, 1, nchar(locus)-2)) %>%
       dplyr::pull(locus)
 
-    loci_tier2 =
+    loci_tier2 <-
       dplyr::tibble(locus = names(baseline2_data)) %>%
       dplyr::filter(grepl("\\.1$", locus)) %>%
       dplyr::mutate(locus = substr(locus, 1, nchar(locus)-2)) %>%
       dplyr::pull(locus)
 
-    # check loci if provided
-    if (!is.null(loci1)) {
-      if (!all(loci_tier1 %in% loci1)) {
-        stop(c("Unidentified loci in baseline 1:", paste0(setdiff(loci_tier1, loci1), ", ")))
-      }
-      }
+    # input error check
 
-    if (!is.null(loci2)) {
-      if (!all(loci_tier2 %in% loci2)) {
-        stop(c("Unidentified loci in baseline 2:", paste0(dplyr::setdiff(loci_tier2, loci2), ", ")))
-      }
-      }
+    loci_all <-
+      dplyr::tibble(locus = names(mixture_data)) %>%
+      dplyr::filter(grepl("\\.1$", locus)) %>%
+      dplyr::mutate(locus = substr(locus, 1, nchar(locus) - 2)) %>%
+      dplyr::pull(locus)
 
-    if (!is.null(loci1) & !is.null(loci2)) {
-      loci_all =
-        dplyr::tibble(locus = names(mixture_data)) %>%
-        dplyr::filter(grepl("\\.1$", locus)) %>%
-        dplyr::mutate(locus = substr(locus, 1, nchar(locus)-2)) %>%
-        dplyr::pull(locus)
-      if (!all(c(loci_tier1, loci_tier2) %in% loci_all)) {
-        stop(c("Unidentified loci in mixture sample:", paste0(dplyr::setdiff(loci_all, c(loci_tier1, loci_tier2)), ", ")))
-      }
-      }
+    error_message <- check_loci_pops(loci1, loci_tier1, loci2, loci_tier2,
+                                     pop1_info$repunit, pop2_info$repunit,
+                                     loci_all)
 
-    # make sure group names are consistent between both tiers
-    if (any(!unique(pop2_info$repunit) %in% pop1_info$repunit)) {
-      stop(c("Group names are not consistent between the two baselines. Names in baseline 2 but not in baseline 1: ", unique(pop2_info$repunit)[!unique(pop2_info$repunit) %in% pop1_info$repunit]))
-      }
+    if ("all good" %in% error_message) {
+      message("Compiling input data, may take a minute or two...")
+    } else {
+      stop(error_message)
+    }
 
     # change column name if the data are gcl objects
     # to match rubias input data name convention
@@ -234,12 +222,60 @@ allefreq <- function(gble_in, gble_ref, loci, collect_by = indiv) {
 
 }
 
+
+#' Error check
+#'
+#' Check loci and population information in input data.
+#'
+#' @param loci1_pr User provided loci 1 info.
+#' @param loci_t1 Loci info from stage 1 baseline.
+#' @param loci2_pr User provided loci 2 info.
+#' @param loci_t2 Loci info from stage 2 baseline.
+#' @param repunit1 Reporting unit for stage 1.
+#' @param repunit2 Reporting unit for stage 2.
+#' @param loc_all All loci in mixture data.
+#'
+#' @noRd
+check_loci_pops <- function(loci1_pr, loci_t1, loci2_pr, loci_t2,
+                            repunit1, repunit2, loc_all) {
+
+  # check loci if provided
+  if (!is.null(loci1_pr)) {
+    if (!all(loci_t1 %in% loci1_pr)) {
+      return(c("Unidentified loci in baseline 1: ",
+               paste0(setdiff(loci_t1, loci1_pr), ", ")))
+    }
+  }
+
+  if (!is.null(loci2_pr)) {
+    if (!all(loci_t2 %in% loci2_pr)) {
+      return(c("Unidentified loci in baseline 2: ",
+               paste0(dplyr::setdiff(loci_t2, loci2_pr), ", ")))
+    }
+  }
+
+  if (!is.null(loci1_pr) & !is.null(loci2_pr)) {
+    if (!all(c(loci_t1, loci_t2) %in% loc_all)) {
+      return(c("Unidentified loci in mixture sample: ",
+               paste0(dplyr::setdiff(loc_all, c(loci_t1, loci_t2)), ", ")))
+    }
+  }
+
+  # make sure group names are consistent between both tiers
+  if (any(!unique(repunit2) %in% repunit1)) {
+    return(c("Group names are not consistent between the two baselines.\n",
+             "Names in baseline 2 but not in baseline 1: ",
+             unique(repunit2)[!unique(repunit2) %in% repunit1]))
+  }
+
+  return("all good")
+
+}
+
+
 utils::globalVariables(c(".", "SILLY_CODE", "SillySource", "altyp", "collection",
-                         "grpvec", "indiv", "locus", "n",
+                         "grpvec", "indiv", "locus", "n", "loci_all",
                          "n_allele", "origin", "repunit"))
-
-
-
 
 
 

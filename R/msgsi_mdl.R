@@ -35,9 +35,6 @@
 #' msgsi_out <- msgsi_mdl(msgsi_dat, nreps = 25, nburn = 15, thin = 1, nchains = 1)
 msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn = FALSE, cond_gsi = TRUE, out_path = NULL, seed = NULL) {
 
-  ### load required packages ### ----
-  # pacman::p_load(doParallel, parallel, foreach, tidyverse, doRNG, coda)
-
   categories <- c("Live, Werk, Pose", "Bring It Like Royalty", "Face", "Best Mother", "Best Dressed", "High Class In A Fur Coat", "Snow Ball", "Butch Queen Body", "Weather Girl", "Labels", "Mother-Daughter Realness", "Working Girl", "Linen Vs. Silk", "Perfect Tens", "Modele Effet", "Stone Cold Face", "Realness", "Intergalatic Best Dressed", "House Vs. House", "Femme Queen Vogue", "High Fashion In Feathers", "Femme Queen Runway", "Lofting", "Higher Than Heaven", "Once Upon A Time")
 
   ### data input ### ----
@@ -192,7 +189,9 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
   p2 <- rdirich(table(iden2) + pPrior2)
 
   ### parallel chains ### ----
-  out_list0 <- foreach::foreach(ch = chains, .packages = c("magrittr", "tidyr", "dplyr")) %dorng% {
+  out_list0 <- foreach::foreach(
+    ch = chains, .packages = c("magrittr", "tidyr", "dplyr")
+    ) %dorng% {
 
     p_out <- p2_out <- pp2_out <- iden_out <- list()
 
@@ -272,13 +271,11 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
 
     } # end gibbs loop
 
-    out_ch <- lapply(list(p_out, p2_out, pp2_out, iden_out), function(out) {
+    lapply(list(p_out, p2_out, pp2_out, iden_out), function(out) {
       sapply(out, rbind) %>%
         t() %>%
         dplyr::as_tibble()
     })
-
-    out_ch
 
   } # end parallel chains
 
@@ -363,7 +360,7 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
   if (!is.null(out_path)) save(msgsi_out, file = out_path)
 
   print(Sys.time() - run_time)
-  message(Sys.time())
+  message(format(Sys.time(), "%B-%d-%Y %H:%M"))
 
   return(msgsi_out)
 
