@@ -42,9 +42,7 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
   y <- dat_in$y %>% dplyr::select(dplyr::ends_with(as.character(0:9))) %>% dplyr::select(order(colnames(.))) %>% as.matrix() # base 1
   y2 <- dat_in$y2 %>% dplyr::select(dplyr::ends_with(as.character(0:9))) %>% dplyr::select(order(colnames(.))) %>% as.matrix() # base 2
 
-  if (is.null(dat_in$iden)) {
-    iden <- rep(NA, nrow(x))
-  } else iden <- dat_in$iden # age and iden info
+  if (is.null(dat_in$iden)) iden <- rep(NA, nrow(x)) else iden <- dat_in$iden # iden info
   nalleles <- dat_in$nalleles # number of allele types
   nalleles2 <- dat_in$nalleles2 # number of allele types
   grps <- dat_in$groups # vector id for the 1st tier reporting groups (aka groupvec)
@@ -72,13 +70,12 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
 
   ### specifications ### ----
   rdirich <- function(alpha0) {
-    if (sum(alpha0)) {
+    if (sum(alpha0) > 0) {
       vec = stats::rgamma(length(alpha0), alpha0, 1)
       vec = vec / sum(vec)
       vec[vec == 0] = .Machine$double.xmin
       vec
-    }
-    else{
+    } else {
       rep(0, length(alpha0))
     }
   } # og random dirichlet by jj
@@ -86,7 +83,7 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
   message(paste0("Running model (and the category is... ", sample(categories, 1), "!)"))
   run_time <- Sys.time()
 
-  if (cond_gsi) nadapt = 0
+  if (isTRUE(cond_gsi)) nadapt = 0
   n_burn <- ifelse(keep_burn, 0, nburn)
 
   chains <- seq(nchains)
@@ -97,11 +94,8 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
   ### initial values ### ----
   ## tier 1
   # hyper-param for relative freq q (allele)
-  beta <-
-    matrix(0,
-           nrow = nrow(y),
-           ncol = ncol(y))
-  # dimnames = dimnames(y))
+  beta <- matrix(0, nrow = nrow(y), ncol = ncol(y))
+
   beta[1:K, ] <-
     matrix(
       rep(1 / nalleles, nalleles),
@@ -112,13 +106,13 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
 
   t_q <- apply(y + beta, 1, function(rw) {
     unlist(tapply(rw, trait_fac, function(betty) {
-      if (sum(betty)) {
+      if (sum(betty) > 0) {
         betty / sum(betty)
       } else {
         rep(1, length(betty))
       }
     }, simplify = FALSE)[names(nalleles)])
-  }) # transposed (allele freq)
+  }) # transposed allele freq
 
   freq <- matrix(
     0,
@@ -141,9 +135,9 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
   freq[na_i, wildpops] <- exp(x[na_i,] %*% log(t_q[, 1:K]))
 
   pPrior <- # alpha, hyper-param for p (pop props)
-    (1/ table(grps)/ max(grps))[grps]
+    (1 / table(grps) / max(grps))[grps]
 
-  iden[na_i] <- unlist( lapply(na_i, function(m) {
+  iden[na_i] <- unlist(lapply(na_i, function(m) {
     sample(K, 1, FALSE, (pPrior * freq[m, ])[seq.int(K)])
   }))
 
@@ -156,22 +150,22 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
       nrow = nrow(y2), # tier 2 has no hatchery
       ncol = ncol(y2),
       byrow = TRUE
-    ) # genetic part of prior (beta)
+    )
 
   t_q2 <- apply(y2 + beta2, 1, function(rw) {
     unlist(tapply(rw, trait_fac2, function(betty) {
-      if (sum(betty)) {
+      if (sum(betty) > 0) {
         betty / sum(betty)
       } else {
         rep(1, length(betty))
       }
     }, simplify = FALSE)[names(nalleles2)])
-  }) # transposed (allele freq)
+  }) # transposed allele freq
 
   freq2 <- exp(x2[iden %in% which(grps %in% sub_grp), ] %*% log(t_q2))
 
   pPrior2 <- # alpha, hyper-param for p2 (pop props)
-    (1/ table(p2_grps)/ max(p2_grps))[p2_grps]
+    (1 / table(p2_grps) / max(p2_grps))[p2_grps]
 
   iden2 <- apply(freq2, 1, function(frq_rw) {
     sample(nrow(y2), 1, FALSE, (pPrior2 * frq_rw))
@@ -246,9 +240,9 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
 
       # record output based on keep or not keep burn-ins
       if (rep > nadapt) { # after adaptation stage
-        if ((rep-nadapt) > n_burn & (rep-nadapt-n_burn) %% thin == 0) {
+        if ((rep - nadapt) > n_burn & (rep - nadapt - n_burn) %% thin == 0) {
 
-          it <- (rep-nadapt-n_burn)/ thin
+          it <- (rep - nadapt - n_burn) / thin
           p_grp <- tapply(p, grps, sum)
           p2_grp <- tapply(p2, p2_grps, sum)
 
@@ -273,56 +267,53 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
   parallel::stopCluster(cl)
 
   ### prepare output ### ----
-  keep_list <- ((nburn*keep_burn + 1):(nreps - nburn*isFALSE(keep_burn)))[!((nburn*keep_burn + 1):(nreps - nburn*isFALSE(keep_burn))) %% thin] / thin
+  keep_list <- ((nburn*keep_burn + 1):(nreps - nburn * isFALSE(keep_burn)))[!((nburn*keep_burn + 1):(nreps - nburn * isFALSE(keep_burn))) %% thin] / thin
 
   # tier 1
-  out_list1 <-
-    lapply(out_list0,
-           function(ol) ol[[1]] )
+  out_list1 <- lapply(out_list0, function(ol) ol[[1]])
 
   p1_combo <-
-    lapply(out_list1,
-           function(ol) ol %>%
-             dplyr::select(1:(ncol(.)-2)) %>%
-             stats::setNames(grp_names_t1))
+    lapply(out_list1, function(ol) {
+      ol %>%
+        dplyr::select(1:(ncol(.)-2)) %>%
+        stats::setNames(grp_names_t1)
+      })
 
   mc_pop1 <- coda::as.mcmc.list(
-    lapply(p1_combo,
-           function(rlist) coda::mcmc(rlist[keep_list,])) )
+    lapply(p1_combo, function(rlist) coda::mcmc(rlist[keep_list,]))
+    )
 
   summ_pop1 <- summ_func(p1_combo, keep_list, mc_pop1, grp_names_t1, nchains)
 
   # tier 2
-  out_list2 <-
-    lapply(out_list0,
-           function(ol) ol[[2]] )
+  out_list2 <- lapply(out_list0, function(ol) ol[[2]])
 
   p2_combo <-
-    lapply(out_list2,
-           function(ol) ol %>%
-             dplyr::select(1:(ncol(.)-2)) %>%
-             stats::setNames(grp_names_t2))
+    lapply(out_list2, function(ol) {
+      ol %>%
+        dplyr::select(1:(ncol(.)-2)) %>%
+        stats::setNames(grp_names_t2)
+      })
 
   mc_pop2 <- coda::as.mcmc.list(
-    lapply(p2_combo,
-           function(rlist) coda::mcmc(rlist[keep_list,])) )
+    lapply(p2_combo, function(rlist) coda::mcmc(rlist[keep_list,]))
+    )
 
   summ_pop2 <- summ_func(p2_combo, keep_list, mc_pop2, grp_names_t2, nchains)
 
   # combine tiers
-  out_list <-
-    lapply(out_list0,
-           function(ol) ol[[3]] )
+  out_list <- lapply(out_list0, function(ol) ol[[3]])
 
   p_combo <-
-    lapply(out_list,
-           function(ol) ol %>%
-             dplyr::select(1:(ncol(.)-2)) %>%
-             stats::setNames(grp_names))
+    lapply(out_list, function(ol) {
+      ol %>%
+        dplyr::select(1:(ncol(.)-2)) %>%
+        stats::setNames(grp_names)
+      })
 
   mc_pop <- coda::as.mcmc.list(
-    lapply(p_combo,
-           function(rlist) coda::mcmc(rlist[keep_list,])) )
+    lapply(p_combo, function(rlist) coda::mcmc(rlist[keep_list,]))
+    )
 
   summ_pop <- summ_func(p_combo, keep_list, mc_pop, grp_names, nchains)
 
@@ -330,26 +321,28 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
   msgsi_out <- list()
 
   msgsi_out$summ_t1 <- summ_pop1
-  msgsi_out$trace_t1 <- out_list1 %>%
+  msgsi_out$trace_t1 <-
+    out_list1 %>%
     dplyr::bind_rows() %>%
     stats::setNames(c(grp_names_t1, "itr", "chain"))
 
   msgsi_out$summ_t2 <- summ_pop2
-  msgsi_out$trace_t2 <- out_list2 %>%
+  msgsi_out$trace_t2 <-
+    out_list2 %>%
     dplyr::bind_rows() %>%
     stats::setNames(c(grp_names_t2, "itr", "chain"))
 
   msgsi_out$summ_comb <- summ_pop
-  msgsi_out$trace_comb <- out_list %>%
+  msgsi_out$trace_comb <-
+    out_list %>%
     dplyr::bind_rows() %>%
     stats::setNames(c(grp_names, "itr", "chain"))
 
   msgsi_out$idens <-
-    lapply(out_list0,
-           function(ol) ol[[4]] ) %>%
+    lapply(out_list0, function(ol) ol[[4]]) %>%
     dplyr::bind_rows()
 
-  if(!is.null(out_path)) save(msgsi_out, file = out_path)
+  if (!is.null(out_path)) save(msgsi_out, file = out_path)
 
   print(Sys.time() - run_time)
   message(Sys.time())
@@ -363,7 +356,7 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
 summ_func <- function(combo_file, keeplist, mc_file, groupnames, n_ch) {
 
   summ <-
-    lapply(combo_file, function(rlist) rlist[keeplist,]) %>%
+    lapply(combo_file, function(rlist) rlist[keeplist, ]) %>%
     dplyr::bind_rows() %>%
     tidyr::pivot_longer(cols = tidyr::everything()) %>%
     dplyr::group_by(name) %>%
@@ -376,13 +369,13 @@ summ_func <- function(combo_file, keeplist, mc_file, groupnames, n_ch) {
       .groups = "drop"
     ) %>%
     dplyr::mutate(
-      GR = {if (n_ch > 1) {
+      GR = { if (n_ch > 1) {
         coda::gelman.diag(mc_file,
                           transform = FALSE,
                           autoburnin = FALSE,
                           multivariate = FALSE)$psrf[,"Point est."] %>%
           .[order(groupnames)]
-      } else {NA}},
+      } else NA },
       n_eff = coda::effectiveSize(mc_file) %>%
         .[order(groupnames)]
     ) %>%

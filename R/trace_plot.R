@@ -29,7 +29,7 @@ tr_plot <- function (obj, nburn = 0, thin = 1, name_order = NULL) {
     name_order <- dplyr::select(obj, -c(itr, chain)) %>% colnames()
   }
 
-  tidyr::pivot_longer({{obj}}, cols = -c(chain, itr)) %>%
+  tidyr::pivot_longer({{ obj }}, cols = -c(chain, itr)) %>%
     dplyr::mutate(name = factor(name, levels = name_order)) %>%
     ggplot2::ggplot() +
     ggplot2::geom_line(ggplot2::aes(x = itr, y = value, color = factor(chain))) +

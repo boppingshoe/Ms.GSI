@@ -47,33 +47,41 @@ prep_msgsi_data <-
       dplyr::pull(locus)
 
     # check loci if provided
-    if(!is.null(loci1)) {
-      if(!all(loci_tier1 %in% loci1)) stop(c("Unidentified loci in baseline 1:", paste0(setdiff(loci_tier1, loci1), ", ")))
-    }
+    if (!is.null(loci1)) {
+      if (!all(loci_tier1 %in% loci1)) {
+        stop(c("Unidentified loci in baseline 1:", paste0(setdiff(loci_tier1, loci1), ", ")))
+      }
+      }
 
-    if(!is.null(loci2)) {
-      if(!all(loci_tier2 %in% loci2)) stop(c("Unidentified loci in baseline 2:", paste0(dplyr::setdiff(loci_tier2, loci2), ", ")))
-    }
+    if (!is.null(loci2)) {
+      if (!all(loci_tier2 %in% loci2)) {
+        stop(c("Unidentified loci in baseline 2:", paste0(dplyr::setdiff(loci_tier2, loci2), ", ")))
+      }
+      }
 
-    if(!is.null(loci1) & !is.null(loci2)) {
+    if (!is.null(loci1) & !is.null(loci2)) {
       loci_all =
         dplyr::tibble(locus = names(mixture_data)) %>%
         dplyr::filter(grepl("\\.1$", locus)) %>%
         dplyr::mutate(locus = substr(locus, 1, nchar(locus)-2)) %>%
         dplyr::pull(locus)
-      if(!all(c(loci_tier1, loci_tier2) %in% loci_all)) stop(c("Unidentified loci in mixture sample:", paste0(dplyr::setdiff(loci_all, c(loci_tier1, loci_tier2)), ", ")))
-    }
+      if (!all(c(loci_tier1, loci_tier2) %in% loci_all)) {
+        stop(c("Unidentified loci in mixture sample:", paste0(dplyr::setdiff(loci_all, c(loci_tier1, loci_tier2)), ", ")))
+      }
+      }
 
     # make sure group names are consistent between both tiers
-    if(any(!unique(pop2_info$repunit) %in% pop1_info$repunit)) stop(c("Group names are not consistent between the two baselines. Names in baseline 2 but not in baseline 1: ", unique(pop2_info$repunit)[!unique(pop2_info$repunit) %in% pop1_info$repunit]))
+    if (any(!unique(pop2_info$repunit) %in% pop1_info$repunit)) {
+      stop(c("Group names are not consistent between the two baselines. Names in baseline 2 but not in baseline 1: ", unique(pop2_info$repunit)[!unique(pop2_info$repunit) %in% pop1_info$repunit]))
+      }
 
     # change column name if the data are gcl objects
     # to match rubias input data name convention
-    if("SILLY_CODE" %in% names(baseline1_data)) baseline1_data = dplyr::rename(baseline1_data, collection = SILLY_CODE)
+    if ("SILLY_CODE" %in% names(baseline1_data)) baseline1_data = dplyr::rename(baseline1_data, collection = SILLY_CODE)
 
-    if("SILLY_CODE" %in% names(baseline2_data)) baseline2_data = dplyr::rename(baseline2_data, collection = SILLY_CODE)
+    if ("SILLY_CODE" %in% names(baseline2_data)) baseline2_data = dplyr::rename(baseline2_data, collection = SILLY_CODE)
 
-    if("SillySource" %in% names(mixture_data)) mixture_data = dplyr::rename(mixture_data, indiv = SillySource)
+    if ("SillySource" %in% names(mixture_data)) mixture_data = dplyr::rename(mixture_data, indiv = SillySource)
 
     # tally allele for each baseline and mixture sample
     base1 = allefreq(baseline1_data, baseline1_data, loci_tier1, collect_by = collection) %>%
@@ -120,12 +128,14 @@ prep_msgsi_data <-
     grp2_nms = base2 %>% dplyr::arrange(grpvec) %>% dplyr::pull(repunit) %>% unique()
 
     # iden if specified in mixture data
-    if(any(grepl("known_", names(mixture_data)))) {
+    if (any(grepl("known_", names(mixture_data)))) {
       iden = mixture_data %>% dplyr::select(tidyr::contains("known_")) %>% dplyr::pull()
-    } else {iden = NULL}
+    } else {
+      iden = NULL
+    }
 
     # wild or hatchery
-    if("origin" %in% names(base1)) {
+    if ("origin" %in% names(base1)) {
       wildpops = base1 %>% dplyr::filter(origin == "wild") %>% dplyr::pull(collection)
       hatcheries = base1 %>% dplyr::filter(origin == "hatchery") %>% dplyr::pull(collection)
     } else {
@@ -151,7 +161,7 @@ prep_msgsi_data <-
       hatcheries = hatcheries
     )
 
-    if(!is.null(file_path)) save(msgsi_dat, file = file_path)
+    if (!is.null(file_path)) save(msgsi_dat, file = file_path)
 
     print(Sys.time() - start_time)
 
@@ -170,19 +180,21 @@ allefreq <- function(gble_in, gble_ref, loci, collect_by = indiv) {
                     dplyr::select(dplyr::all_of(loc), paste0(loc, ".1")) %>%
                     dplyr::pull() %>% unique() %>% .[!is.na(.)],
                   altyp = seq.int(dplyr::n_distinct(call)) %>% factor)
-  }) %>% dplyr::bind_rows()
+    }) %>% dplyr::bind_rows()
 
   n_alleles = alleles %>%
     dplyr::group_by(locus) %>%
     dplyr::summarise(n_allele = max(as.numeric(altyp)), .groups = "drop")
 
-  scores_cols = sapply(loci, function(locus) {c(locus, paste0(locus, ".1"))}) %>%
+  scores_cols = sapply(loci, function(locus) {
+    c(locus, paste0(locus, ".1"))
+    }) %>%
     as.vector()
 
   frq_tib <- gble_in %>%
-    dplyr::select(c({{collect_by}}, dplyr::all_of(scores_cols))) %>%
+    dplyr::select(c({{ collect_by }}, dplyr::all_of(scores_cols))) %>%
     tidyr::pivot_longer(
-      cols = -{{collect_by}},
+      cols = -{{ collect_by }},
       names_to = "locus",
       values_to = "allele"
     ) %>%
@@ -192,7 +204,7 @@ allefreq <- function(gble_in, gble_ref, loci, collect_by = indiv) {
     dplyr::left_join(alleles,
                      by = c("locus" = "locus", "allele" = "call"),
                      keep = FALSE) %>%
-    dplyr::group_by({{collect_by}}, locus) %>%
+    dplyr::group_by({{ collect_by }}, locus) %>%
     dplyr::count(altyp, .drop = FALSE) %>%
     dplyr::filter(!is.na(altyp)) %>%
     dplyr::left_join(n_alleles,
