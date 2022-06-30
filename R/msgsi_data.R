@@ -41,13 +41,13 @@ prep_msgsi_data <-
     loci_tier1 <-
       dplyr::tibble(locus = names(baseline1_data)) %>%
       dplyr::filter(grepl("\\.1$", locus)) %>%
-      dplyr::mutate(locus = substr(locus, 1, nchar(locus)-2)) %>%
+      dplyr::mutate(locus = substr(locus, 1, nchar(locus) - 2)) %>%
       dplyr::pull(locus)
 
     loci_tier2 <-
       dplyr::tibble(locus = names(baseline2_data)) %>%
       dplyr::filter(grepl("\\.1$", locus)) %>%
-      dplyr::mutate(locus = substr(locus, 1, nchar(locus)-2)) %>%
+      dplyr::mutate(locus = substr(locus, 1, nchar(locus) - 2)) %>%
       dplyr::pull(locus)
 
     # input error check
@@ -241,23 +241,23 @@ check_loci_pops <- function(loci1_pr, loci_t1, loci2_pr, loci_t2,
 
   # check loci if provided
   if (!is.null(loci1_pr)) {
-    if (!all(loci_t1 %in% loci1_pr)) {
-      return(c("Unidentified loci in baseline 1: ",
-               paste0(setdiff(loci_t1, loci1_pr), ", ")))
+    if (!setequal(loci_t1, loci1_pr)) {
+      return(c("Unidentified loci in baseline 1 or provided list: ",
+               paste0(c(setdiff(loci_t1, loci1_pr), setdiff(loci1_pr, loci_t1)), ", ")))
     }
   }
 
   if (!is.null(loci2_pr)) {
-    if (!all(loci_t2 %in% loci2_pr)) {
-      return(c("Unidentified loci in baseline 2: ",
-               paste0(dplyr::setdiff(loci_t2, loci2_pr), ", ")))
+    if (!setequal(loci_t2, loci2_pr)) {
+      return(c("Unidentified loci in baseline 2 or provided list: ",
+               paste0(c(setdiff(loci_t2, loci2_pr) | setdiff(loci2_pr, loci_t2)), ", ")))
     }
   }
 
   if (!is.null(loci1_pr) & !is.null(loci2_pr)) {
-    if (!all(c(loci_t1, loci_t2) %in% loc_all)) {
-      return(c("Unidentified loci in mixture sample: ",
-               paste0(dplyr::setdiff(loc_all, c(loci_t1, loci_t2)), ", ")))
+    if (!setequal(c(loci_t1, loci_t2), loc_all)) {
+      return(c("Unidentified loci in mixture sample or provided lists: ",
+               paste0(c(setdiff(loc_all, c(loci_t1, loci_t2)), setdiff(c(loci_t1, loci_t2), loc_all)), ", ")))
     }
   }
 

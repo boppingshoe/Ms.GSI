@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-Ms.GSI is a package for conducting multistage genetic stock identification. This package includes functions to setup input data, run the multistage model, and make summary statistics and convergence diagnostics. It also includes a function for making trace plots.
+Ms.GSI is here to help you conducting multistage genetic stock identification. This package includes functions to setup input data, run the multistage model, and make summary statistics and convergence diagnostics. It also includes a function for making trace plots.
 
 ## Installation
 
@@ -31,7 +31,7 @@ devtools::install_github("boppingshoe/Ms.GSI")
 
 ## Example
 
-This example shows a basic work flow for running a multistage model. First thing first, the background: we made up a scenario where we have samples for Chinook salmon by-catch from a Bering Sea fishery. The mixture sample contains fish from all over the north Pacific, but we are interested in the contribution from the Yukon River. We will conduct GSI using a broad-scale baseline (Templin) in combination with a regional baseline (Yukon) in a multistage framework.
+This example shows a basic work flow for running a multistage model. First thing first, the background: we made up a scenario where we have samples for Chinook salmon bycatch from Bering Sea groundfish fisheries. The mixture sample contains Chinook from all over North Pacific, but we are interested in contribution from the Yukon River. We will conduct GSI using a broad-scale baseline (`base_templin`) in combination with a regional baseline (`base_yukon`) in a multistage framework.
 
 The fake Chinook data sets are pre-loaded and included in the package. Here we prepare the input data:
 
@@ -48,7 +48,7 @@ msgsi_dat <-
 
 ```
 
-Using the prepared input data, we run the model with 150 iterations. In reality, you should of course run it with more iterations. We set the first 50 iterations as the warm-ups (not kept in the final output). Here's the summary for the estimates and convergence diagnostics.
+Using the prepared input data, we run the model with four chains of 150 iterations. In reality, you should of course run it with more iterations. We set the first 50 iterations in each chain as the warm-ups (not kept in the final output). Here's the summary for the estimates and convergence diagnostics.
 
 ```{r example_run_model}
 
@@ -58,7 +58,7 @@ msgsi_out$summ_comb
 
 ```
 
-There's a function to make trace plots and inspect mixing of chains.
+There's a function in the package to make trace plots and inspect mixing of chains.
 
 ```{r example_trace_plot}
 

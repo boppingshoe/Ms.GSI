@@ -385,7 +385,7 @@ summ_func <- function(combo_file, keeplist, mc_file, groupnames, n_ch) {
     tidyr::pivot_longer(cols = tidyr::everything()) %>%
     dplyr::group_by(name) %>%
     dplyr::summarise(
-      mean = base::mean(value),
+      mean = mean(value),
       median = stats::median(value),
       sd = stats::sd(value),
       ci.05 = stats::quantile(value, 0.05),
