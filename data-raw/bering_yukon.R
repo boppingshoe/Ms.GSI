@@ -13,9 +13,11 @@ yukon_loci177 <- yukon_loci380panel %>% filter(Panel == "Chinook_IDFG_299") %>% 
 
 CreateLocusControl.GCL(locusnames=yukon_loci177, username="bhsu", password=password)
 
-templin_pops211 <- read_csv(paste0(wd, "/projects/imbalanced_baseline/ayk_bering_juv_king/Baseline_Templin/baseline_Templin_pops_211_info.csv"))
+templin_pops211 <- read_csv(paste0(wd, "/projects/imbalanced_baseline/ayk_bering_juv_king/Baseline_Templin/baseline_Templin_pops_211_info.csv")) %>%
+  mutate(popSILLY = case_when(popSILLY == "KCHUN09.KCHUN12plate1" ~ "KCHUN09.KCHUN12",
+                              TRUE ~ popSILLY))
 templin_sillys211 <- templin_pops211 %>% pull(popSILLY)
-templin_sillys211[87] <- "KCHUN09.KCHUN12" # I think there's a typo
+# templin_sillys211[87] <- "KCHUN09.KCHUN12" # I think there's a typo
 templin_sillys_all <- str_split(templin_sillys211, pattern = "[.]") %>% unlist
 
 yukon_pops50 <- read_csv(paste0(wd, "/projects/imbalanced_baseline/ayk_bering_juv_king/baseline_yukon/50pop_groupvecs.csv"))
