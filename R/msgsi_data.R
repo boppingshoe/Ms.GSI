@@ -272,7 +272,7 @@ check_loci_pops <- function(loci1_pr, loci_t1, loci2_pr, loci_t2,
   if (!is.null(loci2_pr)) {
     if (!setequal(loci_t2, loci2_pr)) {
       return(c("Unidentified loci in baseline 2 or provided list: ",
-               paste0(c(setdiff(loci_t2, loci2_pr) | setdiff(loci2_pr, loci_t2)), ", ")))
+               paste0(c(setdiff(loci_t2, loci2_pr), setdiff(loci2_pr, loci_t2)), ", ")))
     }
   }
 
