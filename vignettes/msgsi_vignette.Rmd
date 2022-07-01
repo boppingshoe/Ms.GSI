@@ -60,7 +60,7 @@ mix
 
 Columns 5 to 358 contain genotype information for loci in **BOTH** broad-scale and regional baselines. You do not have to specify the loci for each baseline (you can if you want to double check, more on that later). *Ms.GSI* matches the loci between mixture and baselines as long as the locus names are consistent.
 
-If you have fish with known-origin, you can specify their identities by adding a column called `known_collection` in the mixture data set. The entry for known-origin should be a number correspond to the order of the collection on the broad-scale baseline. Fish with unknown-origin should have a `NA` entry.
+If you have fish with known-origin, you can specify their identities by adding a column called `known_collection` in the mixture data set. The entry for known-origin should match the collection name in the broad-scale baseline. Fish with unknown-origin should have a `NA` entry.
 
 ### Broad-scale baseline
 
@@ -71,8 +71,6 @@ Next, we will take a look at the broad-scale (Templin) baseline example provided
 base_templin
 
 ```
-
-If you have hatchery fish and they are identified (by otolith marking or adipose fin clip), you can include that information in the broad-scale baseline by adding an `origin` column. In that column, you identify each fish with `wild` or `hatchery`. This option to identify hatchery fish is only available in the broad-scale baseline, so don't add an `origin` column in the regional baseline.
 
 ### Regional baseline
 
@@ -86,7 +84,7 @@ base_yukon
 
 ### Population information
 
-Another piece of information needed is the population details for each baseline. You need to include three columns in the population information file. Column `collection` contains the names for each population in the baseline. Column `reunit` specifies the reporting group each population belongs to. Column `grpvec` specifies the identification number for each reporting group. Below shows the first ten rows of population information for the Templin baseline.
+Another piece of information needed is the population details for each baseline. You need to include three columns in the population information table. Column `collection` contains the names for each population in the baseline. Column `reunit` specifies the reporting group each population belongs to. Column `grpvec` specifies the identification number for each reporting group. Below shows the first ten rows of population information for the Templin (broad-scale) baseline.
 
 ```{r}
 
@@ -94,7 +92,9 @@ templin_pops211
 
 ```
 
-Population information for the Yukon baseline is in the same format, but not necessarily in the same order.
+If you have hatchery populations in your mixture sample, you can tell *Ms.GSI* either a collection belongs to natural or hatchery-origin by adding an `origin` column in the population information table. In the `origin` column, you identify each collection with `"wild"` or `"hatchery"`. If you don't care to separate natural and hatchery origins, you can lump them in one collection. In this case, you don't need to add an `origin` column. Also, this option to identify hatchery fish is only available in the broad-scale baseline, so don't add an `origin` column in the population table for regional baseline.
+
+Population information table for the Yukon (regional) baseline is in the same format, but not necessarily in the same order.
 
 ```{r}
 
