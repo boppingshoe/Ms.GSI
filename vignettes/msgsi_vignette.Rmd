@@ -17,8 +17,8 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-# library(Ms.GSI)
-devtools::load_all()
+library(Ms.GSI)
+# devtools::load_all()
 
 ```
 
@@ -42,7 +42,7 @@ There are few pieces of information needed for input data set:
 
 There are pre-loaded example data sets available in *Ms.GSI*. We will look at them one at a time. Note that the example data sets are simulated using existing baseline archived by the Alaska Department of Fish & Game Gene Conservation Lab (GCL). The fabricated data set does not represent the true population proportions in real fisheries. In this example, we made up a scenario similar to the Bering Sea groundfish fisheries where Chinook salmon harvested as bycatch originated from a wide range of geographic areas. Within the bycatch sample, we were interested in the proportion contribution from the lower, middle and upper Yukon River reporting groups (see map below). We used a coast-wide data set for Chinook salmon (Templin et al. 2011; Templin baseline hereafter) as the broad-scale baseline to separate Yukon River fish from other non-Yukon stocks in our data set during the first stage of the analysis. However, genetic markers in the Templin baseline were unable to clearly distinguish between lower Yukon River and other coastal western Alaska populations, so we used a second baseline with additional genetic markers that were specifically designed to differentiate Yukon River Chinook salmon populations (Lee et al. 2021; Yukon River baseline hereafter) as the regional fine-scale baseline for the second stage.
 
-![Collection locations and color-coded reporting groups of Chinook salmon represented in the Yukon River example. Shaded area represents the Yukon River region.](map_bering_chinook.png){width="100%"}
+![Collection locations and color-coded reporting groups of Chinook salmon represented in the Yukon River example. Shaded area represents the Yukon River region.](small_map_bering_chinook.png){width="100%"}
 
 We assembled a mixture sample containing 150 individuals from collection sites across Yukon River, coastal western Alaskan, Alaska Peninsula, Gulf of Alaska, and Kamchatka Peninsula (Russia). The collections were grouped into five reporting groups: Lower Yukon, Middle Yukon, Upper Yukon, Coastal Western Alaska (Coastal West Alaska), and Others.
 
@@ -54,7 +54,7 @@ First we will take a look at the baseline and mixture samples. *Ms.GSI* accepts 
 
 ```{r}
 
-mix
+print(dplyr::as_tibble(mix))
 
 ```
 
@@ -68,7 +68,7 @@ Next, we will take a look at the broad-scale (Templin) baseline example provided
 
 ```{r}
 
-base_templin
+print(dplyr::as_tibble(base_templin))
 
 ```
 
@@ -78,7 +78,7 @@ The regional baseline (Yukon) is in the same format. There are originally 380 lo
 
 ```{r}
 
-base_yukon
+print(dplyr::as_tibble(base_yukon))
 
 ```
 
@@ -88,7 +88,7 @@ Another piece of information needed is the population details for each baseline.
 
 ```{r}
 
-templin_pops211
+print(dplyr::as_tibble(templin_pops211))
 
 ```
 
@@ -98,7 +98,7 @@ Population information table for the Yukon (regional) baseline is in the same fo
 
 ```{r}
 
-yukon_pops50
+print(dplyr::as_tibble(yukon_pops50))
 
 ```
 
