@@ -29,4 +29,31 @@ test_that("data error check", {
                                loci1 = loci_t1, loci2 = c(loci_t2, "plus_one")),
                "Unidentified loci in mixture")
 
+  expect_error(prep_msgsi_data(mix, base_templin, base_yukon,
+                               templin_pops211,
+                               dplyr::mutate(yukon_pops50,
+                                             repunit = dplyr::case_when(
+                                               repunit == "Lower Yukon" ~ "wrong yukon",
+                                               TRUE ~ repunit
+                                             )),
+                               sub_group = 3:5),
+               "Group names are not consistent")
+
+  expect_error(prep_msgsi_data(dplyr::mutate(mix,
+                                             known_coll = c("KANDR02", rep(NA, 149))),
+                               base_templin, base_yukon,
+                               templin_pops211, yukon_pops50, 3:5),
+               "Unidentified populations found in 'known_collection'")
+
 })
+
+
+
+
+
+
+
+
+
+
+
