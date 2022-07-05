@@ -1,6 +1,4 @@
 
-# devtools::load_all()
-
 test_that("data error check", {
 
   loci_t1 <- dplyr::tibble(locus = names(base_templin)) %>%
