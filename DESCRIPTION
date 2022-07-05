@@ -9,8 +9,7 @@ Authors@R:
       person(given = "Alaska Dept. of Fish & Game",
              role = "cph"))
 Description: A GSI model to intergrate a broad scale baseline with a finer scale regional baseline.
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.0
@@ -25,6 +24,7 @@ Imports:
     ggplot2,
     magrittr,
     parallel,
+    stats,
     stringr,
     tidyr
 Depends: 
