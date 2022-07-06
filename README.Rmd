@@ -18,27 +18,26 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-Ms.GSI is here to help you conducting multistage genetic stock identification. This package includes functions to setup input data, run the multistage model, and make summary statistics and convergence diagnostics. It also includes a function for making trace plots.
+*Ms.GSI* is here to help you conducting multistage genetic stock identification. This package includes functions to setup input data, run the multistage model, and make summary statistics and convergence diagnostics. It also includes a function for making trace plots.
 
 ## Installation
 
-You can install the development version of Ms.GSI from [GitHub](https://github.com/) with:
+You can install the development version of *Ms.GSI* from [GitHub](https://github.com/boppingshoe/Ms.GSI) with:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("boppingshoe/Ms.GSI")
+devtools::install_github("boppingshoe/Ms.GSI", build_vignettes = TRUE)
 ```
 
 ## Example
 
-This example shows a basic work flow for running a multistage model. First thing first, the background: we made up a scenario where we have samples for Chinook salmon bycatch from Bering Sea groundfish fisheries. The mixture sample contains Chinook from all over North Pacific, but we are interested in contribution from the Yukon River. We will conduct GSI using a broad-scale baseline (`base_templin`) in combination with a regional baseline (`base_yukon`) in a multistage framework.
+This example shows the basic workflows for running a multistage model. First thing first, the background: we made up a scenario where we have samples for Chinook salmon bycatch from Bering Sea groundfish fisheries. The mixture sample contains Chinook from all over the North Pacific, but we are interested in contribution from the Yukon River. We will conduct GSI using a broad-scale baseline (`base_templin`) in combination with a regional baseline (`base_yukon`) in a multistage framework.
 
-The fake Chinook data sets are pre-loaded and included in the package. Here we prepare the input data:
+The fake Chinook data sets are pre-loaded in the *Ms.GSI* package. Here we prepare the input data:
 
 ```{r example_prep_data}
 
-# library(Ms.GSI)
-devtools::load_all()
+library(Ms.GSI)
 
 msgsi_dat <-
   prep_msgsi_data(mixture_data = mix,
@@ -66,6 +65,6 @@ tr_plot(obj = msgsi_out$trace_comb)
 
 ```
 
-We also have a detailed document on the model and instructions (work in progress). Once you install the package, you can call the document using `vignette("Ms.GSI")`.
+We also documented in details on the mathematical model of multistage framework and instructions for using *Ms.GSI* package. Once you installed *Ms.GSI*, you can call the document using `vignette("msgsi_vignette")`.
 
 
