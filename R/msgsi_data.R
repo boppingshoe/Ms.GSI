@@ -62,7 +62,10 @@ prep_msgsi_data <-
                                      pop1_info$repunit, pop2_info$repunit,
                                      loci_all)
 
-    if ("all good" %in% error_message) {
+    if (grepl("Group names", error_message[1])) {
+      warning(error_message)
+      message("Compiling input data, may take a minute or two...")
+    } else if ("all good" %in% error_message) {
       message("Compiling input data, may take a minute or two...")
     } else {
       stop(error_message)

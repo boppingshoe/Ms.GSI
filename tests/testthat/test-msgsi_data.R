@@ -27,7 +27,7 @@ test_that("data error check", {
                                loci1 = loci_t1, loci2 = c(loci_t2, "plus_one")),
                "Unidentified loci in mixture")
 
-  expect_error(prep_msgsi_data(mix, base_templin, base_yukon,
+  expect_warning(prep_msgsi_data(mix, base_templin, base_yukon,
                                templin_pops211,
                                dplyr::mutate(yukon_pops50,
                                              repunit = dplyr::case_when(
