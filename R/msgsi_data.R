@@ -98,7 +98,7 @@ prep_msgsi_data <-
       dplyr::tibble(locus = loc,
                     call = baseline1_data %>%
                       dplyr::select(dplyr::all_of(loc), paste0(loc, ".1")) %>%
-                      dplyr::pull() %>% unique() %>% .[!is.na(.)],
+                      unlist() %>% unique() %>% .[!is.na(.)],
                     altyp = seq.int(dplyr::n_distinct(call)) %>% factor())
     }) %>% dplyr::bind_rows() %>%
       dplyr::group_by(locus) %>%
@@ -112,7 +112,7 @@ prep_msgsi_data <-
       dplyr::tibble(locus = loc,
                     call = baseline2_data %>%
                       dplyr::select(dplyr::all_of(loc), paste0(loc, ".1")) %>%
-                      dplyr::pull() %>% unique() %>% .[!is.na(.)],
+                      unlist() %>% unique() %>% .[!is.na(.)],
                     altyp = seq.int(dplyr::n_distinct(call)) %>% factor())
     }) %>% dplyr::bind_rows() %>%
       dplyr::group_by(locus) %>%
@@ -205,7 +205,7 @@ allefreq <- function(gble_in, gble_ref, loci, collect_by = indiv) {
     dplyr::tibble(locus = loc,
                   call = gble_ref %>%
                     dplyr::select(dplyr::all_of(loc), paste0(loc, ".1")) %>%
-                    dplyr::pull() %>%
+                    unlist() %>%
                     unique() %>%
                     .[!is.na(.)],
                   altyp = seq.int(dplyr::n_distinct(call)) %>% factor)
