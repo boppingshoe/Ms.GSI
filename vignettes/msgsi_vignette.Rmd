@@ -24,11 +24,11 @@ library(Ms.GSI)
 
 # Overview
 
-This document contains the background information for a multistage genetic stock identification (GSI) model in two parts. The first part the describes how to use package *Ms.GSI* to conduct a GSI analysis. The steps include formatting input data, running the multistage GSI model, and summarizing results. The second part details the technical background of multistage GSI model and its mathematical theory. There is a separate article describe the general background of the multistage framework (*add link to multistage paper*).
+This document contains the background information for a integrated multistage genetic stock identification (GSI) model in two parts. The first part the describes how to use package *Ms.GSI* to conduct a GSI analysis. The steps include formatting input data, running the integrated multistage GSI model, and summarizing results. The second part details the technical background of integrated multistage GSI model and its mathematical theory. There is a separate article describe the general background of the integrated multistage framework (*add link to integrated multistage paper*).
 
 # How to use *Ms.GSI*
 
-*Ms.GSI* follows the work flow: format input data, run multistage model, and summarize results/convergence diagnostics.
+*Ms.GSI* follows the work flow: format input data, run integrated multistage model, and summarize results/convergence diagnostics.
 
 ## Input data
 
@@ -42,7 +42,7 @@ There are few pieces of information needed for input data set:
 
 There are pre-loaded example data sets available in *Ms.GSI*. We will look at them one at a time. Note that the example data sets are simulated using existing baseline archived by the Alaska Department of Fish & Game Gene Conservation Lab (GCL). The fabricated data set does not represent the true population proportions in real fisheries. In this example, we made up a scenario similar to the Bering Sea groundfish fisheries where Chinook salmon harvested as bycatch originated from a wide range of geographic areas. Within the bycatch sample, we were interested in the proportion contribution from the lower, middle and upper Yukon River reporting groups (see map below). We used a coast-wide data set for Chinook salmon (Templin et al. 2011; Templin baseline hereafter) as the broad-scale baseline to separate Yukon River fish from other non-Yukon stocks in our data set during the first stage of the analysis. However, genetic markers in the Templin baseline were unable to clearly distinguish between lower Yukon River and other coastal western Alaska populations, so we used a second baseline with additional genetic markers that were specifically designed to differentiate Yukon River Chinook salmon populations (Lee et al. 2021; Yukon River baseline hereafter) as the regional fine-scale baseline for the second stage.
 
-It is important to note that in the original grouping of the Templin baseline, Lower Yukon was a part of Coastal Western Alaska reporting group. We isolated Lower Yukon from the rest of the Coastal Western Alaska, but the accuracy of the proportion estimates would likely diminish because of the breakup of Coastal Western Alaska reporting group. We do not recommend using a genetic baseline beyond its original design. And researchers should be aware of the capability of their genetic baselines before utilizing them in the multistage model. In our example, it would be ideal to keep the Coastal Western Alaska group intact in the broad-scale baseline, and break up the group into Lower Yukon and others using a fine-scale regional baseline. However, at the time of writing, such regional baseline with adequate resolution was still in development.  
+It is important to note that in the original grouping of the Templin baseline, Lower Yukon was a part of Coastal Western Alaska reporting group. We isolated Lower Yukon from the rest of the Coastal Western Alaska, but the accuracy of the proportion estimates would likely diminish because of the breakup of Coastal Western Alaska reporting group. We do not recommend using a genetic baseline beyond its original design. And researchers should be aware of the capability of their genetic baselines before utilizing them in the integrated multistage model. In our example, it would be ideal to keep the Coastal Western Alaska group intact in the broad-scale baseline, and break up the group into Lower Yukon and others using a fine-scale regional baseline. However, at the time of writing, such regional baseline with adequate resolution was still in development.  
 
 ![Collection locations and color-coded reporting groups of Chinook salmon represented in the Yukon River example. Shaded area represents the Yukon River region.](small_map_bering_chinook.png){width="100%"}
 
@@ -129,7 +129,7 @@ lapply(msgsi_dat, head)
 
 Once your input data set is ready, you can use `msgsi_mdl()` to run the model. If you are used to running *rubias*, *Ms.GSI* might feel a bit slower. That is because 1) we are running two GSI models in tandem, so it takes twice as long than running a single model, and 2) *Ms.GSI* is written solely in *R*, which is not as computationally efficient as language *C*. So, why not code *Ms.GSI* in *C*? Because we're not technically advanced like the folks who developed *rubias* package (i.e., we don't know how to code in *C++*).
 
-Because of the running time, we recommend running the multistage model in conditional GSI mode (default setting). But there is an option to run the model in fully Bayesian mode if one choose to. If you run the model in fully Bayesian mode, you have the option to include numbers of adaptation run. Some people think that adaptation run encourages convergence in fully Bayesian mode. We have not test that theory but provide the option for those who want to try it.
+Because of the running time, we recommend running the integrated multistage model in conditional GSI mode (default setting). But there is an option to run the model in fully Bayesian mode if one choose to. If you run the model in fully Bayesian mode, you have the option to include numbers of adaptation run. Some people think that adaptation run encourages convergence in fully Bayesian mode. We have not test that theory but provide the option for those who want to try it.
 
 We demonstrate the model run with one chains of 150 iterations (first 50 as warm-up runs, or burn-ins). We only run one chain in this example so it can pass CMD check while building the vignette document[^#]. In reality, you should **definitely** run multiple chains with more iterations. There are also options to keep the burn-ins and set random seed for reproducible results. We don't show them in this example though (but you can always `?msgsi_mdl`).
 
@@ -184,7 +184,7 @@ $$\newcommand{\mx}[1]{\mathbf{#1}}$$
 
 ## Pella-Masuda Model
 
-This multistage GSI model is essentially two Bayesian GSI models stacked on top of each other; hence the name "multistage." The Pella-Masuda model (Pella & Masuda 2001) is the Bayesian GSI model that make up each stage in the multistage model. We will first describe the Pella-Masuda model before discussing the development of a multistage model.
+This integrated multistage GSI model is essentially two Bayesian GSI models stacked on top of each other; hence the name "multistage." The Pella-Masuda model (Pella & Masuda 2001) is the Bayesian GSI model that make up each stage in the integrated multistage model. We will first describe the Pella-Masuda model before discussing the development of a integrated multistage model.
 
 In a group of mixed populations, Pella-Masuda model assigns population identities to each individual based on its genetic make-up (e.g. genotype). Then the model estimates the overall population proportions based on the numbers of individuals assigned to each population. In the fishery context, genetic data of the individuals is called the mixture sample because it consists multi-locus genotype of individual fish collected from a mixed-stock fishery. $\mx x$ denotes the mixture sample. In this document, a bold-font letter represents a *number set*, or a collection of distinct elements. For example, $\mx x$ is a set that contains individual $x$ elements. And $x_{m,l,j}$ is the count of allele $j$ in locus $l$ for individual fish $m$, where $m \in \{1,2,...,M\}$, $l \in \{1,2,...,L\}$, and $j \in \{1,2,...,J_l\}$ depends on locus $l$.
 
@@ -228,25 +228,27 @@ Moran and Anderson (2018) implement a genetic mixture analysis as a *R* package,
 
 $\mx x_m \sim CDM(\mx{ploidy}, \mx z_m \cdot \mx v)$,
 
-where $\mx v$ is $\mx \beta + \mx y$. We are not going to attempt proving the theory behind the conditional model in this document (details can be found in Moran & Anderson 2018). But since $\mx q$ has been integrated out of $\mx x_m$, the process for estimating parameters is simpler and more streamlined. We have implemented conditional GSI in each stage of our multistage model.
+where $\mx v$ is $\mx \beta + \mx y$. We are not going to attempt proving the theory behind the conditional model in this document (details can be found in Moran & Anderson 2018). But since $\mx q$ has been integrated out of $\mx x_m$, the process for estimating parameters is simpler and more streamlined. We have implemented conditional GSI in each stage of our integrated multistage model.
 
 ## Extend to multistage
 
-In our multistage model, each fish in the sample gets a reporting group assignment in the first stage, but only fish that are assigned to reporting groups of interest will advance to the second stage of the analysis.
-
-In the multistage framework, individual $m$ being assigned to a population in the second stage is conditioned[^5] on its identity assignment in the first stage:
+In the integrated multistage framework, the two Pella-Masuda models are connected because the probability of a fish being assigned to a regional group at the second stage is conditional[^5] based on the probability of that fish being assigned to a geographic area within the regional baseline during the first stage:
 
 [^5]: The conditional distribution of one parameter conditional on all others.
 
-$P(Z^{stage2}=z^{stage2}_m | Z^{stage1}=z^{stage1}_m) = \begin{cases} \frac{P(Z^{stage2}, Z^{stage1})}{P(Z^{stage1})},& \text{if } z^{stage1}_{m,k} \in \text{populations of interest}\\ 0,& \text{otherwise} \end{cases}$ ,
+<!-- $P(Z^{stage2}=z^{stage2}_m | Z^{stage1}=z^{stage1}_m) = \begin{cases} \frac{P(Z^{stage2}, Z^{stage1})}{P(Z^{stage1})},& \text{if } z^{stage1}_{m,k} \in \text{populations of interest}\\ 0,& \text{otherwise} \end{cases}$ , -->
 
-where $z^{stage1}_m$ is the identity of individual $m$ in stage 1, and $z^{stage2}_m$ is the identity of individual $m$ in stage 2.
+$P(Z^{stage2}_m | \zeta_m) = \frac{P(Z^{stage2}_m, \zeta_m)}{P(\zeta_m)}$ ,
 
-During a GSI analysis, two Pella-Masuda models proceed in tandem, each with its own baseline maker suite but the same individuals in the mixture sample. However, fish that are not assigned to the second stage will have $P(Z^{stage2}|Z^{stage1}) = 0$ and eliminated from the mixture sample.
+where $\zeta_m = 1$ if individual $m$ in a size $M$ mixture is assigned to a broad-scale stock that is geographically within the area of the regional baseline, and has a binomial distribution, $\zeta_m | \rho_m \sim Bin(1, \rho_m)$. The posterior distribution for $\rho_m|\zeta_m$ would have Beta distribution with scale parameters of sum of individuals assigned to a stock within the regional baseline and sum of the individuals outside of regional baseline, and an expectation equals to the proportion of individuals assigned to a stock within the regional baseline. This is based on a marginal distribution for Dirichlet distribution (Johnson et al. 1997), since the posterior probabilities for stock assignments have a Dirichlet distribution (Pella & Masuda 2001).
+
+And $z^{stage2}_{m,k} = 1$ if individual $m$ belongs to population $k$ in the regional baseline. $Z^{stage2}_m$ given $\pi_m$ has a multinomial distribution, $Z^{stage2}_m|\pi_m \sim Mult(1, \pi_m)$, where $\pi_m$ are vectors of probabilities for individual $m$ being assigned to each regional stock/population. The prior distribution for $\pi_m$ would be Dirichlet, $\pi_m \sim Dirich(K^{-1})$. $K$ is the number of stocks/populations in the regional baseline.
+
+During a GSI analysis, two Pella-Masuda models proceed in tandem, each with its own baseline maker suite but the same individuals in the mixture sample. However, fish that are not assigned to the second stage will have $z^{stage2}_m|\zeta_m = 0$ and eliminated from the mixture sample.
 
 ## Gibbs Sampler: where the fun go round and round
 
-Deriving the values of parameters in each stage of the multistage model requires finding the joint posterior distribution of Pella-Masuda model in each stage, $\mx p, \mx q,\mx z, \mx y, \mx\alpha, \mx\beta$. In this section, we will introduce the concepts and algorithm to sample from this posterior distribution in a single Pella-Masuda model, which then can be extend to a multistage framework.
+Deriving the values of parameters in each stage of the integrated multistage model requires finding the joint posterior distribution of Pella-Masuda model in each stage, $\mx p, \mx q,\mx z, \mx y, \mx\alpha, \mx\beta$. In this section, we will introduce the concepts and algorithm to sample from this posterior distribution in a single Pella-Masuda model, which then can be extend to a integrated multistage framework.
 
 Gibbs sampler is a type of MCMC methods that sequentially sample parameter values from a Markov chain. With enough sampling, the Markov chain will eventually converge to the desire distribution of interest. The most appealing quality of Gibbs sampler is its reduction of a multivariate problem (such as Pella-Masuda model) to a series of more manageable lower-dimensional problems. A full description of Gibbs sampler and MCMC methods is beyond the scope of this document; however, further information can be found in numerous resources devoting to Bayesian data analysis (see Carlin & Louis 2009; Robert & Casella 2010; Gelman et al. 2014)
 
