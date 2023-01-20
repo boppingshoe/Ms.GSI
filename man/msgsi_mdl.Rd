@@ -14,7 +14,8 @@ msgsi_mdl(
   keep_burn = FALSE,
   cond_gsi = TRUE,
   out_path = NULL,
-  seed = NULL
+  seed = NULL,
+  iden_output = TRUE
 )
 }
 \arguments{
@@ -39,6 +40,8 @@ running model in fully Bayesian mode.}
 want to save the output.}
 
 \item{seed}{Random seed for reproducibility. Default is NULL (no random seed).}
+
+\item{iden_output}{Option to have trace history for individual assignments included in the final output. Default is TRUE.}
 }
 \value{
 A list contains reporting group proportion summary and trace for
@@ -58,4 +61,5 @@ msgsi_dat <-
 
 # run multistage model
 msgsi_out <- msgsi_mdl(msgsi_dat, nreps = 25, nburn = 15, thin = 1, nchains = 1)
+
 }

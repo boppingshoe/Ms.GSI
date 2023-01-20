@@ -12,7 +12,7 @@ Description: A GSI model to intergrate a broad scale baseline with a finer scale
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.0
+RoxygenNote: 7.2.2
 URL: https://github.com/boppingshoe/Ms.GSI
 BugReports: https://github.com/boppingshoe/Ms.GSI/issues
 Imports: 

@@ -13,7 +13,7 @@
 #' @param out_path File path to save the output. Leave it empty is you don't
 #'   want to save the output.
 #' @param seed Random seed for reproducibility. Default is NULL (no random seed).
-#' @param long_output Option to have posterior trace and individual assignments included in the output. Default is TRUE. If set long_output = FALSE, the model output would include only the summaries (no trace, no idens).
+#' @param iden_output Option to have trace history for individual assignments included in the final output. Default is TRUE.
 #'
 #' @return A list contains reporting group proportion summary and trace for
 #'   tier 1 (summ_t1, trace_t1), tier 2 (summ_t2, trace_t2) and two tiers
@@ -35,7 +35,7 @@
 #' # run multistage model
 #' msgsi_out <- msgsi_mdl(msgsi_dat, nreps = 25, nburn = 15, thin = 1, nchains = 1)
 #'
-msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn = FALSE, cond_gsi = TRUE, out_path = NULL, seed = NULL, long_output = TRUE) {
+msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn = FALSE, cond_gsi = TRUE, out_path = NULL, seed = NULL, iden_output = TRUE) {
 
   categories <- c("Live, Werk, Pose", "Bring It Like Royalty", "Face", "Best Mother", "Best Dressed", "High Class In A Fur Coat", "Snow Ball", "Butch Queen Body", "Weather Girl", "Labels", "Mother-Daughter Realness", "Working Girl", "Linen Vs. Silk", "Perfect Tens", "Modele Effet", "Stone Cold Face", "Realness", "Intergalatic Best Dressed", "House Vs. House", "Femme Queen Vogue", "High Fashion In Feathers", "Femme Queen Runway", "Lofting", "Higher Than Heaven", "Once Upon A Time")
 
@@ -177,7 +177,6 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
     }, simplify = FALSE)[names(nalleles2)])
   }) # transposed allele freq
 
-  # freq2 <- exp(x2[iden %in% which(grps %in% sub_grp), ] %*% log(t_q2))
   freq2 <- exp(x2 %*% log(t_q2))
 
   pPrior2 <- # alpha, hyper-param for p2 (pop props)
@@ -189,7 +188,6 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
 
   iden2 <- factor(iden2, levels = seq(nrow(y2)))
 
-  # p2 <- rdirich(table(iden2) + pPrior2)
   p2 <- rdirich(table(iden2[iden %in% which(grps %in% sub_grp)]) + pPrior2)
 
   ### parallel chains ### ----
@@ -197,9 +195,8 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
     ch = chains, .packages = c("magrittr", "tidyr", "dplyr")
     ) %dorng% {
 
-    # p_out <- p2_out <- pp2_out <- iden1_out <- iden2_out <- list()
       p_out <- p2_out <- pp2_out <- list()
-      if (long_output == TRUE) iden1_out <- iden2_out <- list()
+      if (iden_output == TRUE) iden1_out <- iden2_out <- list()
 
     ## gibbs loop ##
     for (rep in seq(nreps + nadapt)) {
@@ -222,9 +219,6 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
 
         x2_sum <- matrix(0L, nrow = nrow(y2), ncol = ncol(y2))
 
-        # x2_sum[as.integer(sort(unique(iden2))),] <-
-        #   rowsum(x2[iden %in% which(grps %in% sub_grp), ], iden2) %>%
-        #   tidyr::replace_na(0) # colsums for new assignment
         x2_sum[as.integer(sort(unique(iden2))),] <-
           rowsum(x2, iden2) %>%
           tidyr::replace_na(0) # colsums for new assignment
@@ -252,7 +246,6 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
 
       p <- rdirich(table(iden) + pPrior)
 
-      # freq2 <- exp(x2[iden %in% which(grps %in% sub_grp), ] %*% log(t_q2))
       freq2 <- exp(x2 %*% log(t_q2))
 
       iden2 <- apply(freq2, 1, function(frq_rw) {
@@ -261,7 +254,6 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
 
       iden2 <- factor(iden2, levels = seq(nrow(y2)))
 
-      # p2 <- rdirich(table(iden2) + pPrior2)
       p2 <- rdirich(table(iden2[iden %in% which(grps %in% sub_grp)]) + pPrior2)
 
       # record output based on keep or not keep burn-ins
@@ -275,7 +267,7 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
           p_out[[it]] <- c(p_grp, it, ch)
           p2_out[[it]] <- c(p2_grp, it, ch)
           pp2_out[[it]] <- c(p_grp[-sub_grp], p2_grp * sum(p_grp[sub_grp]), it, ch)
-          if (long_output == TRUE) {
+          if (iden_output == TRUE) {
             iden1_out[[it]] <- iden
             iden2_out[[it]] <- iden2
           }
@@ -285,7 +277,7 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
 
     } # end gibbs loop
 
-      if (long_output == TRUE) {
+      if (iden_output == TRUE) {
         out_items <- list(p_out, p2_out, pp2_out, iden1_out, iden2_out)
       } else {
         out_items <- list(p_out, p2_out, pp2_out)
@@ -357,26 +349,26 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
 
   msgsi_out$summ_t1 <- summ_pop1
 
+  msgsi_out$trace_t1 <-
+    out_list1 %>%
+    dplyr::bind_rows() %>%
+    stats::setNames(c(grp_names_t1, "itr", "chain"))
+
   msgsi_out$summ_t2 <- summ_pop2
+
+  msgsi_out$trace_t2 <-
+    out_list2 %>%
+    dplyr::bind_rows() %>%
+    stats::setNames(c(grp_names_t2, "itr", "chain"))
 
   msgsi_out$summ_comb <- summ_pop
 
-  if (long_output == TRUE) {
-    msgsi_out$trace_t1 <-
-      out_list1 %>%
-      dplyr::bind_rows() %>%
-      stats::setNames(c(grp_names_t1, "itr", "chain"))
+  msgsi_out$trace_comb <-
+    out_list %>%
+    dplyr::bind_rows() %>%
+    stats::setNames(c(grp_names, "itr", "chain"))
 
-    msgsi_out$trace_t2 <-
-      out_list2 %>%
-      dplyr::bind_rows() %>%
-      stats::setNames(c(grp_names_t2, "itr", "chain"))
-
-    msgsi_out$trace_comb <-
-      out_list %>%
-      dplyr::bind_rows() %>%
-      stats::setNames(c(grp_names, "itr", "chain"))
-
+  if (iden_output == TRUE) {
     msgsi_out$idens_t1 <-
       lapply(out_list0, function(ol) ol[[4]]) %>%
       dplyr::bind_rows()
