@@ -232,19 +232,29 @@ where $\mx v$ is $\mx \beta + \mx y$. We are not going to attempt proving the th
 
 ## Extend to multistage
 
-In the integrated multistage framework, the two Pella-Masuda models are connected because the probability of a fish being assigned to a regional group at the second stage is conditional[^5] based on the probability of that fish being assigned to a geographic area within the regional baseline during the first stage:
+In the integrated multistage framework, the two Pella-Masuda models are connected because a fish being assigned to a regional group at the second stage is conditional based on whether that fish is assigned to a reporting group in the regional baseline during the first stage. The following describes the conditional relationship between the broad-scale and the regional baselines:
 
-[^5]: The conditional distribution of one parameter conditional on all others.
+$\mx z^{(regional)}_m | z^{(broad)}_m = \begin{cases} \mx z^{(regional)}_m & \text{if } z^{(broad)}_m = 1\\ \mx 0 & \text{otherwise} \end{cases}$
 
-<!-- $P(Z^{stage2}=z^{stage2}_m | Z^{stage1}=z^{stage1}_m) = \begin{cases} \frac{P(Z^{stage2}, Z^{stage1})}{P(Z^{stage1})},& \text{if } z^{stage1}_{m,k} \in \text{populations of interest}\\ 0,& \text{otherwise} \end{cases}$ , -->
+$\mx z^{(regional)}_m$ are the same as described in the previous section for a single stage scenario. They are vectors of indicators ($0$ or $1$) identifying the regional population that individual $m$ belongs to. $z^{(broad)}_m$ is an indicator as well, and $z^{(broad)}_m = 1$ if individual $m$ belongs to a reporting group within the regional baseline and $0$ otherwise. Combining $z^{(regional)}$ and $z^{(broad)}$, $z^{(regional)}_{m,k} | z^{(broad)}_m = 1$ if individual $m$ belongs to a reporting group within the regional baseline and is assigned to population $k$ in the regional baseline.
 
-$P(Z^{stage2}_m | \zeta_m) = \frac{P(Z^{stage2}_m, \zeta_m)}{P(\zeta_m)}$ ,
+Individually, vectors $Z^{(regional)}_m$ have a multinomial distribution, $Z^{(regional)}_m \sim Mult(1, \pi_m)$, where $\pi_m$ are vectors of probabilities for individual $m$ being assigned to each regional reporting group. The prior distribution for $\pi_m$ is a Dirichlet, $Dirich(K^{-1})$, where $K$ is the number of reporting groups in the regional baseline. The posterior distribution for $\pi_m|z^{(regional)}_m$ is also a Dirichlet, $Dirich(\sum_{m=1}^M z^{(regional)}_{m,1} + K^{-1}, \sum_{m=1}^M z^{(regional)}_{m,2} + K^{-1},..., \sum_{m=1}^M z^{(regional)}_{m,K} + K^{-1})$. We will describe in more details on deriving the posteriors in the next section.
 
-where $\zeta_m = 1$ if individual $m$ in a size $M$ mixture is assigned to second stage based on the broad-scale baseline, and has a binomial distribution, $\zeta_m | \rho_m \sim Bin(1, \rho_m)$. The prior distribution for $\rho$ is $\rho \sim Beta(\delta, 1-\delta)$, where $\rho$ is the probability being assigned to second stage. We will discuss the details later, but the posterior distribution for $\rho_m|\zeta_m$ would have a Beta distribution with scale parameters of sum of individuals assigned to second stage $+ \delta$ and sum of the individuals not assigned to second stage $+ (1 - \delta)$, and an expectation equals to the proportion of individuals assigned to second stage. This is based on a marginal distribution for Dirichlet distribution (Johnson et al. 1997), since the posterior probabilities for stock assignments have a Dirichlet distribution (Pella & Masuda 2001).
+In the context of the integrated multistage framework, we only care that, during the first stage, whether an individual is assigned to a reporting group within the regional baseline; therefore, individual identity has a binomial outcome, and $Z^{(broad)}_m \sim Bin(1, \rho_m)$. The prior for $\rho_m$ has a Beta distribution with two scale parameters; one equals to the proportions of broad-scale stocks in the regional baseline, and the other equals to the proportions of broad-scale stocks outside of the regional baseline. The expectation for $\rho_m$ equals to the proportion of broad-scale stocks within the regional baseline. The posterior distribution for $\rho_m|z^{(broad)}_m$ is also a Beta, with the first parameter equals to the sum of individuals assigned to a broad-scale stock in the regional baseline and the proportion of broad-scale stocks in the regional baseline, and the second parameter equals to the sum of individuals assigned to a broad-scale stock outside of the regional baseline and the proportion of broad-scale stocks outside of the regional baseline.
 
-And $z^{stage2}_{m,k}|\zeta_m = 1$ if individual $m$ is assigned to the second stage and belongs to population $k$ in the regional baseline. $Z^{stage2}_m$ given $\pi_m$ and $\zeta_m$ has a multinomial distribution, $Z^{stage2}_m|\pi_m, \zeta_m \sim Mult(1, \zeta_m \cdot \pi_m)$, where $\pi_m$ are vectors of probabilities for individual $m$ being assigned to each regional stock/population. The prior distribution for $\pi_m$ would be Dirichlet, $\pi_m \sim Dirich(K^{-1})$. $K$ is the number of stocks/populations in the regional baseline. Posterior distribution would be $\pi_m|\mx z^{stage2}_m \sim Dirich(\sum_{m=1}^M \mx z^{stage2}_m +  K^{-1})$.
+Probability of an individual being assigned to regional population $k$ can be derived using the Bayes rule:
 
-During a GSI analysis, two Pella-Masuda models proceed in tandem, each with its own baseline maker suite but the same individuals in the mixture sample. However, fish that are not assigned to the second stage will have $z^{stage2}_m|\zeta_m = 0$ and eliminated from the mixture sample.
+$$\begin{aligned}
+P&(Z^{(regional)}_{m,k} | Z^{(broad)}_m) =\\ &\frac{P(Z^{(broad)}_m | Z^{(regional)}_{m,k}) \cdot P(Z^{(regional)}_{m,k})} {\sum_{k=1}^{K} P(Z^{(broad)}_m | Z^{(regional)}_{m,k}) \cdot P(Z^{(regional)}_{m,k})} = \frac{P(Z^{(broad)}_m) \cdot P(Z^{(regional)}_{m,k})}{P(Z^{(broad)}_m)}
+\end{aligned}$$
+
+This can be simplified down to just $P(Z^{(regional)}_{m,k})$. Summing up the individual assignment probabilities we get the weighted average of assignment probability to regional population $k$ for all individuals:
+
+$$\begin{aligned}
+P&(Z^{(regional)}_k | Z^{(broad)}) =\\ &\sum\limits_{m=1}^{M} \frac{P(Z^{(broad)}_m | Z^{(regional)}_{m,k}) \cdot P(Z^{(regional)}_{m,k})} {\sum_{k=1}^{K} P(Z^{(broad)}_m | Z^{(regional)}_{m,k}) \cdot P(Z^{(regional)}_{m,k})} = \frac{\sum_{m=1}^{M}P(Z^{(broad)}_m) \cdot P(Z^{(regional)}_{m,k})}{\sum_{m=1}^{M} P(Z^{(broad)}_m)}
+\end{aligned}$$
+
+During a GSI analysis, two Pella-Masuda models proceed in tandem, each with its own baseline maker suite but the same individuals in the mixture sample.
 
 ## Gibbs Sampler: where the fun go round and round
 
@@ -367,15 +377,15 @@ $T$ should be large enough to ensure the sampler chain converges to desire distr
 
 To extend the algorithm to multistage:
 
-1.  Determine the population identities of mixture individuals at the first stage, $\mx z^{(stage1)(t)}_m|\mx p^{(stage1)(t-1)}, \mx q^{(stage1)(t-1)}, \mx x_m \sim Mult(1, \mx{p'}^{(stage1)}_m)$.
+1.  Determine the population identities of mixture individuals at the first stage, $\mx z^{(broad)(t)}_m|\mx p^{(broad)(t-1)}, \mx q^{(broad)(t-1)}, \mx x_m \sim Mult(1, \mx{p'}^{(broad)}_m)$.
 
-2.  Determine the population identities of mixture individuals at the second stage, $\mx z^{(stage2)(t)}_m|z^{(stage1)(t)}_m, \mx p^{(stage2)(t-1)}, \mx q^{(stage2)(t-1)}, \mx x_m \sim Mult(1, \mx{p'}^{(stage2)}_m)$.
+2.  Determine the population identities of mixture individuals at the second stage, $\mx z^{(regional)(t)}_m|z^{(broad)(t)}_m, \mx p^{(regional)(t-1)}, \mx q^{(regional)(t-1)}, \mx x_m \sim Mult(1, \mx{p'}^{(regional)}_m)$.
 
-3.  Draw marginal posterior distributions for $\mx q^{(stage1)(t)}$, $\mx p^{(stage1)(t)}$, $\mx q^{(stage2)(t)}$ and $\mx p^{(stage2)(t)}$ from $p(\mx q^{(stage1)}|\mx x,\mx y^{(stage1)},\mx z^{(stage1)(t)},\mx\beta^{(stage1)})$, $p(\mx p^{(stage1)}|\mx z^{(stage1)(t)},\mx\alpha^{(stage1)})$, $p(\mx q^{(stage2)}|\mx x,\mx y^{(stage2)},\mx z^{(stage2)(t)},\mx\beta^{(stage2)})$ and $p(\mx p^{(stage2)}|\mx z^{(stage2)(t)},\mx\alpha^{(stage2)})$ respectively.
+3.  Draw marginal posterior distributions for $\mx q^{(broad)(t)}$, $\mx p^{(broad)(t)}$, $\mx q^{(regional)(t)}$ and $\mx p^{(regional)(t)}$ from $p(\mx q^{(broad)}|\mx x,\mx y^{(broad)},\mx z^{(broad)(t)},\mx\beta^{(broad)})$, $p(\mx p^{(broad)}|\mx z^{(broad)(t)},\mx\alpha^{(broad)})$, $p(\mx q^{(regional)}|\mx x,\mx y^{(regional)},\mx z^{(regional)(t)},\mx\beta^{(regional)})$ and $p(\mx p^{(regional)}|\mx z^{(regional)(t)},\mx\alpha^{(regional)})$ respectively.
 
 Steps 1 through 3 are repeated until simulations converge to a desire distribution.
 
-Implementing the conditional GSI model only requires a slight modification from the above algorithm. At the first stage, $f(\mx x_m|\mx q^{(stage1)}_k)$ will only need to be derived once in the beginning of the process, and $\mx q^{(stage1)}$ is no longer updated in step 3. At the second stage, $\mx x_m$ changes depending on the identity of $\mx z^{(stage1)}_m$; therefore, $f(\mx x_m|\mx q^{(stage2)}_k)$ is recalculated. However, $\mx q^{(stage2)}$ does not need to be updated. Everything else in the algorithm stays the same.
+Implementing the conditional GSI model only requires a slight modification from the above algorithm. At the first stage, $f(\mx x_m|\mx q^{(broad)}_k)$ will only need to be derived once in the beginning of the process, and $\mx q^{(broad)}$ is no longer updated in step 3. At the second stage, $\mx x_m$ changes depending on the outcome of $z^{(broad)}_m$; therefore, $f(\mx x_m|\mx q^{(regional)}_k)$ is recalculated. However, $\mx q^{(regional)}$ does not need to be updated. Everything else in the algorithm stays the same.
 
 # References
 
