@@ -37,7 +37,7 @@ indiv_assign <- function(mdl_out, mdl_dat) {
   tidyr::tibble(ID = mdl_dat$x$indiv) %>%
     dplyr::bind_cols({
       cbind(1 - pho, pho * t(pi)) %>%
-        tidyr::as_tibble() %>%
+        as.data.frame() %>%
         stats::setNames(c("Not regional", mdl_dat$group_names_t2))
     })
 }
