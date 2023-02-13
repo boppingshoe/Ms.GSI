@@ -65,6 +65,6 @@ tr_plot(obj = msgsi_out$trace_comb)
 
 ```
 
-We also documented in details on the mathematical model of multistage framework and instructions for using *Ms.GSI* package. Once you installed *Ms.GSI*, you can call the document using `vignette("msgsi_vignette")`.
+Details of the mathematical model of integrated multistage framework and instructions for using *Ms.GSI* package can be found in the "articles" tab of the package website. Or, once you installed *Ms.GSI*, you can call the article using `vignette("msgsi_vignette")`.
 
 
