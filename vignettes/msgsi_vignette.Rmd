@@ -104,7 +104,7 @@ print(dplyr::as_tibble(yukon_pops50))
 
 ```
 
-Once you have the data files ready (I recommend saving them as .Rdata files), you can use `prep_msgsi_data()` function to convert them into input data set for model run. You'll also need to identify "groups of interest" in parameter `sub-group`. In this example, groups of interests are Lower Yukon, Middle Yukon and Upper Yukon reporting groups. Their identify numbers are 3, 4, and 5 in the broad-scale baseline. There's an option to save the input data at a designated directory by identifying the location in parameter `file_path`.
+Once you have the data files ready (I recommend saving them as .Rdata or .Rds files), you can use `prep_msgsi_data()` function to convert them into input data set for model run. You'll also need to identify "groups of interest" in parameter `sub-group`. In this example, groups of interests are Lower Yukon, Middle Yukon and Upper Yukon reporting groups. Their identify numbers are 3, 4, and 5 in the broad-scale baseline. There's an option to save the input data at a designated directory by identifying the location in parameter `file_path`.
 
 `prep_msgsi_data()` function matches the loci between mixture and baselines. But if you want to make sure that you didn't miss any locus in your baselines or mixture, you can manually provide loci names (in string vector) for each baseline by inputting them in `loci1` and `loci2`. In this example we don't manually provide lists of loci because we trust that mixture and baselines all have the correct loci.
 
@@ -127,7 +127,7 @@ lapply(msgsi_dat, head)
 
 ## Genetic stock identification
 
-Once your input data set is ready, you can use `msgsi_mdl()` to run the model. If you are used to running *rubias*, *Ms.GSI* might feel a bit slower. That is because 1) we are running two GSI models in tandem, so it takes twice as long than running a single model, and 2) *Ms.GSI* is written solely in *R*, which is not as computationally efficient as language *C*. So, why not code *Ms.GSI* in *C*? Because we're not technically advanced like the folks who developed *rubias* package (i.e., we don't know how to code in *C++*).
+Once your input data set is ready, you can use `msgsi_mdl()` to run the model. If you are used to running *rubias*, *Ms.GSI* might feel a bit slow. That is because 1) we are running two GSI models in tandem, so it takes twice as long than running a single model, and 2) *Ms.GSI* is written solely in *R*, which is not as computationally efficient as language *C*. So, why not code *Ms.GSI* in *C*? Because we're not technically advanced like the folks who developed *rubias* package (i.e., we don't know how to code in *C++*).
 
 Because of the running time, we recommend running the integrated multistage model in conditional GSI mode (default setting). But there is an option to run the model in fully Bayesian mode if one choose to. If you run the model in fully Bayesian mode, you have the option to include numbers of adaptation run. Some people think that adaptation run encourages convergence in fully Bayesian mode. We have not test that theory but provide the option for those who want to try it.
 
@@ -143,7 +143,9 @@ msgsi_out <- msgsi_mdl(msgsi_dat, nreps = 150, nburn = 50, thin = 1, nchains = 1
 
 ## Summarizing results
 
-The output of model contains seven items: `summ_t1`, `trace_t1`, `summ_t2`, `trace_t2`, `summ_comb`, `trace_comb`, and `idens`. Items with "summ" are summary for reporting group proportions and associated convergence diagnostics. If you want to see summaries for stage one and two individually, `summ_t1` and `summ_t2` will show you that. Most people probably want to see the combined summary, `summ_comb`.
+### Stock proportions
+
+The output of model contains eight items: `summ_t1`, `trace_t1`, `summ_t2`, `trace_t2`, `summ_comb`, `trace_comb`, `iden_t1` and `idens_t2`. Items with "summ" are summary for reporting group proportions and associated convergence diagnostics. If you want to see summaries for stage one and two individually, `summ_t1` and `summ_t2` will show you that. Most people probably want to see the combined summary, `summ_comb`.
 
 ```{r}
 
@@ -161,13 +163,27 @@ msgsi_out$trace_comb
 
 ```
 
-The last item in the output is the identity assignment history of each individual in the mixture sample. Each column represents an individual in the mixture, and each row records the identity assigned during each iteration in each chain. Individuals are ordered in the same as the input data.
+### Individual assignments
+
+The last two items in the output are the identity assignment history of each individual in the mixture sample. Each column represents an individual in the mixture, and each row records the identity assigned during each iteration in each chain. These numbers are the population identifiers in the same order as your population information files (and baseline files). Individuals are ordered in the same as the input data (i.e., mixture data).
 
 ```{r}
 
-msgsi_out$idens
+msgsi_out$idens_t1
 
 ```
+
+Individual identity output in this format may not be very useful for most users. So, `Ms.GSI` has a function `indiv_assign()` that summarize the reporting group assignment probabilities for each individual in the mixture.
+
+```{r}
+
+indiv_assign(mdl_out = msgsi_out, mdl_dat = msgsi_dat)
+
+```
+
+The summary for individual assignment has a column named `ID` that identifies each individual in the mixture. `Not regional` column shows the probability of an individual not belong to the group of interest, or, not from within region of focus. The rest of the columns are probabilities for the regional reporting groups. Probabilities in each row should sum up to one.
+
+### Trace plot
 
 *Ms.GSI* has a function for you to make trace plot and examine the mixing of MCMC chains.
 
@@ -248,11 +264,13 @@ $$\begin{aligned}
 P&(Z^{(regional)}_{m,k} | Z^{(broad)}_m) =\\ &\frac{P(Z^{(broad)}_m | Z^{(regional)}_{m,k}) \cdot P(Z^{(regional)}_{m,k})} {\sum_{k=1}^{K} P(Z^{(broad)}_m | Z^{(regional)}_{m,k}) \cdot P(Z^{(regional)}_{m,k})} = \frac{P(Z^{(broad)}_m) \cdot P(Z^{(regional)}_{m,k})}{P(Z^{(broad)}_m)}
 \end{aligned}$$
 
-This can be simplified down to just $P(Z^{(regional)}_{m,k})$. Summing up the individual assignment probabilities we get the weighted average of assignment probability to regional population $k$ for all individuals:
+This can be simplified into $P(Z^{(regional)}_{m,k})$.
 
-$$\begin{aligned}
-P&(Z^{(regional)}_k | Z^{(broad)}) =\\ &\sum\limits_{m=1}^{M} \frac{P(Z^{(broad)}_m | Z^{(regional)}_{m,k}) \cdot P(Z^{(regional)}_{m,k})} {\sum_{k=1}^{K} P(Z^{(broad)}_m | Z^{(regional)}_{m,k}) \cdot P(Z^{(regional)}_{m,k})} = \frac{\sum_{m=1}^{M}P(Z^{(broad)}_m) \cdot P(Z^{(regional)}_{m,k})}{\sum_{m=1}^{M} P(Z^{(broad)}_m)}
-\end{aligned}$$
+<!-- Summing up the individual assignment probabilities we get the weighted average of assignment probability to regional population $k$ for all individuals: -->
+
+<!-- $$\begin{aligned} -->
+<!-- P&(Z^{(regional)}_k | Z^{(broad)}) =\\ &\sum\limits_{m=1}^{M} \frac{P(Z^{(broad)}_m | Z^{(regional)}_{m,k}) \cdot P(Z^{(regional)}_{m,k})} {\sum_{k=1}^{K} P(Z^{(broad)}_m | Z^{(regional)}_{m,k}) \cdot P(Z^{(regional)}_{m,k})} = \frac{\sum_{m=1}^{M}P(Z^{(broad)}_m) \cdot P(Z^{(regional)}_{m,k})}{\sum_{m=1}^{M} P(Z^{(broad)}_m)} -->
+<!-- \end{aligned}$$ -->
 
 During a GSI analysis, two Pella-Masuda models proceed in tandem, each with its own baseline maker suite but the same individuals in the mixture sample.
 
