@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# Ms.GSI
+# Ms.GSI <a href="https://boppingshoe.github.io/Ms.GSI/"><img src="man/figures/logo.png" align="right" height="139" /></a>
 
 <!-- badges: start -->
 <!-- badges: end -->
@@ -43,7 +43,7 @@ msgsi_dat <-
   baseline1_data = base_templin, baseline2_data = base_yukon,
   pop1_info = templin_pops211, pop2_info = yukon_pops50, sub_group = 3:5)
 #> Compiling input data, may take a minute or two...
-#> Time difference of 11.47322 secs
+#> Time difference of 11.39952 secs
 ```
 
 Using the prepared input data, we run the model with four chains of 150
@@ -55,26 +55,26 @@ convergence diagnostics.
 ``` r
 
 msgsi_out <- msgsi_mdl(msgsi_dat, nreps = 150, nburn = 50, thin = 1, nchains = 4)
-#> Running model (and the category is... Femme Queen Vogue!)
-#> Time difference of 23.30967 secs
-#> February-13-2023 11:29
+#> Running model (and the category is... Butch Queen Body!)
+#> Time difference of 13.52093 secs
+#> June-08-2023 15:50
 
 msgsi_out$summ_comb
 #> # A tibble: 12 × 8
 #>    group                       mean  median      sd    ci.05   ci.95    GR n_eff
 #>    <chr>                      <dbl>   <dbl>   <dbl>    <dbl>   <dbl> <dbl> <dbl>
-#>  1 Russia                   3.66e-2 3.49e-2 0.0205  9.07e- 3 0.0745   1.02  94.4
-#>  2 Coastal West Alaska      1.19e-1 6.95e-2 0.132   1.20e-13 0.369    3.81  45.5
-#>  3 North Alaska Peninsula   1.04e-2 2.95e-4 0.0194  4.33e-14 0.0562   1.04  68.6
-#>  4 Northwest Gulf of Alaska 2.74e-1 2.69e-1 0.0710  1.59e- 1 0.399    1.17  90.9
-#>  5 Copper                   8.05e-4 3.00e-6 0.00252 1.15e-17 0.00459  1.02 318. 
-#>  6 Northeast Gulf of Alaska 1.09e-3 2.41e-6 0.00370 2.16e-17 0.00590  1.04 181. 
-#>  7 Coastal Southeast Alaska 2.29e-3 5.20e-6 0.00584 9.36e-17 0.0149   1.02 168. 
-#>  8 British Columbia         6.66e-4 8.01e-7 0.00210 1.79e-21 0.00407  1.11 283. 
-#>  9 WA/OR/CA                 4.54e-4 1.79e-7 0.00184 9.78e-20 0.00222  1.09 400  
-#> 10 Lower Yukon              3.05e-1 3.50e-1 0.160   4.15e- 2 0.517    3.40  97.5
-#> 11 Middle Yukon             7.13e-2 6.96e-2 0.0214  3.94e- 2 0.110    1.03 400  
-#> 12 Upper Yukon              1.79e-1 1.79e-1 0.0322  1.28e- 1 0.234    1.01 339.
+#>  1 Russia                   2.54e-2 2.14e-2 0.0176  3.43e- 3 0.0602   1.01 121. 
+#>  2 Coastal West Alaska      2.91e-1 3.01e-1 0.0949  1.04e- 1 0.429    1.29  50.1
+#>  3 North Alaska Peninsula   2.51e-2 1.95e-2 0.0258  2.40e-14 0.0723   1.22  60.7
+#>  4 Northwest Gulf of Alaska 3.57e-1 3.50e-1 0.0936  2.18e- 1 0.546    1.31  57.7
+#>  5 Copper                   5.81e-4 1.72e-6 0.00169 6.22e-19 0.00348  1.05 309. 
+#>  6 Northeast Gulf of Alaska 2.76e-3 3.06e-6 0.00946 5.57e-19 0.0168   1.16 139. 
+#>  7 Coastal Southeast Alaska 1.31e-3 7.94e-7 0.00415 2.12e-19 0.00914  1.09 218. 
+#>  8 British Columbia         7.41e-4 1.80e-6 0.00234 4.36e-17 0.00489  1.07 294. 
+#>  9 WA/OR/CA                 6.46e-4 1.15e-6 0.00170 9.89e-19 0.00364  1.03 400  
+#> 10 Lower Yukon              6.41e-2 5.44e-2 0.0375  1.87e- 2 0.136    1.13  94.1
+#> 11 Middle Yukon             6.39e-2 6.01e-2 0.0221  3.19e- 2 0.103    1.00 574. 
+#> 12 Upper Yukon              1.68e-1 1.66e-1 0.0321  1.16e- 1 0.223    1.02 335.
 ```
 
 There’s a function in the package to make trace plots and inspect mixing
