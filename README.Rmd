@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Ms.GSI <a href="https://boppingshoe.github.io/Ms.GSI/"><img src="man/figures/logo.png" align="right" height="139" /></a>
+# Ms.GSI <a href="https://boppingshoe.github.io/Ms.GSI/"><img src="man/figures/logo.png" align="right" height="139" alt="Ms.GSI website" /></a>
 
 <!-- badges: start -->
 <!-- badges: end -->
