@@ -153,7 +153,7 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
     (1 / table(grps) / max(grps))[grps]
 
   iden[na_i] <- unlist(lapply(na_i, function(m) {
-    sample(K, 1, FALSE, (pPrior * freq[m, ])[seq.int(K)])
+    sample(K, 1, FALSE, (pPrior * freq[m, ])[seq.int(K)]) # only for wild pops
   }))
 
   p <- rdirich(table(iden) + pPrior)
@@ -229,6 +229,8 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
           unlist(tapply(rw, INDEX = trait_fac2, FUN = rdirich))
         })
 
+        freq2 <- exp(x2 %*% log(t_q2))
+
       } # if no cond_gsi
 
       iden[na_i] <- unlist( lapply(na_i, function(m) {
@@ -245,8 +247,6 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
       } # do this to help prevent no iden == sub_grp (when 1st tier markers are shit)
 
       p <- rdirich(table(iden) + pPrior)
-
-      freq2 <- exp(x2 %*% log(t_q2))
 
       iden2 <- apply(freq2, 1, function(frq_rw) {
         sample(nrow(y2), 1, FALSE, (p2 * frq_rw))
