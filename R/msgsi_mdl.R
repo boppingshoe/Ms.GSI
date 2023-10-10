@@ -418,11 +418,9 @@ summ_func <- function(combo_file, keeplist, mc_file, groupnames, n_ch) {
         coda::gelman.diag(mc_file,
                           transform = FALSE,
                           autoburnin = FALSE,
-                          multivariate = FALSE)$psrf[,"Point est."] %>%
-          .[order(groupnames)]
+                          multivariate = FALSE)$psrf[,"Point est."]
       } else NA },
-      n_eff = coda::effectiveSize(mc_file) %>%
-        .[order(groupnames)]
+      n_eff = coda::effectiveSize(mc_file) # in alphabetical order like tidyverse summarise()
     ) %>%
     dplyr::mutate(name_fac = factor(name, levels = groupnames)) %>%
     dplyr::arrange(name_fac) %>%
