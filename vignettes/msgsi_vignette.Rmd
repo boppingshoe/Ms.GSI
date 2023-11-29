@@ -17,8 +17,8 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-library(Ms.GSI)
-# devtools::load_all()
+# library(Ms.GSI)
+devtools::load_all()
 
 ```
 
@@ -117,7 +117,7 @@ msgsi_dat <-
 
 ```
 
-`prep_msgsi_data()` formats the data files and put them in a list. It took around ten seconds to format the input data in this case. Bigger data sets may take longer. Here are the first few rows/items in the input data list:
+`prep_msgsi_data()` formats the data files and put them in a list. It took few seconds to format the input data in this case. Bigger data sets may take longer. Here are the first few rows/items in the input data list:
 
 ```{r}
 
@@ -173,7 +173,7 @@ msgsi_out$idens_t1
 
 ```
 
-Individual identity output in this format may not be very useful for most users. So, `Ms.GSI` has a function `indiv_assign()` that summarize the reporting group assignment probabilities for each individual in the mixture.
+Individual identity output in this format may not be very useful for most users. So, *Ms.GSI* has a function `indiv_assign()` that summarize the reporting group assignment probabilities for each individual in the mixture.
 
 ```{r}
 
@@ -248,43 +248,17 @@ where $\mx v$ is $\mx \beta + \mx y$. We are not going to attempt proving the th
 
 ## Extend to multistage
 
-In the integrated multistage framework, each stage consists a single baseline Pella-Masuda model. The two models are connected because a fish being assigned to a regional group at the second stage is conditional based on whether that fish is assigned to a reporting group in the regional baseline during the first stage. The following describes the conditional relationship between the broad-scale and the regional baselines, we use $(b)$ and $(r)$ to denote the broad-scale and the regional stages, respectively:
+In a multistage setting, we refer to a baseline that covers the whole range of a mixed stock fishery as a broad-scale baseline. The broad-scale baseline typically covers a wide range of geographic areas but does not have a comprehensive collection of reference populations nor genetic markers to resolve differences between local populations within a sub-region. These smaller sub-regions of a broad-scale baseline are covered by regional baselines with higher resolutions. We generalize the conditions of the *Ms.GSI* model to allow multiple regional baselines to be included, although we programmed *Ms.GSI* to deal with only one regional baseline vs. one broad-scale baseline.
 
-$\mathbf z^{(r)}_m | \mathbf z^{(b)}_m, \mathbf \zeta = \begin{cases} \mathbf z^{(r)}_m & \text{if } \sum (\mathbf z^{(b)}_m \cdot \mathbf \zeta) = 1\\ \mathbf 0 & \text{otherwise} \end{cases}$.
+Let there be $B$ populations in the broad-scale baseline and indexed as $b = 1, 2, ..., B$. Each of these broad-scale populations may belong to exactly 0 or 1 sub-region for which regional baselines might be available. These regional baselines have different sets of genetic markers than the broad-scale baseline and typically include additional populations that are not represented in the broad-scale baseline. Allow for there to be $R$ disjoint sub-regions indexed by $r$, with each sub-region represented by a distinctive regional baseline. We employ a superscript $^{(r)}$ upon variables to indicate a quantity associated with regional baseline $r$. Populations in different sub-regions cannot overlap, and each population only occurs once among the regional baselines. Let $k$ index the populations within these $R$ regional baselines and $K_r$ denotes the number of populations within regional baseline $r$.
 
-$\mathbf z^{(r)}_m$ are vectors of indicators ($0$ or $1$) identifying the regional population that individual $m$ belongs to. And $\mathbf \zeta$ are indicators correspond to broad-scale populations and $= 1$ if the corresponding broad-scale population geographically overlaps with the regional reporting groups. $\sum (\mathbf z^{(b)}_m \cdot \mathbf \zeta) = 1$ if individual $m$ belongs to a reporting group within the regional baseline and $0$ otherwise.
+In the *Ms.GSI* framework, the two stages are connected because the regional group membership of an individual is conditional on whether the broad-scale group membership of that individual belongs to the area of that particular sub-region. The following describes the conditional relationship between the broad-scale and the regional baselines:
 
-$\mathbf z^{(b)}_m$ have a multinomial distribution, $\mathbf z^{(b)}_m \sim Mult(1, \mathbf \pi_m)$, where $\mathbf \pi_m$ are vectors of probabilities for individual $m$ being assigned to each broad-scale reporting group. The prior distribution for $\mathbf \pi_m$ is $Dirich(1/K^{(b)})$, where $K^{(b)}$ is the number of reporting groups in the broad-scale baseline. 
+$\mx z^{(r)}_m | \mx z_m, \mx {\mathscr B}^{(r)} = \begin{cases} \mx z^{(r)}_m & \text{if } \sum_{b \in \mx{\mathscr B}^{(r)}} z_{m,b}  = 1\\ \mx 0 & \text{otherwise} \end{cases}$,
 
-$\mathbf z^{(r)}_m$ also have a multinomial distribution, $\mathbf z^{(r)}_m \sim Mult(1, \mathbf \rho_m)$, where $\mathbf \rho_m$ are vectors of probabilities for individual $m$ being assigned to each regional reporting group. The prior distribution for $\mathbf \rho_m$ is $Dirich(1/K^{(r)})$, where $K^{(r)}$ is the number of reporting groups in the regional baseline. 
+where $\mx z_m$ and $\mx z^{(r)}_m$ are vectors of indicators ($0$ or $1$) identifying the broad-scale and regional populations that individual $m$ belongs to. $\mx{\mathscr B}^{(r)}$ denotes the broad-scale populations that belong to the areas represented by the reporting groups of region $r$, and $\mx 0$ is a vector of all zeros.
 
-During an analysis, two Pella-Masuda models proceed in tandem, each with its own baseline maker suite but the same individuals in the mixture.
-
-<!-- In the integrated multistage framework, the two Pella-Masuda models are connected because a fish being assigned to a regional group at the second stage is conditional based on whether that fish is assigned to a reporting group in the regional baseline during the first stage. The following describes the conditional relationship between the broad-scale and the regional baselines: -->
-
-<!-- $\mx z^{(regional)}_m | z^{(broad)}_m = \begin{cases} \mx z^{(regional)}_m & \text{if } z^{(broad)}_m = 1\\ \mx 0 & \text{otherwise} \end{cases}$ -->
-
-<!-- $\mx z^{(regional)}_m$ are the same as described in the previous section for a single stage scenario. They are vectors of indicators ($0$ or $1$) identifying the regional population that individual $m$ belongs to. $z^{(broad)}_m$ is an indicator as well, and $z^{(broad)}_m = 1$ if individual $m$ belongs to a reporting group within the regional baseline and $0$ otherwise. Combining $z^{(regional)}$ and $z^{(broad)}$, $z^{(regional)}_{m,k} | z^{(broad)}_m = 1$ if individual $m$ belongs to a reporting group within the regional baseline and is assigned to population $k$ in the regional baseline. -->
-
-<!-- Individually, vectors $Z^{(regional)}_m$ have a multinomial distribution, $Z^{(regional)}_m \sim Mult(1, \pi_m)$, where $\pi_m$ are vectors of probabilities for individual $m$ being assigned to each regional reporting group. The prior distribution for $\pi_m$ is a Dirichlet, $Dirich(K^{-1})$, where $K$ is the number of reporting groups in the regional baseline. The posterior distribution for $\pi_m|z^{(regional)}_m$ is also a Dirichlet, $Dirich(\sum_{m=1}^M z^{(regional)}_{m,1} + K^{-1}, \sum_{m=1}^M z^{(regional)}_{m,2} + K^{-1},..., \sum_{m=1}^M z^{(regional)}_{m,K} + K^{-1})$. We will describe in more details on deriving the posteriors in the next section. -->
-
-<!-- In the context of the integrated multistage framework, we only care that, during the first stage, whether an individual is assigned to a reporting group within the regional baseline; therefore, individual identity has a binomial outcome, and $Z^{(broad)}_m \sim Bin(1, \rho_m)$. The prior for $\rho_m$ has a Beta distribution with two scale parameters; one equals to the proportions of broad-scale stocks in the regional baseline, and the other equals to the proportions of broad-scale stocks outside of the regional baseline. The expectation for $\rho_m$ equals to the proportion of broad-scale stocks within the regional baseline. The posterior distribution for $\rho_m|z^{(broad)}_m$ is also a Beta, with the first parameter equals to the sum of individuals assigned to a broad-scale stock in the regional baseline and the proportion of broad-scale stocks in the regional baseline, and the second parameter equals to the sum of individuals assigned to a broad-scale stock outside of the regional baseline and the proportion of broad-scale stocks outside of the regional baseline. -->
-
-<!-- Probability of an individual being assigned to regional population $k$ can be derived using the Bayes rule: -->
-
-<!-- $$\begin{aligned} -->
-<!-- P&(Z^{(regional)}_{m,k} | Z^{(broad)}_m) =\\ &\frac{P(Z^{(broad)}_m | Z^{(regional)}_{m,k}) \cdot P(Z^{(regional)}_{m,k})} {\sum_{k=1}^{K} P(Z^{(broad)}_m | Z^{(regional)}_{m,k}) \cdot P(Z^{(regional)}_{m,k})} = \frac{P(Z^{(broad)}_m) \cdot P(Z^{(regional)}_{m,k})}{P(Z^{(broad)}_m)} -->
-<!-- \end{aligned}$$ -->
-
-<!-- This can be simplified into $P(Z^{(regional)}_{m,k})$. -->
-
-<!-- Summing up the individual assignment probabilities we get the weighted average of assignment probability to regional population $k$ for all individuals: -->
-
-<!-- $$\begin{aligned} -->
-<!-- P&(Z^{(regional)}_k | Z^{(broad)}) =\\ &\sum\limits_{m=1}^{M} \frac{P(Z^{(broad)}_m | Z^{(regional)}_{m,k}) \cdot P(Z^{(regional)}_{m,k})} {\sum_{k=1}^{K} P(Z^{(broad)}_m | Z^{(regional)}_{m,k}) \cdot P(Z^{(regional)}_{m,k})} = \frac{\sum_{m=1}^{M}P(Z^{(broad)}_m) \cdot P(Z^{(regional)}_{m,k})}{\sum_{m=1}^{M} P(Z^{(broad)}_m)} -->
-<!-- \end{aligned}$$ -->
-
-<!-- During a GSI analysis, two Pella-Masuda models proceed in tandem, each with its own baseline maker suite but the same individuals in the mixture sample. -->
+Ultimately, we want to estimate the fraction of individuals in the mixture that come from each of the sub-regional populations, as well as from any of the populations in the broad-scale baseline that are not associated with a regional baseline. $p^{(r)}_k$ denotes the mixture proportion of the $k$^th^ population in region $r$, and $p_b$ denotes the mixture proportion of population $b$ in the broad-scale baseline. Thus, we endeavor to estimate the mixture proportions $p^{(r)}_k$ for each $(r, k)$ such that $r = 1, 2, ..., R$ and $k = 1, 2, ..., K_r$ along with $p_b$, where $b \in \mx{\mathscr B_{*}}$, with $\mx{\mathscr B_{*}}$ denoting the broad-scale populations that do not belong to any areas represented by regional baselines. Lastly, we multiply $\mx {p}^{(r)}$ by $\sum_{b \in \mx{\mathscr B}^{(r)}} p_b$ for each region $r$, so the scaled $\mx{p}^{(r)}$ for all regions and $p_b$, where $b \in \mx{\mathscr B_{*}}$ would sum to one.
 
 ## Gibbs Sampler: where the fun go round and round
 
@@ -315,7 +289,7 @@ $p(\mx p, \mx q, \mx z, \mx y, \mx\alpha, \mx\beta)$
 
 $\propto p(\mx x|\mx z, \mx q) p(\mx y|\mx q) \cdot p(\mx p|\mx\alpha) p(\mx q|\mx\beta) p(\mx z|\mx p)$
 
-With some re-arrangements and hand-waving, we arrive at the marginal posterior distributions for $\mx q$ and $\mx p$:
+With some re-arrangements and hand-waving, we arrive at the full conditional distributions for $\mx q$ and $\mx p$:
 
 $p(\mx x|\mx z, \mx q) p(\mx y|\mx q) \cdot p(\mx p|\mx\alpha) p(\mx q|\mx\beta) p(\mx z|\mx p)$
 
@@ -325,13 +299,13 @@ $\propto p(\mx x,\mx y,\mx z|\mx q) p(\mx q|\mx\beta) \cdot p(\mx z|\mx p) p(\mx
 
 $\propto p(\mx q|\mx x,\mx y,\mx z,\mx\beta) \cdot p(\mx p|\mx z,\mx\alpha)$
 
-Next, we take advantage of a mathematical property called *conjugacy* to help us determine the marginal posterior distributions. Based on this property, the posterior distribution follows the same parametric form as the prior distribution when prior is a *conjugate family* for the likelihood. For example, if the likelihood of data is binomial distribution and the prior of parameter is beta distribution, then the posterior is also beta distribution because beta is a conjugate family for binomial. There are many conjugate families, and Dirichlet and multinomial are another example.
+Next, we take advantage of a mathematical property called *conjugacy* to help us determine the conditional distributions. Based on this property, the posterior distribution follows the same parametric form as the prior distribution when prior is a *conjugate family* for the likelihood. For example, if the likelihood of data is binomial distribution and the prior of parameter is beta distribution, then the posterior is also beta distribution because beta is a conjugate family for binomial. There are many conjugate families, and Dirichlet and multinomial are another example.
 
-Utilizing conjugacy property, we will determine each of the marginal posterior distributions for $\mx q$ and $\mx p$.
+Utilizing conjugacy property, we will determine each of the full conditional distributions for $\mx q$ and $\mx p$.
 
-### Marginal Posterior p(q\|x, y, z, $\beta$)
+### Conditional distribution p(q\|x, y, z, $\beta$)
 
-We determine that posterior $p(\mx q|\mx x,\mx y,\mx z,\mx\beta)$ is Dirichlet-distributed because Dirichlet prior $p(\mx q|\mx\beta)$ is a conjugate family for the multinomial likelihoods $p(\mx x|\mx z, \mx q)$ and $p(\mx y|\mx q)$. To determine the exact parameterization for the posterior distribution, we need to derive the prior and likelihoods first.
+We determine that $p(\mx q|\mx x, \mx y, \mx z, \mx \beta)$ is Dirichlet-distributed because Dirichlet prior $p(\mx q|\mx \beta)$ is a conjugate family for the multinomial likelihoods $p(\mx x|\mx z, \mx q)$ and $p(\mx y|\mx q)$. To determine the exact parameterization for the posterior distribution, we need to derive the prior and likelihoods first.
 
 Likelihood $p(\mx x|\mx z, \mx q)$ can be derived in two steps. The first step we conditioned the likelihood on $\mx z$ so that
 
@@ -353,11 +327,11 @@ Deriving likelihood $p(\mx y|\mx q)$ is more straightforward. It is the product 
 
 $p(\mx y|\mx q) \propto \displaystyle \prod^{K}_{k=1} \prod^{L}_{l=1} \prod^{J_l}_{j=1} q^{y_{k,l,j}}_{k,l,j}$
 
-And $p(q|\mx\beta)$ is Dirichlet prior distribution. Its probability density has a kernel[^6] of $\mx q^{\mx \beta - 1}$. We can express the likelihood as
+And $p(q|\mx \beta)$ is Dirichlet prior distribution. Its probability density has a kernel[^6] of $\mx q^{\mx \beta - 1}$. We can express the likelihood as
 
 [^6]: Without involving too much math, *kernel* here refers to what is left over after factoring out the constant from a probability density function (PDF). For example, The PDF of Dirichlet distribution is $\frac{1}{B(\mx \alpha)} \displaystyle \prod^K_{i=1} x^{\alpha_i - 1}_i$. Beta function $B(\mx \alpha)$ can be factored out, and $\displaystyle \prod^K_{i=1} x^{\alpha_i - 1}_i$ is the kernel.
 
-$p(\mx q|\mx\beta) \propto \displaystyle \prod^{K}_{k=1} \prod^{L}_{l=1} \prod^{J_l}_{j=1} q^{\beta_{l,j} - 1}_{k,l,j}$.
+$p(\mx q|\mx \beta) \propto \displaystyle \prod^{K}_{k=1} \prod^{L}_{l=1} \prod^{J_l}_{j=1} q^{\beta_{l,j} - 1}_{k,l,j}$.
 
 Put all the likelihoods together,
 
@@ -367,11 +341,11 @@ $\propto \displaystyle \prod^{K}_{k=1} \prod^{L}_{l=1} \prod^{J_l}_{j=1} q^{\sum
 
 $= \displaystyle \prod^{K}_{k=1} \prod^{L}_{l=1} \prod^{J_l}_{j=1} q^{\sum^{M}_{m=1} (x_{m,l,j} \cdot z_{m,k}) + y_{k,l,j} + \beta_{l,j} - 1}_{k,l,j}$
 
-It is *elementary* for anybody to recognize that $\displaystyle \prod^{K}_{k=1} \prod^{L}_{l=1} \prod^{J_l}_{j=1} q^{\sum^{M}_{m=1} (x_{m,l,j} \cdot z_{m,k}) + y_{k,l,j} + \beta_{l,j} - 1}_{k,l,j}$ is the kernel for Dirichlet distribution. Hence,
+It is *elementary* to recognize that $\displaystyle \prod^{K}_{k=1} \prod^{L}_{l=1} \prod^{J_l}_{j=1} q^{\sum^{M}_{m=1} (x_{m,l,j} \cdot z_{m,k}) + y_{k,l,j} + \beta_{l,j} - 1}_{k,l,j}$ is the kernel for Dirichlet distribution. Hence,
 
-$\mx q_{k,l}|\mx x,\mx y,\mx z,\mx\beta \sim Dirich(\displaystyle \sum^{M}_{m=1} x_{m,l,j} z_{m,k} + y_{k,l,j} + \beta_{l,j})$
+$\mx q_{k,l}|\mx x,\mx y,\mx z,\mx\beta \sim Dirich(\displaystyle \sum^{M}_{m=1} x_{m,l,j} z_{m,k} + y_{k,l,j} + \beta_{l,j})$.
 
-### Marginal Posterior p(p\|z, $\alpha$)
+### Conditional distribution p(p\|z, $\alpha$)
 
 Using the same logic as previously, $p(\mx p|\mx z,\mx\alpha)$ is also Dirichlet-distributed due to a Dirichlet prior $p(\mx p|\mx\alpha)$ and a multinomial likelihood $p(\mx z|\mx p)$.
 
@@ -391,31 +365,31 @@ There is one more distribution to figure out before we can start our Gibbs sampl
 
 $\mx z_m|\mx p, \mx q, \mx x_m$ has the following distribution:
 
-$\mx z_m|\mx p, \mx q, \mx x_m \sim Mult(1, \mx{p'}_m)$,
+$\mx z_m|\mx p, \mx q, \mx x_m \sim Mult(1, \mx{w}_m)$,
 
-where $p'_{m,k} = p_k \cdot f(\mx x_m|\mx q_k)$. We draw the initial values for $\mx q_k$ based on its prior distribution.
+where $w_{m,k} = p_k \cdot f(\mx x_m|\mx q_k)$. We draw the initial values for $\mx q_k$ based on its prior distribution.
 
-Once we figured out all the pieces in the Gibbs sampler for the single baseline framework, we can extend the concept to a multistage framework. Conceptually, we use a Gibbs sampler to sample from the marginal posteriors of $\mx q^{(b)}$, $\mx p^{(b)}$, $\mx z^{(b)}$, $\mx q^{(r)}$, $\mx p^{(r)}$, and $\mx z^{(r)}$. Most of the marginal posteriors in the multistage framework stay the same as their counterparts in a single baseline framework except for $\mx p^{(r)}$, which is conditioned on the identity assignments of the broad-scale stage:
+Once we figured out all the pieces in the Gibbs sampler for the single baseline framework, we can extend the concept to a multistage framework. Conceptually, we use a Gibbs sampler to sample from the full conditionals of $\mx q$, $\mx p$, $\mx z$, $\mx q^{(r)}$, $\mx p^{(r)}$, and $\mx z^{(r)}$. The full conditional distributions of the broad-scale baseline in the multistage framework stay the same as their counterparts in a single baseline framework. The full conditional distributions for the Gibbs sampler at the regional stage are:
 
-$\mx p^{(r)} | \mx z^{(r)}, \mx z^{(b)}, \mx \zeta, \mx \alpha^{(r)} \sim Dirich(\displaystyle \sum^M_{m=1} (z^{(r)}_{m,k^{(r)}} | z^{(b)}_{m,k^{(b)}}, \zeta_{m,k^{(b)}}) + \alpha^{(r)}_{k^{(r)}})$,
+$\mx q^{(r)}_{k,l} | \mx x^{(r)},\mx y^{(r)},\mx z^{(r)},\mx\beta^{(r)} \sim Dirich(\displaystyle \sum^{M}_{m=1} x^{(r)}_{m,l,j} z^{(r)}_{m,k} + y^{(r)}_{k,l,j} + \beta^{(r)}_{l,j})$,
 
-We initiate the Gibbs sampler with starting values for $\mathbf p^{(b)(0)}$, $\mathbf q^{(b)(0)}$, $\mathbf p^{(r)(0)}$ and $\mathbf q^{(r)(0)}$ based on their prior distributions. We use $(t)$ to denote $t$th iteration of the Gibbs sampler. Sampling for the fully Bayesian model proceeds as follows:
+$\mx p^{(r)} | \mx z^{(r)}, \mx z, \mx{\mathscr B}^{(r)}, \mx \alpha^{(r)} \sim Dirich(\displaystyle \sum^M_{m=1} (z^{(r)}_{m,k} | z_{m,b}, \mathscr B^{(r)}_{m,b}) + \alpha^{(r)}_k)$,
+
+and $\mx z^{(r)}_m | \mx p^{(r)}, \mx q^{(r)}, \mx x^{(r)}_m \sim Mult(1, \mx{w}^{(r)}_m)$,
+
+where $w^{(r)}_{m,k} \propto (p^{(r)}_k \cdot \displaystyle \prod^{L}_{l=1} \prod^{J_l}_{j=1} {q^{(r)}}^{x_{m,l,j}}_{k,l,j})$.
+
+We initiate the Gibbs sampler with starting values for $\mx p^{(0)}$, $\mx q^{(0)}$, $\mx {p^{(r)}}^{(0)}$ and $\mx {q^{(r)}}^{(0)}$ based on their prior distributions. We use subscript $^{(t)}$ to denote $t$^th^ iteration of the Gibbs sampler. Sampling for the fully Bayesian model proceeds as follows:
 
 For $t = 1,2,...,T$, repeat
 
-1.  Determine the population identities of mixture individuals at the first stage, $\mx z^{(broad)(t)}_m|\mx p^{(broad)(t-1)}, \mx q^{(broad)(t-1)}, \mx x_m \sim Mult(1, \mx{p'}^{(broad)}_m)$.
+1.  Determine the group memberships of mixture individuals at the broad-scale stage, $\mx z^{(t)}_m | \mx p^{(t-1)}, \mx q^{(t-1)}, \mx x_m \sim Mult(1, \mx{w}_m)$.
 
-2.  Determine the population identities of mixture individuals at the second stage, $\mx z^{(regional)(t)}_m|z^{(broad)(t)}_m, \mx p^{(regional)(t-1)}, \mx q^{(regional)(t-1)}, \mx x_m \sim Mult(1, \mx{p'}^{(regional)}_m)$.
+2.  Determine the group memberships of mixture individuals for each sub-region at the regional stage, ${\mx z^{(r)}_m}^{(t)} | {\mx p^{(r)}}^{(t-1)}, {\mx q^{(r)}}^{(t-1)}, \mx x_m^{(r)} \sim Mult(1, \mx{w}^{(r)}_m)$, $r = 1, 2, ..., R$.
 
-3.  Draw marginal posterior distributions for $\mx q^{(broad)(t)}$, $\mx p^{(broad)(t)}$, $\mx q^{(regional)(t)}$ and $\mx p^{(regional)(t)}$ from $p(\mx q^{(broad)}|\mx x,\mx y^{(broad)},\mx z^{(broad)(t)},\mx\beta^{(broad)})$, $p(\mx p^{(broad)}|\mx z^{(broad)(t)},\mx\alpha^{(broad)})$, $p(\mx q^{(regional)}|\mx x,\mx y^{(regional)},\mx z^{(regional)(t)},\mx\beta^{(regional)})$ and $p(\mx p^{(regional)}|\mx z^{(regional)(t)},\mx\alpha^{(regional)})$ respectively.
+3.  Draw updated values, $\mx q^{(t)}$, $\mx p^{(t)}$, ${{\mx q}^{(r)}}^{(t)}$ and ${{\mx p}^{(r)}}^{(t)}$ from $p(\mx q | \mx x, \mx y, \mx z^{(t)}, \mx \beta)$, $p(\mx p | \mx z^{(t)}, \mx \alpha)$, $p(\mx q^{(r)} | \mx x^{(r)}, \mx y^{(r)}, {\mx z^{(r)}}^{(t)}, \mx \beta^{(r)})$ and $p(\mx p^{(r)} | \mx {z^{(r)}}^{(t)}, \mx z^{(t)}, \mx{\mathscr B}^{(r)}, \mx \alpha^{(r)})$ respectively.
 
-1.  Determine the population identities of mixture individuals at the braod-scale stage, $(\mathbf z^{(t)}_m | \mathbf p^{(t-1)}, \mathbf q^{(t-1)}, \mathbf x_m)^{(b)} \sim Mult(1, \mathbf{p'}_m)^{(b)}$.
-
-2.  Determine the population identities of mixture individuals at the regional stage, $(\mathbf z^{(t)}_m | \mathbf p^{(t-1)}, \mathbf q^{(t-1)}, \mathbf x_m)^{(r)} \sim Mult(1, \mathbf{p'}_m)^{(r)}$.
-
-3.  Draw marginal posterior distributions for $\mathbf q^{(b)(t)}$, $\mathbf p^{(b)(t)}$, $\mathbf q^{(r)(t)}$ and $\mathbf p^{(r)(t)}$ from $p(\mathbf q | \mathbf x, \mathbf y, \mathbf z^{(t)}, \mathbf \beta)^{(b)}$, $p(\mathbf p | \mathbf z^{(t)}, \mathbf \alpha)^{(b)}$, $p(\mathbf q | \mathbf x, \mathbf y, \mathbf z^{(t)}, \mathbf \beta)^{(r)}$ and $p(\mathbf p^{(r)} | \mathbf z^{(r)}, \mathbf z^{(b)}, \mathbf \zeta, \mathbf \alpha^{(r)})$ respectively. Noted that marginal posteriors $\mathbf p^{(b)}$ and $\mathbf p^{(r)}$ are the population proportions for the broad-scale and regional baselines.
-
-$T$ should be large enough to ensure the sampler chain converges to a desire distribution. Usually it takes thousands of iterations. Implementing the conditional GSI model only requires a slight modification from the above algorithm. $\mx q^{(b)}$ and $\mx q^{(r)}$ only need to be calculated once at the initial step without further updates, otherwise the procedures remain the same.
+$T$ should be large enough to ensure the simulations converge to the posterior distribution. Usually it takes thousands of iterations. Implementing the conditional GSI model only requires a slight modification from the above algorithm. $\mx q$ and $\mx q^{(r)}$ only need to be calculated once at the initial step without further updates, otherwise the procedures remain the same.
 
 
 # References
