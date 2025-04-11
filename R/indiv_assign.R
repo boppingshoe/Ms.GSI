@@ -23,8 +23,16 @@
 indiv_assign <- function(mdl_out, mdl_dat) {
   regional <- which(mdl_dat$groups %in% mdl_dat$sub_group)
 
-  pho <- apply(mdl_out$idens_t1, 2,
-               function (idens) mean(idens %in% regional))
+  # pho <- apply(mdl_out$idens_t1, 2,
+  #              function (idens) mean(idens %in% regional))
+  p <- apply(mdl_out$idens_t1, 2,
+             function (idens) {
+               factor(idens, levels = seq(length(mdl_dat$groups))) %>%
+                 table(.) %>%
+                 tapply(., mdl_dat$groups, sum) %>%
+                 prop.table(.)
+             }) %>% t()
+  pho <- rowSums(p[, mdl_dat$sub_group])
 
   pi <- apply(mdl_out$idens_t2, 2,
               function (idens) {
@@ -32,12 +40,19 @@ indiv_assign <- function(mdl_out, mdl_dat) {
                   table(.) %>%
                   tapply(., mdl_dat$p2_groups, sum) %>%
                   prop.table(.)
-              })
+              }) %>% t()
 
-  tidyr::tibble(ID = mdl_dat$x$indiv) %>%
+  # tidyr::tibble(ID = mdl_dat$x$indiv) %>%
+  #   dplyr::bind_cols({
+  #     cbind(1 - pho, pho * pi) %>%
+  #       as.data.frame() %>%
+  #       stats::setNames(c("Not regional", mdl_dat$group_names_t2))
+  #   }) # combine broad-scale groups
+    tidyr::tibble(ID = mdl_dat$x$indiv) %>%
     dplyr::bind_cols({
-      cbind(1 - pho, pho * t(pi)) %>%
+      cbind(p[, -mdl_dat$sub_group], pho * pi) %>%
         as.data.frame() %>%
-        stats::setNames(c("Not regional", mdl_dat$group_names_t2))
+        stats::setNames(c(mdl_dat$group_names_t1[-mdl_dat$sub_group], mdl_dat$group_names_t2))
     })
 }
+
