@@ -404,14 +404,14 @@ summ_func <- function(combo_file, keeplist, mc_file, groupnames, n_ch) {
   lapply(combo_file, function(rlist) rlist[keeplist, ]) %>%
     dplyr::bind_rows() %>%
     tidyr::pivot_longer(cols = tidyr::everything()) %>%
-    dplyr::group_by(name) %>%
     dplyr::summarise(
       mean = mean(value),
       median = stats::median(value),
       sd = stats::sd(value),
       ci.05 = stats::quantile(value, 0.05),
       ci.95 = stats::quantile(value, 0.95),
-      .groups = "drop"
+      `P=0` = mean(value < 5e-7),
+      .by = name
     ) %>%
     dplyr::mutate(
       GR = { if (n_ch > 1) {
