@@ -1,10 +1,9 @@
-pandoc: 2.19.2
-pkgdown: 2.0.7
+pandoc: 3.1.11
+pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   msgsi_vignette: msgsi_vignette.html
-last_built: 2023-11-29T20:16Z
+last_built: 2025-04-11T22:40Z
 urls:
   reference: https://boppingshoe.github.io/Ms.GSI/reference
   article: https://boppingshoe.github.io/Ms.GSI/articles
-
