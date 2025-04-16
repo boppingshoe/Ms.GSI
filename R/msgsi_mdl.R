@@ -10,7 +10,7 @@
 #'   running model in fully Bayesian mode.
 #' @param keep_burn To save the burn-ins or not (default is FALSE).
 #' @param cond_gsi To run the model in conditional GSI mode (default is TRUE).
-#' @param out_path File path to save the output. Leave it empty is you don't
+#' @param file_path File path to save the output. Leave it empty is you don't
 #'   want to save the output.
 #' @param seed Random seed for reproducibility. Default is NULL (no random seed).
 #' @param iden_output Option to have trace history for individual assignments included in the final output. Default is TRUE.
@@ -35,11 +35,20 @@
 #' # run multistage model
 #' msgsi_out <- msgsi_mdl(msgsi_dat, nreps = 25, nburn = 15, thin = 1, nchains = 1)
 #'
-msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn = FALSE, cond_gsi = TRUE, out_path = NULL, seed = NULL, iden_output = TRUE) {
+msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn = FALSE, cond_gsi = TRUE, file_path = NULL, seed = NULL, iden_output = TRUE) {
 
+  # save test file (specs) ----
+  if(!is.null(file_path)) {
+    specs <- data.frame(name = c("nreps", "nburn", "thin", "nchains", "keep_burn"),
+                        value = c(nreps, nburn, thin, nchains, keep_burn))
+    message(paste0("Ms.GSI specifications saved in ", file_path, "/msgsi_specs.rds"))
+    write.table(specs, file = paste0(file_path, "/msgsi_specs.csv"))
+  }
+
+  # Message categories ----
   categories <- c("Live, Werk, Pose", "Bring It Like Royalty", "Face", "Best Mother", "Best Dressed", "High Class In A Fur Coat", "Snow Ball", "Butch Queen Body", "Weather Girl", "Labels", "Mother-Daughter Realness", "Working Girl", "Linen Vs. Silk", "Perfect Tens", "Modele Effet", "Stone Cold Face", "Realness", "Intergalatic Best Dressed", "House Vs. House", "Femme Queen Vogue", "High Fashion In Feathers", "Femme Queen Runway", "Lofting", "Higher Than Heaven", "Once Upon A Time")
 
-  ### data input ### ----
+  # data input ----
   x <- dat_in$x %>%
     dplyr::select(dplyr::ends_with(as.character(0:9))) %>%
     dplyr::select(order(colnames(.))) %>%
@@ -83,7 +92,7 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
 
   trait_fac2 <- factor(rep(names(nalleles2), nalleles2), levels = names(nalleles2))
 
-  ### specifications ### ----
+  # specifications ----
   rdirich <- function(alpha0) {
     if (sum(alpha0) > 0) {
       vec = stats::rgamma(length(alpha0), alpha0, 1)
@@ -106,7 +115,7 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
   doParallel::registerDoParallel(cl, cores = nchains)
   if (!is.null(seed)) doRNG::registerDoRNG(seed, once = TRUE)
 
-  ### initial values ### ----
+  # initial values ----
   ## tier 1
   # hyper-param for relative freq q (allele)
   beta <- matrix(0, nrow = nrow(y), ncol = ncol(y))
@@ -190,7 +199,7 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
 
   p2 <- rdirich(table(iden2[iden %in% which(grps %in% sub_grp)]) + pPrior2)
 
-  ### parallel chains ### ----
+  # parallel chains ----
   out_list0 <- foreach::foreach(
     ch = chains, .packages = c("magrittr", "tidyr", "dplyr")
     ) %dorng% {
@@ -293,10 +302,10 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
 
   parallel::stopCluster(cl)
 
-  ### prepare output ### ----
+  # prepare output ----
   keep_list <- ((nburn*keep_burn + 1):(nreps - nburn * isFALSE(keep_burn)))[!((nburn*keep_burn + 1):(nreps - nburn * isFALSE(keep_burn))) %% thin] / thin
 
-  # tier 1
+  ## tier 1
   out_list1 <- lapply(out_list0, function(ol) ol[[1]])
 
   p1_combo <-
@@ -312,7 +321,7 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
 
   summ_pop1 <- summ_func(p1_combo, keep_list, mc_pop1, grp_names_t1, nchains)
 
-  # tier 2
+  ## tier 2
   out_list2 <- lapply(out_list0, function(ol) ol[[2]])
 
   p2_combo <-
@@ -328,7 +337,7 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
 
   summ_pop2 <- summ_func(p2_combo, keep_list, mc_pop2, grp_names_t2, nchains)
 
-  # combine tiers
+  ## combine tiers
   out_list <- lapply(out_list0, function(ol) ol[[3]])
 
   p_combo <-
@@ -378,7 +387,17 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
       dplyr::bind_rows()
   }
 
-  if (!is.null(out_path)) save(msgsi_out, file = out_path)
+  # if (!is.null(file_path)) save(msgsi_out, file = file_path)
+  if (!is.null(file_path)) {
+    message(paste("Ms.GSI output saved in", file_path))
+    out_files <- c("summ_t1", "trace_t1", "summ_t2", "trace_t2", "summ_comb", "trace_comb")
+    sapply(out_files, function(i) tidyfst::export_fst(data.table::as.data.table(msgsi_out[i]), path = paste0(file_path, "/", i, ".fst")))
+    if (iden_output == TRUE) {
+      message(paste("IA posteriors saved in", file_path, "as msgsi_idens.fst"))
+      iden_files <- c("iden_t1", "iden_t2")
+      sapply(iden_files, function(j) tidyfst::export_fst(data.table::as.data.table(msgsi_out[j]), path = paste0(file_path, "/", j, ".fst")))
+    }
+  }
 
   print(Sys.time() - run_time)
   message(format(Sys.time(), "%B-%d-%Y %H:%M"))
@@ -410,7 +429,7 @@ summ_func <- function(combo_file, keeplist, mc_file, groupnames, n_ch) {
       sd = stats::sd(value),
       ci.05 = stats::quantile(value, 0.05),
       ci.95 = stats::quantile(value, 0.95),
-      `P=0` = mean(value < 5e-7),
+      p0 = mean(value < 5e-7),
       .by = name
     ) %>%
     dplyr::mutate(
