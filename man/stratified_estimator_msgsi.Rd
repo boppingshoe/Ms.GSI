@@ -13,7 +13,7 @@ stratified_estimator_msgsi(
 )
 }
 \arguments{
-\item{mdl_out}{Optional. Model output object name.}
+\item{mdl_out}{Optional. Model output object name for combining group proportions and harvest of a single mixture.}
 
 \item{path}{Where to find output from each mixture as a folder.}
 
@@ -30,6 +30,8 @@ A tibble of proportions and harvest numbers by reporting group for combined mixt
 Stratified estimator for Ms.GSI
 }
 \examples{
+\dontrun{
 stratified_estimator_msgsi(path = "test", mixvec = c("m1", "m2", "m3"), catchvec = c(4500, 5000, 3000), cv = c(0.5, 0.1 ,0.3))
+}
 
 }
