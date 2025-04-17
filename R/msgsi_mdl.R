@@ -42,7 +42,7 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
     specs <- data.frame(name = c("nreps", "nburn", "thin", "nchains", "keep_burn"),
                         value = c(nreps, nburn, thin, nchains, keep_burn))
     message(paste0("Ms.GSI specifications saved in ", file_path, "/msgsi_specs.csv"))
-    write.table(specs, file = paste0(file_path, "/msgsi_specs.csv"))
+    readr::write_csv(specs, file = paste0(file_path, "/msgsi_specs.csv"))
   }
 
   # Message categories ----
@@ -391,15 +391,17 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
   if (!is.null(file_path)) {
     message(paste("Ms.GSI output saved in", file_path))
     out_files <- c("summ_t1", "trace_t1", "summ_t2", "trace_t2", "summ_comb", "trace_comb")
-    # sapply(out_files, function(i) tidyfst::export_fst(data.table::as.data.table(msgsi_out[i]), path = paste0(file_path, "/", i, ".fst")))
-    sapply(out_files, function(i) readr::write_csv(msgsi_out[[i]], file = paste0(file_path, "/", i, ".csv")))
+    sapply(out_files, function(i) {
+      readr::write_csv(msgsi_out[[i]], file = paste0(file_path, "/", i, ".csv"))
+    })
     if (iden_output == TRUE) {
       message(paste("IA posteriors saved in", file_path))
       iden_files <- c("idens_t1", "idens_t2")
-      # sapply(iden_files, function(j) tidyfst::export_fst(data.table::as.data.table(msgsi_out[j]), path = paste0(file_path, "/", j, ".fst")))
-      sapply(iden_files, function(j) readr::write_csv(msgsi_out[[j]], file = paste0(file_path, "/", j, ".csv")))
-    }
-  }
+      sapply(iden_files, function(j) {
+        readr::write_csv(msgsi_out[[j]], file = paste0(file_path, "/", j, ".csv"))
+      })
+    } # if iden_output
+  } # if save file
 
   print(Sys.time() - run_time)
   message(format(Sys.time(), "%B-%d-%Y %H:%M"))
