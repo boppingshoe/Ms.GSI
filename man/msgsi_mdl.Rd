@@ -13,7 +13,7 @@ msgsi_mdl(
   nadapt = 0,
   keep_burn = FALSE,
   cond_gsi = TRUE,
-  out_path = NULL,
+  file_path = NULL,
   seed = NULL,
   iden_output = TRUE
 )
@@ -36,7 +36,7 @@ running model in fully Bayesian mode.}
 
 \item{cond_gsi}{To run the model in conditional GSI mode (default is TRUE).}
 
-\item{out_path}{File path to save the output. Leave it empty is you don't
+\item{file_path}{File path to save the output. Leave it empty is you don't
 want to save the output.}
 
 \item{seed}{Random seed for reproducibility. Default is NULL (no random seed).}
