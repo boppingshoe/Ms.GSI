@@ -3,6 +3,7 @@
 export(indiv_assign)
 export(msgsi_mdl)
 export(prep_msgsi_data)
+export(stratified_estimator_msgsi)
 export(tr_plot)
 importFrom(doRNG,"%dorng%")
 importFrom(foreach,"%dopar%")
