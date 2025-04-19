@@ -69,8 +69,8 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
   if (is.null(dat_in$iden)) iden <- rep(NA, nrow(x)) else iden <- dat_in$iden # iden info
   nalleles <- dat_in$nalleles # number of allele types
   nalleles2 <- dat_in$nalleles2 # number of allele types
-  grps <- dat_in$groups # vector id for the 1st tier reporting groups (aka groupvec)
-  p2_grps <- dat_in$p2_groups # vector id for the 2nd tier reporting groups
+  grps <- dat_in$y$grpvec # vector id for the 1st tier reporting groups (aka groupvec)
+  p2_grps <- dat_in$y2$grpvec # vector id for the 2nd tier reporting groups
   sub_grp <- dat_in$sub_group
   grp_names_t1 <- dat_in$group_names_t1
   grp_names_t2 <- dat_in$group_names_t2
@@ -270,12 +270,17 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
         if ((rep - nadapt) > n_burn & (rep - nadapt - n_burn) %% thin == 0) {
 
           it <- (rep - nadapt - n_burn) / thin
-          p_grp <- tapply(p, grps, sum)
-          p2_grp <- tapply(p2, p2_grps, sum)
+          # trace output in reporting groups
+          # p_grp <- tapply(p, grps, sum)
+          # p2_grp <- tapply(p2, p2_grps, sum)
+          # p_out[[it]] <- c(p_grp, it, ch)
+          # p2_out[[it]] <- c(p2_grp, it, ch)
+          # pp2_out[[it]] <- c(p_grp[-sub_grp], p2_grp * sum(p_grp[sub_grp]), it, ch)
 
-          p_out[[it]] <- c(p_grp, it, ch)
-          p2_out[[it]] <- c(p2_grp, it, ch)
-          pp2_out[[it]] <- c(p_grp[-sub_grp], p2_grp * sum(p_grp[sub_grp]), it, ch)
+          # trace output in collections
+          p_out[[it]] <- c(p, it, ch)
+          p2_out[[it]] <- c(p2, it, ch)
+          pp2_out[[it]] <- c(p[which(!grps %in% sub_grp)], p2 * sum(p[which(grps %in% sub_grp)]), it, ch)
           if (iden_output == TRUE) {
             iden1_out[[it]] <- iden
             iden2_out[[it]] <- iden2
@@ -299,11 +304,12 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
         })
 
   } # end parallel chains
+  # return list[[chains]][[posteriors]]
 
   parallel::stopCluster(cl)
 
   # prepare output ----
-  keep_list <- ((nburn*keep_burn + 1):(nreps - nburn * isFALSE(keep_burn)))[!((nburn*keep_burn + 1):(nreps - nburn * isFALSE(keep_burn))) %% thin] / thin
+  keep_list <- ((nburn*keep_burn + 1):(nreps - nburn * isFALSE(keep_burn)))[!((nburn*keep_burn + 1):(nreps - nburn * isFALSE(keep_burn))) %% thin] / thin # for summary only
 
   ## tier 1
   out_list1 <- lapply(out_list0, function(ol) ol[[1]])
@@ -312,6 +318,7 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
     lapply(out_list1, function(ol) {
       ol %>%
         dplyr::select(1:(ncol(.)-2)) %>%
+        t() %>% rowsum(., grps) %>% t() %>% as.data.frame() %>%
         stats::setNames(grp_names_t1)
       })
 
@@ -328,6 +335,7 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
     lapply(out_list2, function(ol) {
       ol %>%
         dplyr::select(1:(ncol(.)-2)) %>%
+        t() %>% rowsum(., p2_grps) %>% t() %>% as.data.frame() %>%
         stats::setNames(grp_names_t2)
       })
 
@@ -344,6 +352,10 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
     lapply(out_list, function(ol) {
       ol %>%
         dplyr::select(1:(ncol(.)-2)) %>%
+        t() %>%
+        rowsum(., c(grps[which(!grps %in% sub_grp)], (p2_grps + max(grps)))) %>%
+        t() %>%
+        as.data.frame() %>%
         stats::setNames(grp_names)
       })
 
@@ -361,21 +373,24 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
   msgsi_out$trace_t1 <-
     out_list1 %>%
     dplyr::bind_rows() %>%
-    stats::setNames(c(grp_names_t1, "itr", "chain"))
+    stats::setNames(c(dat_in$y$collection, "itr", "chain"))
 
   msgsi_out$summ_t2 <- summ_pop2
 
   msgsi_out$trace_t2 <-
     out_list2 %>%
     dplyr::bind_rows() %>%
-    stats::setNames(c(grp_names_t2, "itr", "chain"))
+    stats::setNames(c(dat_in$y2$collection, "itr", "chain"))
 
   msgsi_out$summ_comb <- summ_pop
 
   msgsi_out$trace_comb <-
     out_list %>%
     dplyr::bind_rows() %>%
-    stats::setNames(c(grp_names, "itr", "chain"))
+    stats::setNames(c(c(dat_in$y$collection[which(!grps %in% sub_grp)], dat_in$y2$collection),
+                      "itr", "chain"))
+
+  msgsi_out$comb_groups <- dat_in$comb_groups
 
   if (iden_output == TRUE) {
     msgsi_out$idens_t1 <-
@@ -390,7 +405,7 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
   # if (!is.null(file_path)) save(msgsi_out, file = file_path)
   if (!is.null(file_path)) {
     message(paste("Ms.GSI output saved in", file_path))
-    out_files <- c("summ_t1", "trace_t1", "summ_t2", "trace_t2", "summ_comb", "trace_comb")
+    out_files <- c("summ_t1", "trace_t1", "summ_t2", "trace_t2", "summ_comb", "trace_comb", "comb_groups")
     sapply(out_files, function(i) {
       readr::write_csv(msgsi_out[[i]], file = paste0(file_path, "/", i, ".csv"))
     })

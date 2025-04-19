@@ -24,18 +24,18 @@
 indiv_assign <- function(mdl_out, mdl_dat) {
   p <- apply(mdl_out$idens_t1, 2,
              function (idens) {
-               factor(idens, levels = seq(length(mdl_dat$groups))) %>%
+               factor(idens, levels = seq(length(mdl_dat$groups$grpvec))) %>%
                  table(.) %>%
                  prop.table(.)
-             }) %>% rowsum(., mdl_dat$groups) %>% t()
+             }) %>% rowsum(., mdl_dat$groups$grpvec) %>% t()
   pho <- rowSums(p[, mdl_dat$sub_group])
 
   pi <- apply(mdl_out$idens_t2, 2,
               function (idens) {
-                factor(idens, levels = seq(length(mdl_dat$p2_groups))) %>%
+                factor(idens, levels = seq(length(mdl_dat$p2_groups$grpvec))) %>%
                   table(.) %>%
                   prop.table(.)
-              }) %>% rowsum(., mdl_dat$p2_groups) %>% t()
+              }) %>% rowsum(., mdl_dat$p2_groups$grpvec) %>% t()
 
     tidyr::tibble(ID = mdl_dat$x$indiv) %>%
     dplyr::bind_cols({

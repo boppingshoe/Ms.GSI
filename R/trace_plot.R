@@ -6,8 +6,9 @@
 #'   Default is 0 if you didn't save the burn-ins (keep_burn = FALSE).
 #' @param thin Number of thinning you set up when you ran the model.
 #'   Default is 1 (no thinning).
-#' @param name_order Arrange the reporting groups as you wish. Leave it empty
-#'   if you want to accept the default.
+#' @param pop_info Population information. A tibble with columns
+#'   collection (collection names), repunit (reporting unit names),
+#'   grpvec (group numbers), and optional origin (wild/hatchery).
 #'
 #' @return Trace plot in ggplot
 
@@ -26,26 +27,33 @@
 #' # trace plot
 #' tr_plot(obj = msgsi_out$trace_comb)
 
-tr_plot <- function (obj, nburn = 0, thin = 1, name_order = NULL) {
+tr_plot <- function (obj, nburn = 0, thin = 1, pop_info = NULL) {
 
-  if (is.null(name_order)) {
+  if (is.null(pop_info)) {
     name_order <- dplyr::select(obj, -c(itr, chain)) %>% colnames()
+    trace <- tidyr::pivot_longer({{ obj }}, cols = -c(chain, itr),
+                                 names_to = "repunit", values_to = "p")
+  } else {
+    name_order <- unique(pop_info$repunit)
+    trace <- tidyr::pivot_longer({{ obj }}, cols = -c(chain, itr), names_to = "collection") %>%
+      dplyr::left_join(pop_info, by = "collection") %>%
+      dplyr::summarise(p = sum(value), .by = c(chain, itr, repunit))
   }
 
-  tidyr::pivot_longer({{ obj }}, cols = -c(chain, itr)) %>%
-    dplyr::mutate(name = factor(name, levels = name_order)) %>%
+  trace %>%
+    dplyr::mutate(repunit = factor(repunit, levels = name_order)) %>%
     ggplot2::ggplot() +
-    ggplot2::geom_line(ggplot2::aes(x = itr, y = value, color = factor(chain))) +
+    ggplot2::geom_line(ggplot2::aes(x = itr, y = p, color = factor(chain))) +
     {if (nburn > 0) {
       ggplot2::annotate("rect", fill = "red", alpha = 0.15,
                         xmin = 0, xmax = nburn/thin, ymin = -Inf, ymax = Inf)
     }} +
-    ggplot2::facet_grid(name ~ ., scales = "free") +
+    ggplot2::facet_grid(repunit ~ ., scales = "free") +
     ggplot2::labs(color = "MC chain")
 
 } # nburn = 0 if keep_burn = FALSE
 
-utils::globalVariables(c("chain", "itr", "name", "value"))
+utils::globalVariables(c("chain", "itr", "repunit", "p"))
 
 
 
