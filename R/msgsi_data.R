@@ -170,8 +170,13 @@ prep_msgsi_data <-
       iden = iden,
       nalleles = n_alleles_t1,
       nalleles2 = n_alleles_t2,
-      groups = base1$grpvec,
-      p2_groups = base2$grpvec,
+      groups = dplyr::select(base1, collection, repunit, grpvec), # base1$grpvec,
+      p2_groups = dplyr::select(base2, collection, repunit, grpvec), # base2$grpvec,
+      comb_groups = dplyr::select(base1, collection, repunit, grpvec) %>%
+        dplyr::filter(!grpvec %in% sub_group) %>%
+        dplyr::bind_rows({
+          dplyr::select(base2, collection, repunit, grpvec)
+        }),
       sub_group = sub_group,
       group_names_t1 = grp1_nms,
       group_names_t2 = grp2_nms,
