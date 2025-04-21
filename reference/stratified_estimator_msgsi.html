@@ -46,7 +46,8 @@
 <span>  path <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">mixvec</span>,</span>
 <span>  <span class="va">catchvec</span>,</span>
-<span>  cv <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  cv <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  new_pop_info <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -55,7 +56,7 @@
 
 
 <dl><dt id="arg-mdl-out">mdl_out<a class="anchor" aria-label="anchor" href="#arg-mdl-out"></a></dt>
-<dd><p>Optional. Model output object name for combining group proportions and harvest of a single mixture.</p></dd>
+<dd><p>Optional. Ms.GSI output object name for combining group proportions and harvest of a single mixture.</p></dd>
 
 
 <dt id="arg-path">path<a class="anchor" aria-label="anchor" href="#arg-path"></a></dt>
@@ -73,6 +74,11 @@
 <dt id="arg-cv">cv<a class="anchor" aria-label="anchor" href="#arg-cv"></a></dt>
 <dd><p>Numeric vector of harvest estimate coefficients of variation for each stratum, must be the same order as <code>mixvec</code>.</p></dd>
 
+
+<dt id="arg-new-pop-info">new_pop_info<a class="anchor" aria-label="anchor" href="#arg-new-pop-info"></a></dt>
+<dd><p>Population information for the new grouping. A tibble with columns
+<code>repunit</code> and <code>new_repunit</code>. <code>repunit</code> is the names of the original reporting groups.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -82,7 +88,11 @@
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="fu">stratified_estimator_msgsi</span><span class="op">(</span>path <span class="op">=</span> <span class="st">"test"</span>, mixvec <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"m1"</span>, <span class="st">"m2"</span>, <span class="st">"m3"</span><span class="op">)</span>, catchvec <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4500</span>, <span class="fl">5000</span>, <span class="fl">3000</span><span class="op">)</span>, cv <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.1</span> ,<span class="fl">0.3</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">new_groups</span> <span class="op">&lt;-</span> <span class="va">mdl_out</span><span class="op">$</span><span class="va">summ_comb</span> <span class="op">%&gt;%</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">group</span><span class="op">)</span> <span class="op">%&gt;%</span></span></span>
+<span class="r-in"><span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>new_repunit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"broad"</span>, <span class="fl">9</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"regional"</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span></span></span>
+<span class="r-in"><span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>repunit <span class="op">=</span> <span class="va">group</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">stratified_estimator_msgsi</span><span class="op">(</span>path <span class="op">=</span> <span class="st">"test"</span>, mixvec <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"m1"</span>, <span class="st">"m2"</span>, <span class="st">"m3"</span><span class="op">)</span>, catchvec <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4500</span>, <span class="fl">5000</span>, <span class="fl">3000</span><span class="op">)</span>, cv <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.1</span> ,<span class="fl">0.3</span><span class="op">)</span>, new_pop_info <span class="op">=</span> <span class="va">new_groups</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
