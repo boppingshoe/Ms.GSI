@@ -326,7 +326,7 @@ baselines all have the correct loci.</p>
 <span>  baseline1_data <span class="op">=</span> <span class="va">base_templin</span>, baseline2_data <span class="op">=</span> <span class="va">base_yukon</span>,</span>
 <span>  pop1_info <span class="op">=</span> <span class="va">templin_pops211</span>, pop2_info <span class="op">=</span> <span class="va">yukon_pops50</span>, sub_group <span class="op">=</span> <span class="fl">3</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Compiling input data, may take a minute or two...</span></span>
-<span><span class="co">#&gt; Time difference of 9.033073 secs</span></span></code></pre></div>
+<span><span class="co">#&gt; Time difference of 9.463948 secs</span></span></code></pre></div>
 <p><code><a href="../reference/prep_msgsi_data.html">prep_msgsi_data()</a></code> formats the data files and put them in
 a list. It took few seconds to format the input data in this case.
 Bigger data sets may take longer. Here are the first few rows/items in
@@ -505,8 +505,8 @@ though (but you can always <code><a href="../reference/msgsi_mdl.html">?msgsi_md
 <code class="sourceCode R"><span></span>
 <span><span class="va">msgsi_out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/msgsi_mdl.html">msgsi_mdl</a></span><span class="op">(</span><span class="va">msgsi_dat</span>, nreps <span class="op">=</span> <span class="fl">150</span>, nburn <span class="op">=</span> <span class="fl">50</span>, thin <span class="op">=</span> <span class="fl">1</span>, nchains <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Running model (and the category is... Linen Vs. Silk!)</span></span>
-<span><span class="co">#&gt; Time difference of 2.179841 secs</span></span>
-<span><span class="co">#&gt; April-21-2025 15:59</span></span></code></pre></div>
+<span><span class="co">#&gt; Time difference of 2.167404 secs</span></span>
+<span><span class="co">#&gt; April-21-2025 18:15</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="summarizing-results">Summarizing results<a class="anchor" aria-label="anchor" href="#summarizing-results"></a>
@@ -516,12 +516,13 @@ though (but you can always <code><a href="../reference/msgsi_mdl.html">?msgsi_md
 </h4>
 <p>The output of model contains eight items: <code>summ_t1</code>,
 <code>trace_t1</code>, <code>summ_t2</code>, <code>trace_t2</code>,
-<code>summ_comb</code>, <code>trace_comb</code>, <code>iden_t1</code>
-and <code>idens_t2</code>. Items with “summ” are summary for reporting
-group proportions and associated convergence diagnostics. If you want to
-see summaries for stage one and two individually, <code>summ_t1</code>
-and <code>summ_t2</code> will show you that. Most people probably want
-to see the combined summary, <code>summ_comb</code>.</p>
+<code>summ_comb</code>, <code>trace_comb</code>,
+<code>comb_groups</code>, <code>iden_t1</code> and
+<code>idens_t2</code>. Items with “summ” are summary for reporting group
+proportions and associated convergence diagnostics. If you want to see
+summaries for stage one and two individually, <code>summ_t1</code> and
+<code>summ_t2</code> will show you that. Most people probably want to
+see the combined summary, <code>summ_comb</code>.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">msgsi_out</span><span class="op">$</span><span class="va">summ_comb</span></span>
@@ -555,10 +556,13 @@ consult Gelman et al. 2014, Gelman &amp; Rubin 1992, Brooks &amp; Gelman
 history, for either stage one, two, or combined. Trace history is needed
 for making trace plots. And if you need to combine reporting groups
 proportions or combine variance, trace histories are what you need.
-<code>trace_</code> items are tibbles with each reporting group as a
-column. There are two additional columns, <code>itr</code> and
+<code>trace_</code> items are tibbles with each collection as a column.
+There are two additional columns, <code>itr</code> and
 <code>chain</code>, to identify Markov chain Monte Carlo (MCMC) sampling
 iteration and chain.</p>
+<p><code>comb_groups</code> are provided in the output as reference for
+trace plot and stratified estimator. Grouping for stage one and two can
+also be found in the input data.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">msgsi_out</span><span class="op">$</span><span class="va">trace_comb</span></span>
@@ -652,16 +656,18 @@ reporting groups. Probabilities in each row should sum up to one.</p>
 <h4 id="trace-plot">Trace plot<a class="anchor" aria-label="anchor" href="#trace-plot"></a>
 </h4>
 <p><em>Ms.GSI</em> has a function for you to make trace plot and examine
-the mixing of MCMC chains.</p>
+the mixing of MCMC chains. Don’t forget to include the group information
+(as in <code>groups</code>, <code>p2_groups</code>, or
+<code>comb_groups</code>) for the trace history that you want to
+plot.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
-<span><span class="fu"><a href="../reference/tr_plot.html">tr_plot</a></span><span class="op">(</span>obj <span class="op">=</span> <span class="va">msgsi_out</span><span class="op">$</span><span class="va">trace_comb</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/tr_plot.html">tr_plot</a></span><span class="op">(</span>obj <span class="op">=</span> <span class="va">msgsi_out</span><span class="op">$</span><span class="va">trace_comb</span>, pop_info <span class="op">=</span> <span class="va">msgsi_out</span><span class="op">$</span><span class="va">comb_groups</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
 <img src="msgsi_vignette_files/figure-html/unnamed-chunk-14-1.png" alt="Trace plots for reporting group proportions." width="100%"><p class="caption">
 Trace plots for reporting group proportions.
 </p>
 </div>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow></mrow><annotation encoding="application/x-tex">\newcommand{\mx}[1]{\mathbf{#1}}</annotation></semantics></math></p>
 </div>
 </div>
 </div>
@@ -683,9 +689,13 @@ population identities to each individual based on its genetic make-up
 proportions based on the numbers of individuals assigned to each
 population. In the fishery context, genetic data of the individuals is
 called the mixture sample because it consists multi-locus genotype of
-individual fish collected from a mixed-stock fishery. <span class="math inline">$\mx x$</span> denotes the mixture sample. In this
-document, a bold-font letter represents a <em>number set</em>, or a
-collection of distinct elements. For example, <span class="math inline">$\mx x$</span> is a set that contains individual
+individual fish collected from a mixed-stock fishery.
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐱</mi><annotation encoding="application/x-tex">\mathbf x</annotation></semantics></math>
+denotes the mixture sample. In this document, a bold-font letter
+represents a <em>number set</em>, or a collection of distinct elements.
+For example,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐱</mi><annotation encoding="application/x-tex">\mathbf x</annotation></semantics></math>
+is a set that contains individual
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math>
 elements. And
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>x</mi><mrow><mi>m</mi><mo>,</mo><mi>l</mi><mo>,</mo><mi>j</mi></mrow></msub><annotation encoding="application/x-tex">x_{m,l,j}</annotation></semantics></math>
@@ -705,7 +715,9 @@ depends on locus
 <p>Genetic data of the populations is called the baseline sample because
 it consists genotype compositions of various baseline populations
 collected at their spawning locations. Researchers select sampling
-locations to best represent the populations in an area. <span class="math inline">$\mx y$</span> denotes the baseline sample.
+locations to best represent the populations in an area.
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐲</mi><annotation encoding="application/x-tex">\mathbf y</annotation></semantics></math>
+denotes the baseline sample.
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>y</mi><mrow><mi>k</mi><mo>,</mo><mi>l</mi><mo>,</mo><mi>j</mi></mrow></msub><annotation encoding="application/x-tex">y_{k,l,j}</annotation></semantics></math>
 is the count of allele
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>
@@ -749,33 +761,43 @@ distribution.&lt;/p&gt;"><sup>5</sup></a>
 Usually we set the priors to be equal for all loci. In this example, let
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>β</mi><mrow><mn>1</mn><mo>,</mo><mn>1</mn></mrow></msub><mo>=</mo><msub><mi>β</mi><mrow><mn>1</mn><mo>,</mo><mn>2</mn></mrow></msub><mo>=</mo><mn>1</mn><mi>/</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">\beta_{1,1} = \beta_{1,2} = 1/2</annotation></semantics></math>
 based on the number of alleles for locus 1.</p>
-<p><span class="math inline">$\mx q$</span> represents
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐪</mi><annotation encoding="application/x-tex">\mathbf q</annotation></semantics></math>
+represents
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>q</mi><mrow><mn>1</mn><mo>,</mo><mn>2</mn><mo>,</mo><mn>1</mn></mrow></msub><annotation encoding="application/x-tex">q_{1,2,1}</annotation></semantics></math>
 and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>q</mi><mrow><mn>1</mn><mo>,</mo><mn>2</mn><mo>,</mo><mn>2</mn></mrow></msub><annotation encoding="application/x-tex">q_{1,2,2}</annotation></semantics></math>,
 together with allele frequencies of other loci and other populations. As
-you can see, <span class="math inline">$\mx q$</span> and <span class="math inline">$\mx y$</span> have the same dimension because each
-relative frequency corresponds to an allele count. In the model, allele
-frequencies of baseline populations, <span class="math inline">$\mx
-q$</span>, determine population proportions. And population proportions
-determines the identities of individual fish. Individual identities are
-then tallied and summarized to update baseline allele frequencies. <span class="math inline">$\mx y$</span> can be expressed as follows:</p>
-<p><span class="math inline">$\mx y_k \sim Mult(\mx n_k, \mx
-q_k)$</span></p>
-<p>Prior distribution for <span class="math inline">$\mx q$</span>:</p>
-<p><span class="math inline">$\mx q_k \sim Dirich(\mx
-\beta)$</span>,</p>
-<p>where <span class="math inline">$\mx \beta = 1/J_l$</span></p>
+you can see,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐪</mi><annotation encoding="application/x-tex">\mathbf q</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐲</mi><annotation encoding="application/x-tex">\mathbf y</annotation></semantics></math>
+have the same dimension because each relative frequency corresponds to
+an allele count. In the model, allele frequencies of baseline
+populations,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐪</mi><annotation encoding="application/x-tex">\mathbf q</annotation></semantics></math>,
+determine population proportions. And population proportions determines
+the identities of individual fish. Individual identities are then
+tallied and summarized to update baseline allele frequencies.
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐲</mi><annotation encoding="application/x-tex">\mathbf y</annotation></semantics></math>
+can be expressed as follows:</p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>𝐲</mi><mi>k</mi></msub><mo>∼</mo><mi>M</mi><mi>u</mi><mi>l</mi><mi>t</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>𝐧</mi><mi>k</mi></msub><mo>,</mo><msub><mi>𝐪</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\mathbf y_k \sim Mult(\mathbf n_k, \mathbf q_k)</annotation></semantics></math></p>
+<p>Prior distribution for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐪</mi><annotation encoding="application/x-tex">\mathbf q</annotation></semantics></math>:</p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>𝐪</mi><mi>k</mi></msub><mo>∼</mo><mi>D</mi><mi>i</mi><mi>r</mi><mi>i</mi><mi>c</mi><mi>h</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝛃</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\mathbf q_k \sim Dirich(\mathbf \beta)</annotation></semantics></math>,</p>
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝛃</mi><mo>=</mo><mn>1</mn><mi>/</mi><msub><mi>J</mi><mi>l</mi></msub></mrow><annotation encoding="application/x-tex">\mathbf \beta = 1/J_l</annotation></semantics></math></p>
 <p>For mixture sample, allele counts in each locus of individual fish
 also follows a multinomial distributions. If a fish came from a certain
 population, its distribution of allele counts should resemble the allele
 frequencies of the baseline population which it came from. However, the
 identity of the individual fish is unknown so it needs to be estimated.
-Here we let <span class="math inline">$\mx z_m$</span> represent the
-population identify for the
+Here we let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>𝐳</mi><mi>m</mi></msub><annotation encoding="application/x-tex">\mathbf z_m</annotation></semantics></math>
+represent the population identify for the
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math><sup>th</sup>
-mixture individual. <span class="math inline">$\mx z_m$</span> is
-composed of 0’s and an 1 with a length
+mixture individual.
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>𝐳</mi><mi>m</mi></msub><annotation encoding="application/x-tex">\mathbf z_m</annotation></semantics></math>
+is composed of 0’s and an 1 with a length
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>K</mi><annotation encoding="application/x-tex">K</annotation></semantics></math>
 (e.g. number of baseline populations).
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>z</mi><mrow><mi>m</mi><mo>,</mo><mi>k</mi></mrow></msub><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">z_{m,k} = 1</annotation></semantics></math>
@@ -785,9 +807,10 @@ belongs to population
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>,
 and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>z</mi><mrow><mi>m</mi><mo>,</mo><mi>k</mi></mrow></msub><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">z_{m,k} = 0</annotation></semantics></math>
-otherwise. In a made-up example, <span class="math inline">$\mx z_{100}
-= \{0, 0, 1, 0, 0\}$</span> means that there are five baseline
-populations, and individual fish #100 comes from population 3.</p>
+otherwise. In a made-up example,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>𝐳</mi><mn>100</mn></msub><mo>=</mo><mo stretchy="false" form="prefix">{</mo><mn>0</mn><mo>,</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo>,</mo><mn>0</mn><mo>,</mo><mn>0</mn><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">\mathbf z_{100} = \{0, 0, 1, 0, 0\}</annotation></semantics></math>
+means that there are five baseline populations, and individual fish #100
+comes from population 3.</p>
 <p>We place a multinomial prior on
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>z</mi><mrow><mi>m</mi><mo>,</mo><mn>1</mn></mrow></msub><mo>,</mo><msub><mi>z</mi><mrow><mi>m</mi><mo>,</mo><mn>2</mn></mrow></msub><mo>,</mo><mi>.</mi><mi>.</mi><mi>.</mi><mo>,</mo><msub><mi>z</mi><mrow><mi>m</mi><mo>,</mo><mi>K</mi></mrow></msub></mrow><annotation encoding="application/x-tex">z_{m,1}, z_{m,2}, ..., z_{m,K}</annotation></semantics></math>
 with size 1 and probabilities equal to population proportions
@@ -801,12 +824,15 @@ where
 We usually set
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>
 to be equal for all reporting groups, but they can be set based on prior
-knowledge in population proportions. We express <span class="math inline">$\mx z$</span> as follows:</p>
-<p><span class="math inline">$\mx z_m \sim Mult(\mx 1, \mx
-p)$</span></p>
-<p>Prior distribution for <span class="math inline">$\mx p$</span>:</p>
-<p><span class="math inline">$\mx p \sim Dirich(\mx \alpha)$</span>,</p>
-<p>where <span class="math inline">$\mx \alpha = 1/K$</span></p>
+knowledge in population proportions. We express
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐳</mi><annotation encoding="application/x-tex">\mathbf z</annotation></semantics></math>
+as follows:</p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>𝐳</mi><mi>m</mi></msub><mo>∼</mo><mi>M</mi><mi>u</mi><mi>l</mi><mi>t</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>𝟏</mn><mo>,</mo><mi>𝐩</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\mathbf z_m \sim Mult(\mathbf 1, \mathbf p)</annotation></semantics></math></p>
+<p>Prior distribution for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐩</mi><annotation encoding="application/x-tex">\mathbf p</annotation></semantics></math>:</p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝐩</mi><mo>∼</mo><mi>D</mi><mi>i</mi><mi>r</mi><mi>i</mi><mi>c</mi><mi>h</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝛂</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\mathbf p \sim Dirich(\mathbf \alpha)</annotation></semantics></math>,</p>
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝛂</mi><mo>=</mo><mn>1</mn><mi>/</mi><mi>K</mi></mrow><annotation encoding="application/x-tex">\mathbf \alpha = 1/K</annotation></semantics></math></p>
 <p>As mentioned, for mixture sample, allele counts in each locus of
 individual fish follows a multinomial distributions. The parameters are
 allele frequencies of the corresponding baseline population with size
@@ -821,32 +847,45 @@ and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>z</mi><mrow><mi>m</mi><mo>,</mo><mi>k</mi></mrow></msub><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">z_{m,k} = 0</annotation></semantics></math>
 otherwise. When multiplying population identities,
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>z</mi><mrow><mi>m</mi><mo>,</mo><mn>1</mn></mrow></msub><mo>,</mo><msub><mi>z</mi><mrow><mi>m</mi><mo>,</mo><mn>2</mn></mrow></msub><mo>,</mo><mi>.</mi><mi>.</mi><mi>.</mi><mo>,</mo><msub><mi>z</mi><mrow><mi>m</mi><mo>,</mo><mi>K</mi></mrow></msub></mrow><annotation encoding="application/x-tex">z_{m,1}, z_{m,2}, ..., z_{m,K}</annotation></semantics></math>,
-and allele frequencies of baseline populations, <span class="math inline">$\mx q_1, \mx q_2, ..., \mx q_K$</span>, only allele
-frequencies of baseline population which individual
+and allele frequencies of baseline populations,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>𝐪</mi><mn>1</mn></msub><mo>,</mo><msub><mi>𝐪</mi><mn>2</mn></msub><mo>,</mo><mi>.</mi><mi>.</mi><mi>.</mi><mo>,</mo><msub><mi>𝐪</mi><mi>K</mi></msub></mrow><annotation encoding="application/x-tex">\mathbf q_1, \mathbf q_2, ..., \mathbf q_K</annotation></semantics></math>,
+only allele frequencies of baseline population which individual
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math>
-belong to would remain while the rest goes to zero. <span class="math inline">$\mx x$</span> is expressed below. <span class="math inline">$\mx{ploidy} = ploidy_1, ploidy_2, ...,
-ploidy_L$</span> denotes ploidy for each locus.</p>
-<p><span class="math inline">$\mx x_m \sim Mult(\mx{ploidy}, \mx z_m
-\cdot \mx q)$</span></p>
+belong to would remain while the rest goes to zero.
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐱</mi><annotation encoding="application/x-tex">\mathbf x</annotation></semantics></math>
+is expressed below.
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi>𝐩</mi><mi>𝐥</mi><mi>𝐨</mi><mi>𝐢</mi><mi>𝐝</mi><mi>𝐲</mi></mrow><mo>=</mo><mi>p</mi><mi>l</mi><mi>o</mi><mi>i</mi><mi>d</mi><msub><mi>y</mi><mn>1</mn></msub><mo>,</mo><mi>p</mi><mi>l</mi><mi>o</mi><mi>i</mi><mi>d</mi><msub><mi>y</mi><mn>2</mn></msub><mo>,</mo><mi>.</mi><mi>.</mi><mi>.</mi><mo>,</mo><mi>p</mi><mi>l</mi><mi>o</mi><mi>i</mi><mi>d</mi><msub><mi>y</mi><mi>L</mi></msub></mrow><annotation encoding="application/x-tex">\mathbf{ploidy} = ploidy_1, ploidy_2, ..., ploidy_L</annotation></semantics></math>
+denotes ploidy for each locus.</p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>𝐱</mi><mi>m</mi></msub><mo>∼</mo><mi>M</mi><mi>u</mi><mi>l</mi><mi>t</mi><mrow><mo stretchy="true" form="prefix">(</mo><mrow><mi>𝐩</mi><mi>𝐥</mi><mi>𝐨</mi><mi>𝐢</mi><mi>𝐝</mi><mi>𝐲</mi></mrow><mo>,</mo><msub><mi>𝐳</mi><mi>m</mi></msub><mo>⋅</mo><mi>𝐪</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\mathbf x_m \sim Mult(\mathbf{ploidy}, \mathbf z_m \cdot \mathbf q)</annotation></semantics></math></p>
 <p>Moran and Anderson (2018) implement a genetic mixture analysis as a
 <em>R</em> package, <em>rubias</em>. Their program has been widely used
 by researchers around the world, including here at the GCL.
 <em>rubias</em> utilizes a model structure called the conditional
 genetic stock identification model, or the conditional GSI model, that
 is modified from the Pella-Masuda model. The main difference between the
-two models is that, in the conditional model, <span class="math inline">$\mx q$</span> is integrated out of the distribution
-of mixture sample, <span class="math inline">$\mx x_m$</span>. That is,
-baseline allele frequencies are not being updated in the model. The
-result of that, <span class="math inline">$\mx x_m$</span> takes a form
-of a compound Dirichlet-multinomial distribution (Johnson at el.
-1997):</p>
-<p><span class="math inline">$\mx x_m \sim CDM(\mx{ploidy}, \mx z_m
-\cdot \mx v)$</span>,</p>
-<p>where <span class="math inline">$\mx v$</span> is <span class="math inline">$\mx \beta + \mx y$</span>. We are not going to
-attempt proving the theory behind the conditional model in this document
-(details can be found in Moran &amp; Anderson 2018). But since <span class="math inline">$\mx q$</span> has been integrated out of <span class="math inline">$\mx x_m$</span>, the process for estimating
-parameters is simpler and more streamlined. We have implemented
-conditional GSI in each stage of our integrated multistage model.</p>
+two models is that, in the conditional model,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐪</mi><annotation encoding="application/x-tex">\mathbf q</annotation></semantics></math>
+is integrated out of the distribution of mixture sample,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>𝐱</mi><mi>m</mi></msub><annotation encoding="application/x-tex">\mathbf x_m</annotation></semantics></math>.
+That is, baseline allele frequencies are not being updated in the model.
+The result of that,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>𝐱</mi><mi>m</mi></msub><annotation encoding="application/x-tex">\mathbf x_m</annotation></semantics></math>
+takes a form of a compound Dirichlet-multinomial distribution (Johnson
+at el. 1997):</p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>𝐱</mi><mi>m</mi></msub><mo>∼</mo><mi>C</mi><mi>D</mi><mi>M</mi><mrow><mo stretchy="true" form="prefix">(</mo><mrow><mi>𝐩</mi><mi>𝐥</mi><mi>𝐨</mi><mi>𝐢</mi><mi>𝐝</mi><mi>𝐲</mi></mrow><mo>,</mo><msub><mi>𝐳</mi><mi>m</mi></msub><mo>⋅</mo><mi>𝐯</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\mathbf x_m \sim CDM(\mathbf{ploidy}, \mathbf z_m \cdot \mathbf v)</annotation></semantics></math>,</p>
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐯</mi><annotation encoding="application/x-tex">\mathbf v</annotation></semantics></math>
+is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝛃</mi><mo>+</mo><mi>𝐲</mi></mrow><annotation encoding="application/x-tex">\mathbf \beta + \mathbf y</annotation></semantics></math>.
+We are not going to attempt proving the theory behind the conditional
+model in this document (details can be found in Moran &amp; Anderson
+2018). But since
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐪</mi><annotation encoding="application/x-tex">\mathbf q</annotation></semantics></math>
+has been integrated out of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>𝐱</mi><mi>m</mi></msub><annotation encoding="application/x-tex">\mathbf x_m</annotation></semantics></math>,
+the process for estimating parameters is simpler and more streamlined.
+We have implemented conditional GSI in each stage of our integrated
+multistage model.</p>
 </div>
 <div class="section level3">
 <h3 id="extend-to-multistage">Extend to multistage<a class="anchor" aria-label="anchor" href="#extend-to-multistage"></a>
@@ -893,22 +932,25 @@ whether the broad-scale group membership of that individual belongs to
 the area of that particular sub-region. The following describes the
 conditional relationship between the broad-scale and the regional
 baselines:</p>
-<p><span class="math inline">$\mx z^{(r)}_m | \mx z_m, \mx {\mathscr
-B}^{(r)} = \begin{cases} \mx z^{(r)}_m &amp; \text{if } \sum_{b \in
-\mx{\mathscr B}^{(r)}} z_{m,b}  = 1\\ \mx 0 &amp; \text{otherwise}
-\end{cases}$</span>,</p>
-<p>where <span class="math inline">$\mx z_m$</span> and <span class="math inline">$\mx z^{(r)}_m$</span> are vectors of indicators
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>𝐳</mi><mi>m</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo stretchy="false" form="prefix">|</mo><msub><mi>𝐳</mi><mi>m</mi></msub><mo>,</mo><msup><mi>ℬ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><mo>=</mo><mrow><mo stretchy="true" form="prefix">{</mo><mtable><mtr><mtd columnalign="left" style="text-align: left"><msubsup><mi>𝐳</mi><mi>m</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mrow><mtext mathvariant="normal">if </mtext><mspace width="0.333em"></mspace></mrow><msub><mo>∑</mo><mrow><mi>b</mi><mo>∈</mo><msup><mi>ℬ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup></mrow></msub><msub><mi>z</mi><mrow><mi>m</mi><mo>,</mo><mi>b</mi></mrow></msub><mo>=</mo><mn>1</mn></mtd></mtr><mtr><mtd columnalign="left" style="text-align: left"><mn>𝟎</mn></mtd><mtd columnalign="left" style="text-align: left"><mtext mathvariant="normal">otherwise</mtext></mtd></mtr></mtable></mrow></mrow><annotation encoding="application/x-tex">\mathbf z^{(r)}_m | \mathbf z_m, \mathbf {\mathscr B}^{(r)} = \begin{cases} \mathbf z^{(r)}_m &amp; \text{if } \sum_{b \in \mathbf{\mathscr B}^{(r)}} z_{m,b}  = 1\\ \mathbf 0 &amp; \text{otherwise} \end{cases}</annotation></semantics></math>,</p>
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>𝐳</mi><mi>m</mi></msub><annotation encoding="application/x-tex">\mathbf z_m</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>𝐳</mi><mi>m</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><annotation encoding="application/x-tex">\mathbf z^{(r)}_m</annotation></semantics></math>
+are vectors of indicators
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0</mn><annotation encoding="application/x-tex">0</annotation></semantics></math>
 or
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>1</mn><annotation encoding="application/x-tex">1</annotation></semantics></math>)
 identifying the broad-scale and regional populations that individual
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math>
-belongs to. <span class="math inline">$\mx{\mathscr B}^{(r)}$</span>
+belongs to.
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>ℬ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><annotation encoding="application/x-tex">\mathbf{\mathscr B}^{(r)}</annotation></semantics></math>
 denotes the broad-scale populations that belong to the areas represented
 by the reporting groups of region
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>r</mi><annotation encoding="application/x-tex">r</annotation></semantics></math>,
-and <span class="math inline">$\mx 0$</span> is a vector of all
-zeros.</p>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>𝟎</mn><annotation encoding="application/x-tex">\mathbf 0</annotation></semantics></math>
+is a vector of all zeros.</p>
 <p>Ultimately, we want to estimate the fraction of individuals in the
 mixture that come from each of the sub-regional populations, as well as
 from any of the populations in the broad-scale baseline that are not
@@ -933,29 +975,36 @@ and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mo>=</mo><mn>1</mn><mo>,</mo><mn>2</mn><mo>,</mo><mi>.</mi><mi>.</mi><mi>.</mi><mo>,</mo><msub><mi>K</mi><mi>r</mi></msub></mrow><annotation encoding="application/x-tex">k = 1, 2, ..., K_r</annotation></semantics></math>
 along with
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>p</mi><mi>b</mi></msub><annotation encoding="application/x-tex">p_b</annotation></semantics></math>,
-where <span class="math inline">$b \in \mx{\mathscr B_{*}}$</span>, with
-<span class="math inline">$\mx{\mathscr B_{*}}$</span> denoting the
-broad-scale populations that do not belong to any areas represented by
-regional baselines. Lastly, we multiply <span class="math inline">$\mx
-{p}^{(r)}$</span> by <span class="math inline">$\sum_{b \in \mx{\mathscr
-B}^{(r)}} p_b$</span> for each region
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>b</mi><mo>∈</mo><msub><mi>ℬ</mi><mo mathvariant="bold">*</mo></msub></mrow><annotation encoding="application/x-tex">b \in \mathbf{\mathscr B_{*}}</annotation></semantics></math>,
+with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ℬ</mi><mo mathvariant="bold">*</mo></msub><annotation encoding="application/x-tex">\mathbf{\mathscr B_{*}}</annotation></semantics></math>
+denoting the broad-scale populations that do not belong to any areas
+represented by regional baselines. Lastly, we multiply
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>𝐩</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><annotation encoding="application/x-tex">\mathbf {p}^{(r)}</annotation></semantics></math>
+by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>∑</mo><mrow><mi>b</mi><mo>∈</mo><msup><mi>ℬ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup></mrow></msub><msub><mi>p</mi><mi>b</mi></msub></mrow><annotation encoding="application/x-tex">\sum_{b \in \mathbf{\mathscr B}^{(r)}} p_b</annotation></semantics></math>
+for each region
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>r</mi><annotation encoding="application/x-tex">r</annotation></semantics></math>,
-so the scaled <span class="math inline">$\mx{p}^{(r)}$</span> for all
-regions and
+so the scaled
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>𝐩</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><annotation encoding="application/x-tex">\mathbf{p}^{(r)}</annotation></semantics></math>
+for all regions and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>p</mi><mi>b</mi></msub><annotation encoding="application/x-tex">p_b</annotation></semantics></math>,
-where <span class="math inline">$b \in \mx{\mathscr B_{*}}$</span> would
-sum to one.</p>
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>b</mi><mo>∈</mo><msub><mi>ℬ</mi><mo mathvariant="bold">*</mo></msub></mrow><annotation encoding="application/x-tex">b \in \mathbf{\mathscr B_{*}}</annotation></semantics></math>
+would sum to one.</p>
 </div>
 <div class="section level3">
 <h3 id="gibbs-sampler-where-the-fun-go-round-and-round">Gibbs Sampler: where the fun go round and round<a class="anchor" aria-label="anchor" href="#gibbs-sampler-where-the-fun-go-round-and-round"></a>
 </h3>
 <p>Deriving the values of parameters in each stage of the integrated
 multistage model requires finding the joint posterior distribution of
-Pella-Masuda model in each stage, <span class="math inline">$\mx p, \mx
-q,\mx z, \mx y, \mx\alpha, \mx\beta$</span>. In this section, we will
-introduce the concepts and algorithm to sample from this posterior
-distribution in a single baseline Pella-Masuda model, which then can be
-extend to an integrated multistage framework.</p>
+Pella-Masuda model in each stage,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝐩</mi><mo>,</mo><mi>𝐪</mi><mo>,</mo><mi>𝐳</mi><mo>,</mo><mi>𝐲</mi><mo>,</mo><mi>𝛂</mi><mo>,</mo><mi>𝛃</mi></mrow><annotation encoding="application/x-tex">\mathbf p, \mathbf q,\mathbf z, \mathbf y, \mathbf\alpha, \mathbf\beta</annotation></semantics></math>.
+In this section, we will introduce the concepts and algorithm to sample
+from this posterior distribution in a single baseline Pella-Masuda
+model, which then can be extend to an integrated multistage
+framework.</p>
 <p>Gibbs sampler is a type of MCMC methods that sequentially sample
 parameter values from a Markov chain. With enough sampling, the Markov
 chain will eventually converge to the desire distribution of interest.
@@ -967,15 +1016,18 @@ further information can be found in numerous resources devoting to
 Bayesian data analysis (see Carlin &amp; Louis 2009; Robert &amp;
 Casella 2010; Gelman et al. 2014)</p>
 <p>To illustrate, suppose we would like to determine the joint posterior
-distribution of interest, <span class="math inline">$p(\mx \theta|\mx
-y)$</span>, where <span class="math inline">$\mx \theta = \{\theta_1,
-\theta_2,..., \theta_K\}$</span>. Most likely the multivariate <span class="math inline">$p(\mx \theta|\mx y)$</span> would be too
-complicated to sample from. However, if we can figure out how to break
-up the joint posterior distribution into individual full conditional
-distributions, each parameter in <span class="math inline">$\mx
-\theta$</span> can be sampled one by one sequentially using a Gibbs
-sampler algorithm. The process begins with an arbitrary set of starting
-values
+distribution of interest,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝛉</mi><mo stretchy="false" form="prefix">|</mo><mi>𝐲</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">p(\mathbf \theta|\mathbf y)</annotation></semantics></math>,
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝛉</mi><mo>=</mo><mo stretchy="false" form="prefix">{</mo><msub><mi>θ</mi><mn>1</mn></msub><mo>,</mo><msub><mi>θ</mi><mn>2</mn></msub><mo>,</mo><mi>.</mi><mi>.</mi><mi>.</mi><mo>,</mo><msub><mi>θ</mi><mi>K</mi></msub><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">\mathbf \theta = \{\theta_1, \theta_2,..., \theta_K\}</annotation></semantics></math>.
+Most likely the multivariate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝛉</mi><mo stretchy="false" form="prefix">|</mo><mi>𝐲</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">p(\mathbf \theta|\mathbf y)</annotation></semantics></math>
+would be too complicated to sample from. However, if we can figure out
+how to break up the joint posterior distribution into individual full
+conditional distributions, each parameter in
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝛉</mi><annotation encoding="application/x-tex">\mathbf \theta</annotation></semantics></math>
+can be sampled one by one sequentially using a Gibbs sampler algorithm.
+The process begins with an arbitrary set of starting values
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>θ</mi><mn>2</mn><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo>,</mo><msubsup><mi>θ</mi><mn>3</mn><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo>,</mo><mi>.</mi><mi>.</mi><mi>.</mi><mo>,</mo><msubsup><mi>θ</mi><mi>K</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo stretchy="true" form="postfix">)</mo></mrow></msubsup></mrow><annotation encoding="application/x-tex">\theta^{(0)}_2, \theta^{(0)}_3,..., \theta^{(0)}_K</annotation></semantics></math>
 and proceeds as follows:</p>
 <p>For
@@ -984,59 +1036,63 @@ repeat</p>
 <ol style="list-style-type: decimal">
 <li><p>Draw
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>θ</mi><mn>1</mn><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><annotation encoding="application/x-tex">\theta^{(t)}_1</annotation></semantics></math>
-from <span class="math inline">$p(\theta_1|\theta^{(t-1)}_2,
-\theta^{(t-1)}_3,..., \theta^{(t-1)}_k, \mx y)$</span></p></li>
+from
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>θ</mi><mn>1</mn></msub><mo stretchy="false" form="prefix">|</mo><msubsup><mi>θ</mi><mn>2</mn><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>−</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo>,</mo><msubsup><mi>θ</mi><mn>3</mn><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>−</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo>,</mo><mi>.</mi><mi>.</mi><mi>.</mi><mo>,</mo><msubsup><mi>θ</mi><mi>k</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>−</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo>,</mo><mi>𝐲</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">p(\theta_1|\theta^{(t-1)}_2, \theta^{(t-1)}_3,..., \theta^{(t-1)}_k, \mathbf y)</annotation></semantics></math></p></li>
 <li>
 <p>Draw
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>θ</mi><mn>2</mn><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><annotation encoding="application/x-tex">\theta^{(t)}_2</annotation></semantics></math>
-from <span class="math inline">$p(\theta_2|\theta^{(t)}_1,
-\theta^{(t-1)}_3,..., \theta^{(t-1)}_k, \mx y)$</span></p>
+from
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>θ</mi><mn>2</mn></msub><mo stretchy="false" form="prefix">|</mo><msubsup><mi>θ</mi><mn>1</mn><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo>,</mo><msubsup><mi>θ</mi><mn>3</mn><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>−</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo>,</mo><mi>.</mi><mi>.</mi><mi>.</mi><mo>,</mo><msubsup><mi>θ</mi><mi>k</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>−</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo>,</mo><mi>𝐲</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">p(\theta_2|\theta^{(t)}_1, \theta^{(t-1)}_3,..., \theta^{(t-1)}_k, \mathbf y)</annotation></semantics></math></p>
 <p>⋮</p>
 </li>
 </ol>
 <!-- --><ol start="11" style="list-style-type: lower-alpha">
 <li>Draw
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>θ</mi><mi>k</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><annotation encoding="application/x-tex">\theta^{(t)}_k</annotation></semantics></math>
-from <span class="math inline">$p(\theta_k|\theta^{(t)}_1,
-\theta^{(t)}_2,..., \theta^{(t)}_{k-1}, \mx y)$</span>
+from
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>θ</mi><mi>k</mi></msub><mo stretchy="false" form="prefix">|</mo><msubsup><mi>θ</mi><mn>1</mn><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo>,</mo><msubsup><mi>θ</mi><mn>2</mn><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo>,</mo><mi>.</mi><mi>.</mi><mi>.</mi><mo>,</mo><msubsup><mi>θ</mi><mrow><mi>k</mi><mo>−</mo><mn>1</mn></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo>,</mo><mi>𝐲</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">p(\theta_k|\theta^{(t)}_1, \theta^{(t)}_2,..., \theta^{(t)}_{k-1}, \mathbf y)</annotation></semantics></math>
 </li>
 </ol>
 <p>This would work best if the full conditionals are some known
 distributions that we can easily sample from (although it’s not
 required). In our case with Pella-Masuda model, we rely on two main
 concepts, the Bayes theorem and conjugacy, to do the trick. Briefly, for
-estimating parameters <span class="math inline">$\mx\theta$</span> from
-data <span class="math inline">$\mx D$</span>, according to Bayes Rule,
-<span class="math inline">$p(\mx\theta|\mx D) = \displaystyle
-\frac{p(\mx D|\mx\theta)p(\mx\theta)}{p(\mx D)}$</span>. <span class="math inline">$p(\mx\theta|\mx D)$</span> is the joint posterior
-distribution for parameters <span class="math inline">$\mx\theta$</span>, <span class="math inline">$p(\mx
-D|\mx\theta)$</span> is the likelihood of observing the data given the
-parameters, <span class="math inline">$p(\mx\theta)$</span> is the prior
-distribution of the parameters, and <span class="math inline">$p(\mx
-D)$</span> is the constant marginal distribution of the data. <span class="math inline">$p(\mx D)$</span> is often mathematically difficult
-to obtain; however, because <span class="math inline">$p(\mx D)$</span>
+estimating parameters
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝛉</mi><annotation encoding="application/x-tex">\mathbf\theta</annotation></semantics></math>
+from data
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐃</mi><annotation encoding="application/x-tex">\mathbf D</annotation></semantics></math>,
+according to Bayes Rule,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝛉</mi><mo stretchy="false" form="prefix">|</mo><mi>𝐃</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac><mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐃</mi><mo stretchy="false" form="prefix">|</mo><mi>𝛉</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝛉</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐃</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mrow><annotation encoding="application/x-tex">p(\mathbf\theta|\mathbf D) = \displaystyle \frac{p(\mathbf D|\mathbf\theta)p(\mathbf\theta)}{p(\mathbf D)}</annotation></semantics></math>.
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝛉</mi><mo stretchy="false" form="prefix">|</mo><mi>𝐃</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">p(\mathbf\theta|\mathbf D)</annotation></semantics></math>
+is the joint posterior distribution for parameters
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝛉</mi><annotation encoding="application/x-tex">\mathbf\theta</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐃</mi><mo stretchy="false" form="prefix">|</mo><mi>𝛉</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">p(\mathbf D|\mathbf\theta)</annotation></semantics></math>
+is the likelihood of observing the data given the parameters,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝛉</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">p(\mathbf\theta)</annotation></semantics></math>
+is the prior distribution of the parameters, and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐃</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">p(\mathbf D)</annotation></semantics></math>
+is the constant marginal distribution of the data.
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐃</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">p(\mathbf D)</annotation></semantics></math>
+is often mathematically difficult to obtain; however, because
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐃</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">p(\mathbf D)</annotation></semantics></math>
 is a constant number, we can ignore it by reducing the posterior
-distribution to <span class="math inline">$p(\mx\theta|\mx D) \propto
-p(\mx D|\mx\theta)p(\mx\theta)$</span>.</p>
+distribution to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝛉</mi><mo stretchy="false" form="prefix">|</mo><mi>𝐃</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>∝</mo><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐃</mi><mo stretchy="false" form="prefix">|</mo><mi>𝛉</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝛉</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">p(\mathbf\theta|\mathbf D) \propto p(\mathbf D|\mathbf\theta)p(\mathbf\theta)</annotation></semantics></math>.</p>
 <p>So, how does Bayes Rule help us estimating parameters in the
 Pella-Masuda model? First, the joint posterior distribution has to be
 split up into smaller pieces. That is, we separate the joint posterior
 into likelihood of the data and priors for the parameters:</p>
-<p><span class="math inline">$p(\mx p, \mx q, \mx z, \mx y, \mx\alpha,
-\mx\beta)$</span></p>
-<p><span class="math inline">$\propto p(\mx x|\mx z, \mx q) p(\mx y|\mx
-q) \cdot p(\mx p|\mx\alpha) p(\mx q|\mx\beta) p(\mx z|\mx p)$</span></p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐩</mi><mo>,</mo><mi>𝐪</mi><mo>,</mo><mi>𝐳</mi><mo>,</mo><mi>𝐲</mi><mo>,</mo><mi>𝛂</mi><mo>,</mo><mi>𝛃</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">p(\mathbf p, \mathbf q, \mathbf z, \mathbf y, \mathbf\alpha, \mathbf\beta)</annotation></semantics></math></p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>∝</mo><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐱</mi><mo stretchy="false" form="prefix">|</mo><mi>𝐳</mi><mo>,</mo><mi>𝐪</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐲</mi><mo stretchy="false" form="prefix">|</mo><mi>𝐪</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>⋅</mo><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐩</mi><mo stretchy="false" form="prefix">|</mo><mi>𝛂</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐪</mi><mo stretchy="false" form="prefix">|</mo><mi>𝛃</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐳</mi><mo stretchy="false" form="prefix">|</mo><mi>𝐩</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\propto p(\mathbf x|\mathbf z, \mathbf q) p(\mathbf y|\mathbf q) \cdot p(\mathbf p|\mathbf\alpha) p(\mathbf q|\mathbf\beta) p(\mathbf z|\mathbf p)</annotation></semantics></math></p>
 <p>With some re-arrangements and hand-waving, we arrive at the full
-conditional distributions for <span class="math inline">$\mx q$</span>
-and <span class="math inline">$\mx p$</span>:</p>
-<p><span class="math inline">$p(\mx x|\mx z, \mx q) p(\mx y|\mx q) \cdot
-p(\mx p|\mx\alpha) p(\mx q|\mx\beta) p(\mx z|\mx p)$</span></p>
-<p><span class="math inline">$= p(\mx x|\mx z, \mx q) p(\mx y|\mx q)
-p(\mx q|\mx\beta) \cdot p(\mx z|\mx p) p(\mx p|\mx\alpha)$</span></p>
-<p><span class="math inline">$\propto p(\mx x,\mx y,\mx z|\mx q) p(\mx
-q|\mx\beta) \cdot p(\mx z|\mx p) p(\mx p|\mx\alpha)$</span></p>
-<p><span class="math inline">$\propto p(\mx q|\mx x,\mx y,\mx
-z,\mx\beta) \cdot p(\mx p|\mx z,\mx\alpha)$</span></p>
+conditional distributions for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐪</mi><annotation encoding="application/x-tex">\mathbf q</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐩</mi><annotation encoding="application/x-tex">\mathbf p</annotation></semantics></math>:</p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐱</mi><mo stretchy="false" form="prefix">|</mo><mi>𝐳</mi><mo>,</mo><mi>𝐪</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐲</mi><mo stretchy="false" form="prefix">|</mo><mi>𝐪</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>⋅</mo><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐩</mi><mo stretchy="false" form="prefix">|</mo><mi>𝛂</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐪</mi><mo stretchy="false" form="prefix">|</mo><mi>𝛃</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐳</mi><mo stretchy="false" form="prefix">|</mo><mi>𝐩</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">p(\mathbf x|\mathbf z, \mathbf q) p(\mathbf y|\mathbf q) \cdot p(\mathbf p|\mathbf\alpha) p(\mathbf q|\mathbf\beta) p(\mathbf z|\mathbf p)</annotation></semantics></math></p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>=</mo><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐱</mi><mo stretchy="false" form="prefix">|</mo><mi>𝐳</mi><mo>,</mo><mi>𝐪</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐲</mi><mo stretchy="false" form="prefix">|</mo><mi>𝐪</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐪</mi><mo stretchy="false" form="prefix">|</mo><mi>𝛃</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>⋅</mo><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐳</mi><mo stretchy="false" form="prefix">|</mo><mi>𝐩</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐩</mi><mo stretchy="false" form="prefix">|</mo><mi>𝛂</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">= p(\mathbf x|\mathbf z, \mathbf q) p(\mathbf y|\mathbf q) p(\mathbf q|\mathbf\beta) \cdot p(\mathbf z|\mathbf p) p(\mathbf p|\mathbf\alpha)</annotation></semantics></math></p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>∝</mo><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐱</mi><mo>,</mo><mi>𝐲</mi><mo>,</mo><mi>𝐳</mi><mo stretchy="false" form="prefix">|</mo><mi>𝐪</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐪</mi><mo stretchy="false" form="prefix">|</mo><mi>𝛃</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>⋅</mo><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐳</mi><mo stretchy="false" form="prefix">|</mo><mi>𝐩</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐩</mi><mo stretchy="false" form="prefix">|</mo><mi>𝛂</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\propto p(\mathbf x,\mathbf y,\mathbf z|\mathbf q) p(\mathbf q|\mathbf\beta) \cdot p(\mathbf z|\mathbf p) p(\mathbf p|\mathbf\alpha)</annotation></semantics></math></p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>∝</mo><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐪</mi><mo stretchy="false" form="prefix">|</mo><mi>𝐱</mi><mo>,</mo><mi>𝐲</mi><mo>,</mo><mi>𝐳</mi><mo>,</mo><mi>𝛃</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>⋅</mo><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐩</mi><mo stretchy="false" form="prefix">|</mo><mi>𝐳</mi><mo>,</mo><mi>𝛂</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\propto p(\mathbf q|\mathbf x,\mathbf y,\mathbf z,\mathbf\beta) \cdot p(\mathbf p|\mathbf z,\mathbf\alpha)</annotation></semantics></math></p>
 <p>Next, we take advantage of a mathematical property called
 <em>conjugacy</em> to help us determine the conditional distributions.
 Based on this property, the posterior distribution follows the same
@@ -1047,97 +1103,98 @@ distribution, then the posterior is also beta distribution because beta
 is a conjugate family for binomial. There are many conjugate families,
 and Dirichlet and multinomial are another example.</p>
 <p>Utilizing conjugacy property, we will determine each of the full
-conditional distributions for <span class="math inline">$\mx q$</span>
-and <span class="math inline">$\mx p$</span>.</p>
+conditional distributions for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐪</mi><annotation encoding="application/x-tex">\mathbf q</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐩</mi><annotation encoding="application/x-tex">\mathbf p</annotation></semantics></math>.</p>
 <div class="section level4">
 <h4 id="conditional-distribution-pqx-y-z-beta">Conditional distribution p(q|x, y, z,
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>)<a class="anchor" aria-label="anchor" href="#conditional-distribution-pqx-y-z-beta"></a>
 </h4>
-<p>We determine that <span class="math inline">$p(\mx q|\mx x, \mx y,
-\mx z, \mx \beta)$</span> is Dirichlet-distributed because Dirichlet
-prior <span class="math inline">$p(\mx q|\mx \beta)$</span> is a
-conjugate family for the multinomial likelihoods <span class="math inline">$p(\mx x|\mx z, \mx q)$</span> and <span class="math inline">$p(\mx y|\mx q)$</span>. To determine the exact
-parameterization for the posterior distribution, we need to derive the
-prior and likelihoods first.</p>
-<p>Likelihood <span class="math inline">$p(\mx x|\mx z, \mx q)$</span>
+<p>We determine that
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐪</mi><mo stretchy="false" form="prefix">|</mo><mi>𝐱</mi><mo>,</mo><mi>𝐲</mi><mo>,</mo><mi>𝐳</mi><mo>,</mo><mi>𝛃</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">p(\mathbf q|\mathbf x, \mathbf y, \mathbf z, \mathbf \beta)</annotation></semantics></math>
+is Dirichlet-distributed because Dirichlet prior
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐪</mi><mo stretchy="false" form="prefix">|</mo><mi>𝛃</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">p(\mathbf q|\mathbf \beta)</annotation></semantics></math>
+is a conjugate family for the multinomial likelihoods
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐱</mi><mo stretchy="false" form="prefix">|</mo><mi>𝐳</mi><mo>,</mo><mi>𝐪</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">p(\mathbf x|\mathbf z, \mathbf q)</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐲</mi><mo stretchy="false" form="prefix">|</mo><mi>𝐪</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">p(\mathbf y|\mathbf q)</annotation></semantics></math>.
+To determine the exact parameterization for the posterior distribution,
+we need to derive the prior and likelihoods first.</p>
+<p>Likelihood
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐱</mi><mo stretchy="false" form="prefix">|</mo><mi>𝐳</mi><mo>,</mo><mi>𝐪</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">p(\mathbf x|\mathbf z, \mathbf q)</annotation></semantics></math>
 can be derived in two steps. The first step we conditioned the
-likelihood on <span class="math inline">$\mx z$</span> so that</p>
-<p><span class="math inline">$p(\mx x|\mx z, \mx q) \propto
-\displaystyle \prod^{M}_{m=1} \prod^{K}_{k=1} [f(\mx x_m|\mx
-q_k)]^{z_{m,k}}$</span>,</p>
-<p>where <span class="math inline">$f(\mx x_m|\mx q_k)$</span> is the
-relative frequency of multi-locus genotype for individual
+likelihood on
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐳</mi><annotation encoding="application/x-tex">\mathbf z</annotation></semantics></math>
+so that</p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐱</mi><mo stretchy="false" form="prefix">|</mo><mi>𝐳</mi><mo>,</mo><mi>𝐪</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>∝</mo><msubsup><mo>∏</mo><mrow><mi>m</mi><mo>=</mo><mn>1</mn></mrow><mi>M</mi></msubsup><msubsup><mo>∏</mo><mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow><mi>K</mi></msubsup><msup><mrow><mo stretchy="true" form="prefix">[</mo><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>𝐱</mi><mi>m</mi></msub><mo stretchy="false" form="prefix">|</mo><msub><mi>𝐪</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow><msub><mi>z</mi><mrow><mi>m</mi><mo>,</mo><mi>k</mi></mrow></msub></msup></mrow><annotation encoding="application/x-tex">p(\mathbf x|\mathbf z, \mathbf q) \propto \displaystyle \prod^{M}_{m=1} \prod^{K}_{k=1} [f(\mathbf x_m|\mathbf q_k)]^{z_{m,k}}</annotation></semantics></math>,</p>
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>𝐱</mi><mi>m</mi></msub><mo stretchy="false" form="prefix">|</mo><msub><mi>𝐪</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">f(\mathbf x_m|\mathbf q_k)</annotation></semantics></math>
+is the relative frequency of multi-locus genotype for individual
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math>
 in population
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>.
-In the next step, we derive <span class="math inline">$f(\mx x_m|\mx
-q_k)$</span>:</p>
-<p><span class="math inline">$f(\mx x_m|\mx q_k) \propto \displaystyle
-\prod^{L}_{l=1} \prod^{J_l}_{j=1} q^{x_{m,l,j}}_{k,l,j}$</span></p>
+In the next step, we derive
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>𝐱</mi><mi>m</mi></msub><mo stretchy="false" form="prefix">|</mo><msub><mi>𝐪</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">f(\mathbf x_m|\mathbf q_k)</annotation></semantics></math>:</p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>𝐱</mi><mi>m</mi></msub><mo stretchy="false" form="prefix">|</mo><msub><mi>𝐪</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>∝</mo><msubsup><mo>∏</mo><mrow><mi>l</mi><mo>=</mo><mn>1</mn></mrow><mi>L</mi></msubsup><msubsup><mo>∏</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><msub><mi>J</mi><mi>l</mi></msub></msubsup><msubsup><mi>q</mi><mrow><mi>k</mi><mo>,</mo><mi>l</mi><mo>,</mo><mi>j</mi></mrow><msub><mi>x</mi><mrow><mi>m</mi><mo>,</mo><mi>l</mi><mo>,</mo><mi>j</mi></mrow></msub></msubsup></mrow><annotation encoding="application/x-tex">f(\mathbf x_m|\mathbf q_k) \propto \displaystyle \prod^{L}_{l=1} \prod^{J_l}_{j=1} q^{x_{m,l,j}}_{k,l,j}</annotation></semantics></math></p>
 <p>Then we combine the two,</p>
-<p><span class="math inline">$p(\mx x|\mx z, \mx q) \propto
-\displaystyle \prod^{M}_{m=1} \prod^{K}_{k=1} [f(\mx x_m|\mx
-q_k)]^{z_{m,k}}$</span></p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐱</mi><mo stretchy="false" form="prefix">|</mo><mi>𝐳</mi><mo>,</mo><mi>𝐪</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>∝</mo><msubsup><mo>∏</mo><mrow><mi>m</mi><mo>=</mo><mn>1</mn></mrow><mi>M</mi></msubsup><msubsup><mo>∏</mo><mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow><mi>K</mi></msubsup><msup><mrow><mo stretchy="true" form="prefix">[</mo><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>𝐱</mi><mi>m</mi></msub><mo stretchy="false" form="prefix">|</mo><msub><mi>𝐪</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow><msub><mi>z</mi><mrow><mi>m</mi><mo>,</mo><mi>k</mi></mrow></msub></msup></mrow><annotation encoding="application/x-tex">p(\mathbf x|\mathbf z, \mathbf q) \propto \displaystyle \prod^{M}_{m=1} \prod^{K}_{k=1} [f(\mathbf x_m|\mathbf q_k)]^{z_{m,k}}</annotation></semantics></math></p>
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>∝</mo><msubsup><mo>∏</mo><mrow><mi>m</mi><mo>=</mo><mn>1</mn></mrow><mi>M</mi></msubsup><msubsup><mo>∏</mo><mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow><mi>K</mi></msubsup><mrow><mo stretchy="true" form="prefix">[</mo><msubsup><mo>∏</mo><mrow><mi>l</mi><mo>=</mo><mn>1</mn></mrow><mi>L</mi></msubsup><msubsup><mo>∏</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><msub><mi>J</mi><mi>l</mi></msub></msubsup><msubsup><mi>q</mi><mrow><mi>k</mi><mo>,</mo><mi>l</mi><mo>,</mo><mi>j</mi></mrow><mrow><msub><mi>x</mi><mrow><mi>m</mi><mo>,</mo><mi>l</mi><mo>,</mo><mi>j</mi></mrow></msub><mo>⋅</mo><msub><mi>z</mi><mrow><mi>m</mi><mo>,</mo><mi>k</mi></mrow></msub></mrow></msubsup><mo stretchy="true" form="postfix">]</mo></mrow></mrow><annotation encoding="application/x-tex">\propto \displaystyle \prod^{M}_{m=1} \prod^{K}_{k=1} [\displaystyle \prod^{L}_{l=1} \prod^{J_l}_{j=1} q^{x_{m,l,j} \cdot z_{m,k}}_{k,l,j}]</annotation></semantics></math></p>
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>∝</mo><msubsup><mo>∏</mo><mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow><mi>K</mi></msubsup><msubsup><mo>∏</mo><mrow><mi>l</mi><mo>=</mo><mn>1</mn></mrow><mi>L</mi></msubsup><msubsup><mo>∏</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><msub><mi>J</mi><mi>l</mi></msub></msubsup><msubsup><mi>q</mi><mrow><mi>k</mi><mo>,</mo><mi>l</mi><mo>,</mo><mi>j</mi></mrow><mrow><msubsup><mo>∑</mo><mrow><mi>m</mi><mo>=</mo><mn>1</mn></mrow><mi>M</mi></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>x</mi><mrow><mi>m</mi><mo>,</mo><mi>l</mi><mo>,</mo><mi>j</mi></mrow></msub><mo>⋅</mo><msub><mi>z</mi><mrow><mi>m</mi><mo>,</mo><mi>k</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msubsup></mrow><annotation encoding="application/x-tex">\propto \displaystyle \prod^{K}_{k=1} \prod^{L}_{l=1} \prod^{J_l}_{j=1} q^{\sum^{M}_{m=1} (x_{m,l,j} \cdot z_{m,k})}_{k,l,j}</annotation></semantics></math></p>
-<p>Deriving likelihood <span class="math inline">$p(\mx y|\mx q)$</span>
+<p>Deriving likelihood
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐲</mi><mo stretchy="false" form="prefix">|</mo><mi>𝐪</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">p(\mathbf y|\mathbf q)</annotation></semantics></math>
 is more straightforward. It is the product of relative frequency of
 multi-locus genotype for each population:</p>
-<p><span class="math inline">$p(\mx y|\mx q) \propto \displaystyle
-\prod^{K}_{k=1} \prod^{L}_{l=1} \prod^{J_l}_{j=1}
-q^{y_{k,l,j}}_{k,l,j}$</span></p>
-<p>And <span class="math inline">$p(q|\mx \beta)$</span> is Dirichlet
-prior distribution. Its probability density has a kernel<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;Without involving too much math, &lt;em&gt;kernel&lt;/em&gt; here
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐲</mi><mo stretchy="false" form="prefix">|</mo><mi>𝐪</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>∝</mo><msubsup><mo>∏</mo><mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow><mi>K</mi></msubsup><msubsup><mo>∏</mo><mrow><mi>l</mi><mo>=</mo><mn>1</mn></mrow><mi>L</mi></msubsup><msubsup><mo>∏</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><msub><mi>J</mi><mi>l</mi></msub></msubsup><msubsup><mi>q</mi><mrow><mi>k</mi><mo>,</mo><mi>l</mi><mo>,</mo><mi>j</mi></mrow><msub><mi>y</mi><mrow><mi>k</mi><mo>,</mo><mi>l</mi><mo>,</mo><mi>j</mi></mrow></msub></msubsup></mrow><annotation encoding="application/x-tex">p(\mathbf y|\mathbf q) \propto \displaystyle \prod^{K}_{k=1} \prod^{L}_{l=1} \prod^{J_l}_{j=1} q^{y_{k,l,j}}_{k,l,j}</annotation></semantics></math></p>
+<p>And
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>q</mi><mo stretchy="false" form="prefix">|</mo><mi>𝛃</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">p(q|\mathbf \beta)</annotation></semantics></math>
+is Dirichlet prior distribution. Its probability density has a kernel<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;Without involving too much math, &lt;em&gt;kernel&lt;/em&gt; here
 refers to what is left over after factoring out the constant from a
 probability density function (PDF). For example, The PDF of Dirichlet
-distribution is &lt;span class="math inline"&gt;$\frac{1}{B(\mx \alpha)}
-\displaystyle \prod^K_{i=1} x^{\alpha_i - 1}_i$&lt;/span&gt;. Beta function
-&lt;span class="math inline"&gt;$B(\mx \alpha)$&lt;/span&gt; can be factored out,
-and
+distribution is
+&lt;math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"&gt;&lt;semantics&gt;&lt;mrow&gt;&lt;mfrac&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;mrow&gt;&lt;mi&gt;B&lt;/mi&gt;&lt;mrow&gt;&lt;mo stretchy="true" form="prefix"&gt;(&lt;/mo&gt;&lt;mi&gt;𝛂&lt;/mi&gt;&lt;mo stretchy="true" form="postfix"&gt;)&lt;/mo&gt;&lt;/mrow&gt;&lt;/mrow&gt;&lt;/mfrac&gt;&lt;msubsup&gt;&lt;mo&gt;∏&lt;/mo&gt;&lt;mrow&gt;&lt;mi&gt;i&lt;/mi&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;/mrow&gt;&lt;mi&gt;K&lt;/mi&gt;&lt;/msubsup&gt;&lt;msubsup&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;mi&gt;i&lt;/mi&gt;&lt;mrow&gt;&lt;msub&gt;&lt;mi&gt;α&lt;/mi&gt;&lt;mi&gt;i&lt;/mi&gt;&lt;/msub&gt;&lt;mo&gt;−&lt;/mo&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;/mrow&gt;&lt;/msubsup&gt;&lt;/mrow&gt;&lt;annotation encoding="application/x-tex"&gt;\frac{1}{B(\mathbf \alpha)} \displaystyle \prod^K_{i=1} x^{\alpha_i - 1}_i&lt;/annotation&gt;&lt;/semantics&gt;&lt;/math&gt;.
+Beta function
+&lt;math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"&gt;&lt;semantics&gt;&lt;mrow&gt;&lt;mi&gt;B&lt;/mi&gt;&lt;mrow&gt;&lt;mo stretchy="true" form="prefix"&gt;(&lt;/mo&gt;&lt;mi&gt;𝛂&lt;/mi&gt;&lt;mo stretchy="true" form="postfix"&gt;)&lt;/mo&gt;&lt;/mrow&gt;&lt;/mrow&gt;&lt;annotation encoding="application/x-tex"&gt;B(\mathbf \alpha)&lt;/annotation&gt;&lt;/semantics&gt;&lt;/math&gt;
+can be factored out, and
 &lt;math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"&gt;&lt;semantics&gt;&lt;mrow&gt;&lt;msubsup&gt;&lt;mo&gt;∏&lt;/mo&gt;&lt;mrow&gt;&lt;mi&gt;i&lt;/mi&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;/mrow&gt;&lt;mi&gt;K&lt;/mi&gt;&lt;/msubsup&gt;&lt;msubsup&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;mi&gt;i&lt;/mi&gt;&lt;mrow&gt;&lt;msub&gt;&lt;mi&gt;α&lt;/mi&gt;&lt;mi&gt;i&lt;/mi&gt;&lt;/msub&gt;&lt;mo&gt;−&lt;/mo&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;/mrow&gt;&lt;/msubsup&gt;&lt;/mrow&gt;&lt;annotation encoding="application/x-tex"&gt;\displaystyle \prod^K_{i=1} x^{\alpha_i - 1}_i&lt;/annotation&gt;&lt;/semantics&gt;&lt;/math&gt;
-is the kernel.&lt;/p&gt;'><sup>6</sup></a> of <span class="math inline">$\mx q^{\mx \beta - 1}$</span>. We can express the
-likelihood as</p>
-<p><span class="math inline">$p(\mx q|\mx \beta) \propto \displaystyle
-\prod^{K}_{k=1} \prod^{L}_{l=1} \prod^{J_l}_{j=1} q^{\beta_{l,j} -
-1}_{k,l,j}$</span>.</p>
+is the kernel.&lt;/p&gt;'><sup>6</sup></a> of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>𝐪</mi><mrow><mi>𝛃</mi><mo>−</mo><mn>1</mn></mrow></msup><annotation encoding="application/x-tex">\mathbf q^{\mathbf \beta - 1}</annotation></semantics></math>.
+We can express the likelihood as</p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐪</mi><mo stretchy="false" form="prefix">|</mo><mi>𝛃</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>∝</mo><msubsup><mo>∏</mo><mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow><mi>K</mi></msubsup><msubsup><mo>∏</mo><mrow><mi>l</mi><mo>=</mo><mn>1</mn></mrow><mi>L</mi></msubsup><msubsup><mo>∏</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><msub><mi>J</mi><mi>l</mi></msub></msubsup><msubsup><mi>q</mi><mrow><mi>k</mi><mo>,</mo><mi>l</mi><mo>,</mo><mi>j</mi></mrow><mrow><msub><mi>β</mi><mrow><mi>l</mi><mo>,</mo><mi>j</mi></mrow></msub><mo>−</mo><mn>1</mn></mrow></msubsup></mrow><annotation encoding="application/x-tex">p(\mathbf q|\mathbf \beta) \propto \displaystyle \prod^{K}_{k=1} \prod^{L}_{l=1} \prod^{J_l}_{j=1} q^{\beta_{l,j} - 1}_{k,l,j}</annotation></semantics></math>.</p>
 <p>Put all the likelihoods together,</p>
-<p><span class="math inline">$p(\mx q|\mx x,\mx y,\mx z,\mx\beta)
-\propto p(\mx x|\mx z, \mx q) p(\mx y|\mx q) p(\mx
-q|\mx\beta)$</span></p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐪</mi><mo stretchy="false" form="prefix">|</mo><mi>𝐱</mi><mo>,</mo><mi>𝐲</mi><mo>,</mo><mi>𝐳</mi><mo>,</mo><mi>𝛃</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>∝</mo><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐱</mi><mo stretchy="false" form="prefix">|</mo><mi>𝐳</mi><mo>,</mo><mi>𝐪</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐲</mi><mo stretchy="false" form="prefix">|</mo><mi>𝐪</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐪</mi><mo stretchy="false" form="prefix">|</mo><mi>𝛃</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">p(\mathbf q|\mathbf x,\mathbf y,\mathbf z,\mathbf\beta) \propto p(\mathbf x|\mathbf z, \mathbf q) p(\mathbf y|\mathbf q) p(\mathbf q|\mathbf\beta)</annotation></semantics></math></p>
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>∝</mo><msubsup><mo>∏</mo><mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow><mi>K</mi></msubsup><msubsup><mo>∏</mo><mrow><mi>l</mi><mo>=</mo><mn>1</mn></mrow><mi>L</mi></msubsup><msubsup><mo>∏</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><msub><mi>J</mi><mi>l</mi></msub></msubsup><msubsup><mi>q</mi><mrow><mi>k</mi><mo>,</mo><mi>l</mi><mo>,</mo><mi>j</mi></mrow><mrow><msubsup><mo>∑</mo><mrow><mi>m</mi><mo>=</mo><mn>1</mn></mrow><mi>M</mi></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>x</mi><mrow><mi>m</mi><mo>,</mo><mi>l</mi><mo>,</mo><mi>j</mi></mrow></msub><mo>⋅</mo><msub><mi>z</mi><mrow><mi>m</mi><mo>,</mo><mi>k</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msubsup><mo>⋅</mo><msubsup><mo>∏</mo><mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow><mi>K</mi></msubsup><msubsup><mo>∏</mo><mrow><mi>l</mi><mo>=</mo><mn>1</mn></mrow><mi>L</mi></msubsup><msubsup><mo>∏</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><msub><mi>J</mi><mi>l</mi></msub></msubsup><msubsup><mi>q</mi><mrow><mi>k</mi><mo>,</mo><mi>l</mi><mo>,</mo><mi>j</mi></mrow><msub><mi>y</mi><mrow><mi>k</mi><mo>,</mo><mi>l</mi><mo>,</mo><mi>j</mi></mrow></msub></msubsup><mo>⋅</mo><msubsup><mo>∏</mo><mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow><mi>K</mi></msubsup><msubsup><mo>∏</mo><mrow><mi>l</mi><mo>=</mo><mn>1</mn></mrow><mi>L</mi></msubsup><msubsup><mo>∏</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><msub><mi>J</mi><mi>l</mi></msub></msubsup><msubsup><mi>q</mi><mrow><mi>k</mi><mo>,</mo><mi>l</mi><mo>,</mo><mi>j</mi></mrow><mrow><msub><mi>β</mi><mrow><mi>l</mi><mo>,</mo><mi>j</mi></mrow></msub><mo>−</mo><mn>1</mn></mrow></msubsup></mrow><annotation encoding="application/x-tex">\propto \displaystyle \prod^{K}_{k=1} \prod^{L}_{l=1} \prod^{J_l}_{j=1} q^{\sum^{M}_{m=1} (x_{m,l,j} \cdot z_{m,k})}_{k,l,j} \cdot \displaystyle \prod^{K}_{k=1} \prod^{L}_{l=1} \prod^{J_l}_{j=1} q^{y_{k,l,j}}_{k,l,j} \cdot \displaystyle \prod^{K}_{k=1} \prod^{L}_{l=1} \prod^{J_l}_{j=1} q^{\beta_{l,j} - 1}_{k,l,j}</annotation></semantics></math></p>
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>=</mo><msubsup><mo>∏</mo><mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow><mi>K</mi></msubsup><msubsup><mo>∏</mo><mrow><mi>l</mi><mo>=</mo><mn>1</mn></mrow><mi>L</mi></msubsup><msubsup><mo>∏</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><msub><mi>J</mi><mi>l</mi></msub></msubsup><msubsup><mi>q</mi><mrow><mi>k</mi><mo>,</mo><mi>l</mi><mo>,</mo><mi>j</mi></mrow><mrow><msubsup><mo>∑</mo><mrow><mi>m</mi><mo>=</mo><mn>1</mn></mrow><mi>M</mi></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>x</mi><mrow><mi>m</mi><mo>,</mo><mi>l</mi><mo>,</mo><mi>j</mi></mrow></msub><mo>⋅</mo><msub><mi>z</mi><mrow><mi>m</mi><mo>,</mo><mi>k</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><msub><mi>y</mi><mrow><mi>k</mi><mo>,</mo><mi>l</mi><mo>,</mo><mi>j</mi></mrow></msub><mo>+</mo><msub><mi>β</mi><mrow><mi>l</mi><mo>,</mo><mi>j</mi></mrow></msub><mo>−</mo><mn>1</mn></mrow></msubsup></mrow><annotation encoding="application/x-tex">= \displaystyle \prod^{K}_{k=1} \prod^{L}_{l=1} \prod^{J_l}_{j=1} q^{\sum^{M}_{m=1} (x_{m,l,j} \cdot z_{m,k}) + y_{k,l,j} + \beta_{l,j} - 1}_{k,l,j}</annotation></semantics></math></p>
 <p>It is <em>elementary</em> to recognize that
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mo>∏</mo><mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow><mi>K</mi></msubsup><msubsup><mo>∏</mo><mrow><mi>l</mi><mo>=</mo><mn>1</mn></mrow><mi>L</mi></msubsup><msubsup><mo>∏</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><msub><mi>J</mi><mi>l</mi></msub></msubsup><msubsup><mi>q</mi><mrow><mi>k</mi><mo>,</mo><mi>l</mi><mo>,</mo><mi>j</mi></mrow><mrow><msubsup><mo>∑</mo><mrow><mi>m</mi><mo>=</mo><mn>1</mn></mrow><mi>M</mi></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>x</mi><mrow><mi>m</mi><mo>,</mo><mi>l</mi><mo>,</mo><mi>j</mi></mrow></msub><mo>⋅</mo><msub><mi>z</mi><mrow><mi>m</mi><mo>,</mo><mi>k</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><msub><mi>y</mi><mrow><mi>k</mi><mo>,</mo><mi>l</mi><mo>,</mo><mi>j</mi></mrow></msub><mo>+</mo><msub><mi>β</mi><mrow><mi>l</mi><mo>,</mo><mi>j</mi></mrow></msub><mo>−</mo><mn>1</mn></mrow></msubsup></mrow><annotation encoding="application/x-tex">\displaystyle \prod^{K}_{k=1} \prod^{L}_{l=1} \prod^{J_l}_{j=1} q^{\sum^{M}_{m=1} (x_{m,l,j} \cdot z_{m,k}) + y_{k,l,j} + \beta_{l,j} - 1}_{k,l,j}</annotation></semantics></math>
 is the kernel for Dirichlet distribution. Hence,</p>
-<p><span class="math inline">$\mx q_{k,l}|\mx x,\mx y,\mx z,\mx\beta
-\sim Dirich(\displaystyle \sum^{M}_{m=1} x_{m,l,j} z_{m,k} + y_{k,l,j} +
-\beta_{l,j})$</span>.</p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>𝐪</mi><mrow><mi>k</mi><mo>,</mo><mi>l</mi></mrow></msub><mo stretchy="false" form="prefix">|</mo><mi>𝐱</mi><mo>,</mo><mi>𝐲</mi><mo>,</mo><mi>𝐳</mi><mo>,</mo><mi>𝛃</mi><mo>∼</mo><mi>D</mi><mi>i</mi><mi>r</mi><mi>i</mi><mi>c</mi><mi>h</mi><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mo>∑</mo><mrow><mi>m</mi><mo>=</mo><mn>1</mn></mrow><mi>M</mi></msubsup><msub><mi>x</mi><mrow><mi>m</mi><mo>,</mo><mi>l</mi><mo>,</mo><mi>j</mi></mrow></msub><msub><mi>z</mi><mrow><mi>m</mi><mo>,</mo><mi>k</mi></mrow></msub><mo>+</mo><msub><mi>y</mi><mrow><mi>k</mi><mo>,</mo><mi>l</mi><mo>,</mo><mi>j</mi></mrow></msub><mo>+</mo><msub><mi>β</mi><mrow><mi>l</mi><mo>,</mo><mi>j</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\mathbf q_{k,l}|\mathbf x,\mathbf y,\mathbf z,\mathbf\beta \sim Dirich(\displaystyle \sum^{M}_{m=1} x_{m,l,j} z_{m,k} + y_{k,l,j} + \beta_{l,j})</annotation></semantics></math>.</p>
 </div>
 <div class="section level4">
 <h4 id="conditional-distribution-ppz-alpha">Conditional distribution p(p|z,
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>)<a class="anchor" aria-label="anchor" href="#conditional-distribution-ppz-alpha"></a>
 </h4>
-<p>Using the same logic as previously, <span class="math inline">$p(\mx
-p|\mx z,\mx\alpha)$</span> is also Dirichlet-distributed due to a
-Dirichlet prior <span class="math inline">$p(\mx p|\mx\alpha)$</span>
-and a multinomial likelihood <span class="math inline">$p(\mx z|\mx
-p)$</span>.</p>
-<p><span class="math inline">$p(\mx p|\mx z,\mx\alpha) \propto p(\mx
-z|\mx p) p(\mx p|\mx\alpha)$</span></p>
+<p>Using the same logic as previously,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐩</mi><mo stretchy="false" form="prefix">|</mo><mi>𝐳</mi><mo>,</mo><mi>𝛂</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">p(\mathbf p|\mathbf z,\mathbf\alpha)</annotation></semantics></math>
+is also Dirichlet-distributed due to a Dirichlet prior
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐩</mi><mo stretchy="false" form="prefix">|</mo><mi>𝛂</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">p(\mathbf p|\mathbf\alpha)</annotation></semantics></math>
+and a multinomial likelihood
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐳</mi><mo stretchy="false" form="prefix">|</mo><mi>𝐩</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">p(\mathbf z|\mathbf p)</annotation></semantics></math>.</p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐩</mi><mo stretchy="false" form="prefix">|</mo><mi>𝐳</mi><mo>,</mo><mi>𝛂</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>∝</mo><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐳</mi><mo stretchy="false" form="prefix">|</mo><mi>𝐩</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐩</mi><mo stretchy="false" form="prefix">|</mo><mi>𝛂</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">p(\mathbf p|\mathbf z,\mathbf\alpha) \propto p(\mathbf z|\mathbf p) p(\mathbf p|\mathbf\alpha)</annotation></semantics></math></p>
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>∝</mo><msubsup><mo>∏</mo><mrow><mi>m</mi><mo>=</mo><mn>1</mn></mrow><mi>M</mi></msubsup><msubsup><mo>∏</mo><mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow><mi>K</mi></msubsup><msubsup><mi>p</mi><mi>k</mi><msub><mi>z</mi><mrow><mi>m</mi><mo>,</mo><mi>k</mi></mrow></msub></msubsup><mo>⋅</mo><msubsup><mo>∏</mo><mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow><mi>K</mi></msubsup><msubsup><mi>p</mi><mi>k</mi><mrow><msub><mi>α</mi><mi>k</mi></msub><mo>−</mo><mn>1</mn></mrow></msubsup></mrow><annotation encoding="application/x-tex">\propto \displaystyle \prod^{M}_{m=1} \prod^{K}_{k=1} p^{z_{m,k}}_k \cdot \prod^{K}_{k=1} p^{\alpha_k - 1}_k</annotation></semantics></math></p>
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>∝</mo><msubsup><mo>∏</mo><mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow><mi>K</mi></msubsup><msubsup><mi>p</mi><mi>k</mi><mrow><msubsup><mo>∑</mo><mrow><mi>m</mi><mo>=</mo><mn>1</mn></mrow><mi>M</mi></msubsup><msub><mi>z</mi><mrow><mi>m</mi><mo>,</mo><mi>k</mi></mrow></msub><mo>+</mo><msub><mi>α</mi><mi>k</mi></msub><mo>−</mo><mn>1</mn></mrow></msubsup></mrow><annotation encoding="application/x-tex">\propto \displaystyle \prod^{K}_{k=1} p^{\sum^M_{m=1}z_{m,k} + \alpha_k - 1}_k</annotation></semantics></math></p>
 <p>Once again, we recognize it as the kernel for Dirichlet
 distribution:</p>
-<p><span class="math inline">$\mx p|\mx z,\mx\alpha \sim
-Dirich(\displaystyle \sum^M_{m=1}z_{m,k} + \alpha_k)$</span></p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝐩</mi><mo stretchy="false" form="prefix">|</mo><mi>𝐳</mi><mo>,</mo><mi>𝛂</mi><mo>∼</mo><mi>D</mi><mi>i</mi><mi>r</mi><mi>i</mi><mi>c</mi><mi>h</mi><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mo>∑</mo><mrow><mi>m</mi><mo>=</mo><mn>1</mn></mrow><mi>M</mi></msubsup><msub><mi>z</mi><mrow><mi>m</mi><mo>,</mo><mi>k</mi></mrow></msub><mo>+</mo><msub><mi>α</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\mathbf p|\mathbf z,\mathbf\alpha \sim Dirich(\displaystyle \sum^M_{m=1}z_{m,k} + \alpha_k)</annotation></semantics></math></p>
 </div>
 <div class="section level4">
 <h4 id="algorithm">Algorithm<a class="anchor" aria-label="anchor" href="#algorithm"></a>
 </h4>
 <p>There is one more distribution to figure out before we can start our
 Gibbs sampler routine (and you thought we’re all set, lol). We would
-need to know how to sample <span class="math inline">$\mx z_m|\mx p, \mx
-q, \mx x_m$</span>, the population identity for individual fish
+need to know how to sample
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>𝐳</mi><mi>m</mi></msub><mo stretchy="false" form="prefix">|</mo><mi>𝐩</mi><mo>,</mo><mi>𝐪</mi><mo>,</mo><msub><mi>𝐱</mi><mi>m</mi></msub></mrow><annotation encoding="application/x-tex">\mathbf z_m|\mathbf p, \mathbf q, \mathbf x_m</annotation></semantics></math>,
+the population identity for individual fish
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math>
 (in components 1 and 2) given the population proportions and genotype.
 If the probability of fish
@@ -1150,47 +1207,52 @@ and the likelihood of observing relative frequency of genotype for fish
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math>
 in population
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>
-is <span class="math inline">$f(\mx x_m|\mx q_k)$</span>, then the
-probability of fish
+is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>𝐱</mi><mi>m</mi></msub><mo stretchy="false" form="prefix">|</mo><msub><mi>𝐪</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">f(\mathbf x_m|\mathbf q_k)</annotation></semantics></math>,
+then the probability of fish
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math>
 belong to population
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>
-given the population proportions and genotype is <span class="math inline">$\displaystyle \frac{p_k \cdot f(\mx x_m|\mx
-q_k)}{\sum^K_{k'=1}p_{k'} \cdot f(\mx x_m|\mx q_{k'})}$</span>. The
-denominator should sum to one, so we only need to calculate the
+given the population proportions and genotype is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mfrac><mrow><msub><mi>p</mi><mi>k</mi></msub><mo>⋅</mo><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>𝐱</mi><mi>m</mi></msub><mo stretchy="false" form="prefix">|</mo><msub><mi>𝐪</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><msubsup><mo>∑</mo><mrow><mi>k</mi><mi>′</mi><mo>=</mo><mn>1</mn></mrow><mi>K</mi></msubsup><msub><mi>p</mi><mrow><mi>k</mi><mi>′</mi></mrow></msub><mo>⋅</mo><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>𝐱</mi><mi>m</mi></msub><mo stretchy="false" form="prefix">|</mo><msub><mi>𝐪</mi><mrow><mi>k</mi><mi>′</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><annotation encoding="application/x-tex">\displaystyle \frac{p_k \cdot f(\mathbf x_m|\mathbf q_k)}{\sum^K_{k'=1}p_{k'} \cdot f(\mathbf x_m|\mathbf q_{k'})}</annotation></semantics></math>.
+The denominator should sum to one, so we only need to calculate the
 numerator.</p>
-<p><span class="math inline">$\mx z_m|\mx p, \mx q, \mx x_m$</span> has
-the following distribution:</p>
-<p><span class="math inline">$\mx z_m|\mx p, \mx q, \mx x_m \sim Mult(1,
-\mx{w}_m)$</span>,</p>
-<p>where <span class="math inline">$w_{m,k} = p_k \cdot f(\mx x_m|\mx
-q_k)$</span>. We draw the initial values for <span class="math inline">$\mx q_k$</span> based on its prior
-distribution.</p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>𝐳</mi><mi>m</mi></msub><mo stretchy="false" form="prefix">|</mo><mi>𝐩</mi><mo>,</mo><mi>𝐪</mi><mo>,</mo><msub><mi>𝐱</mi><mi>m</mi></msub></mrow><annotation encoding="application/x-tex">\mathbf z_m|\mathbf p, \mathbf q, \mathbf x_m</annotation></semantics></math>
+has the following distribution:</p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>𝐳</mi><mi>m</mi></msub><mo stretchy="false" form="prefix">|</mo><mi>𝐩</mi><mo>,</mo><mi>𝐪</mi><mo>,</mo><msub><mi>𝐱</mi><mi>m</mi></msub><mo>∼</mo><mi>M</mi><mi>u</mi><mi>l</mi><mi>t</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>,</mo><msub><mi>𝐰</mi><mi>m</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\mathbf z_m|\mathbf p, \mathbf q, \mathbf x_m \sim Mult(1, \mathbf{w}_m)</annotation></semantics></math>,</p>
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>w</mi><mrow><mi>m</mi><mo>,</mo><mi>k</mi></mrow></msub><mo>=</mo><msub><mi>p</mi><mi>k</mi></msub><mo>⋅</mo><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>𝐱</mi><mi>m</mi></msub><mo stretchy="false" form="prefix">|</mo><msub><mi>𝐪</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">w_{m,k} = p_k \cdot f(\mathbf x_m|\mathbf q_k)</annotation></semantics></math>.
+We draw the initial values for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>𝐪</mi><mi>k</mi></msub><annotation encoding="application/x-tex">\mathbf q_k</annotation></semantics></math>
+based on its prior distribution.</p>
 <p>Once we figured out all the pieces in the Gibbs sampler for the
 single baseline framework, we can extend the concept to a multistage
 framework. Conceptually, we use a Gibbs sampler to sample from the full
-conditionals of <span class="math inline">$\mx q$</span>, <span class="math inline">$\mx p$</span>, <span class="math inline">$\mx
-z$</span>, <span class="math inline">$\mx q^{(r)}$</span>, <span class="math inline">$\mx p^{(r)}$</span>, and <span class="math inline">$\mx z^{(r)}$</span>. The full conditional
-distributions of the broad-scale baseline in the multistage framework
-stay the same as their counterparts in a single baseline framework. The
-full conditional distributions for the Gibbs sampler at the regional
-stage are:</p>
-<p><span class="math inline">$\mx q^{(r)}_{k,l} | \mx x^{(r)},\mx
-y^{(r)},\mx z^{(r)},\mx\beta^{(r)} \sim Dirich(\displaystyle
-\sum^{M}_{m=1} x^{(r)}_{m,l,j} z^{(r)}_{m,k} + y^{(r)}_{k,l,j} +
-\beta^{(r)}_{l,j})$</span>,</p>
-<p><span class="math inline">$\mx p^{(r)} | \mx z^{(r)}, \mx z,
-\mx{\mathscr B}^{(r)}, \mx \alpha^{(r)} \sim Dirich(\displaystyle
-\sum^M_{m=1} (z^{(r)}_{m,k} | z_{m,b}, \mathscr B^{(r)}_{m,b}) +
-\alpha^{(r)}_k)$</span>,</p>
-<p>and <span class="math inline">$\mx z^{(r)}_m | \mx p^{(r)}, \mx
-q^{(r)}, \mx x^{(r)}_m \sim Mult(1, \mx{w}^{(r)}_m)$</span>,</p>
+conditionals of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐪</mi><annotation encoding="application/x-tex">\mathbf q</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐩</mi><annotation encoding="application/x-tex">\mathbf p</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐳</mi><annotation encoding="application/x-tex">\mathbf z</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>𝐪</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><annotation encoding="application/x-tex">\mathbf q^{(r)}</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>𝐩</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><annotation encoding="application/x-tex">\mathbf p^{(r)}</annotation></semantics></math>,
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>𝐳</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><annotation encoding="application/x-tex">\mathbf z^{(r)}</annotation></semantics></math>.
+The full conditional distributions of the broad-scale baseline in the
+multistage framework stay the same as their counterparts in a single
+baseline framework. The full conditional distributions for the Gibbs
+sampler at the regional stage are:</p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>𝐪</mi><mrow><mi>k</mi><mo>,</mo><mi>l</mi></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo stretchy="false" form="prefix">|</mo><msup><mi>𝐱</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><mo>,</mo><msup><mi>𝐲</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><mo>,</mo><msup><mi>𝐳</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><mo>,</mo><msup><mi>𝛃</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><mo>∼</mo><mi>D</mi><mi>i</mi><mi>r</mi><mi>i</mi><mi>c</mi><mi>h</mi><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mo>∑</mo><mrow><mi>m</mi><mo>=</mo><mn>1</mn></mrow><mi>M</mi></msubsup><msubsup><mi>x</mi><mrow><mi>m</mi><mo>,</mo><mi>l</mi><mo>,</mo><mi>j</mi></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><msubsup><mi>z</mi><mrow><mi>m</mi><mo>,</mo><mi>k</mi></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo>+</mo><msubsup><mi>y</mi><mrow><mi>k</mi><mo>,</mo><mi>l</mi><mo>,</mo><mi>j</mi></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo>+</mo><msubsup><mi>β</mi><mrow><mi>l</mi><mo>,</mo><mi>j</mi></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\mathbf q^{(r)}_{k,l} | \mathbf x^{(r)},\mathbf y^{(r)},\mathbf z^{(r)},\mathbf\beta^{(r)} \sim Dirich(\displaystyle \sum^{M}_{m=1} x^{(r)}_{m,l,j} z^{(r)}_{m,k} + y^{(r)}_{k,l,j} + \beta^{(r)}_{l,j})</annotation></semantics></math>,</p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>𝐩</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><mo stretchy="false" form="prefix">|</mo><msup><mi>𝐳</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><mo>,</mo><mi>𝐳</mi><mo>,</mo><msup><mi>ℬ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><mo>,</mo><msup><mi>𝛂</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><mo>∼</mo><mi>D</mi><mi>i</mi><mi>r</mi><mi>i</mi><mi>c</mi><mi>h</mi><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mo>∑</mo><mrow><mi>m</mi><mo>=</mo><mn>1</mn></mrow><mi>M</mi></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>z</mi><mrow><mi>m</mi><mo>,</mo><mi>k</mi></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo stretchy="false" form="prefix">|</mo><msub><mi>z</mi><mrow><mi>m</mi><mo>,</mo><mi>b</mi></mrow></msub><mo>,</mo><msubsup><mi>ℬ</mi><mrow><mi>m</mi><mo>,</mo><mi>b</mi></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><msubsup><mi>α</mi><mi>k</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\mathbf p^{(r)} | \mathbf z^{(r)}, \mathbf z, \mathbf{\mathscr B}^{(r)}, \mathbf \alpha^{(r)} \sim Dirich(\displaystyle \sum^M_{m=1} (z^{(r)}_{m,k} | z_{m,b}, \mathscr B^{(r)}_{m,b}) + \alpha^{(r)}_k)</annotation></semantics></math>,</p>
+<p>and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>𝐳</mi><mi>m</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo stretchy="false" form="prefix">|</mo><msup><mi>𝐩</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><mo>,</mo><msup><mi>𝐪</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><mo>,</mo><msubsup><mi>𝐱</mi><mi>m</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo>∼</mo><mi>M</mi><mi>u</mi><mi>l</mi><mi>t</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>,</mo><msubsup><mi>𝐰</mi><mi>m</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\mathbf z^{(r)}_m | \mathbf p^{(r)}, \mathbf q^{(r)}, \mathbf x^{(r)}_m \sim Mult(1, \mathbf{w}^{(r)}_m)</annotation></semantics></math>,</p>
 <p>where
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>w</mi><mrow><mi>m</mi><mo>,</mo><mi>k</mi></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo>∝</mo><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>p</mi><mi>k</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo>⋅</mo><msubsup><mo>∏</mo><mrow><mi>l</mi><mo>=</mo><mn>1</mn></mrow><mi>L</mi></msubsup><msubsup><mo>∏</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><msub><mi>J</mi><mi>l</mi></msub></msubsup><msubsup><msup><mi>q</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><mrow><mi>k</mi><mo>,</mo><mi>l</mi><mo>,</mo><mi>j</mi></mrow><msub><mi>x</mi><mrow><mi>m</mi><mo>,</mo><mi>l</mi><mo>,</mo><mi>j</mi></mrow></msub></msubsup><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">w^{(r)}_{m,k} \propto (p^{(r)}_k \cdot \displaystyle \prod^{L}_{l=1} \prod^{J_l}_{j=1} {q^{(r)}}^{x_{m,l,j}}_{k,l,j})</annotation></semantics></math>.</p>
-<p>We initiate the Gibbs sampler with starting values for <span class="math inline">$\mx p^{(0)}$</span>, <span class="math inline">$\mx
-q^{(0)}$</span>, <span class="math inline">$\mx {p^{(r)}}^{(0)}$</span>
-and <span class="math inline">$\mx {q^{(r)}}^{(0)}$</span> based on
-their prior distributions. We use subscript
+<p>We initiate the Gibbs sampler with starting values for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>𝐩</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo stretchy="true" form="postfix">)</mo></mrow></msup><annotation encoding="application/x-tex">\mathbf p^{(0)}</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>𝐪</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo stretchy="true" form="postfix">)</mo></mrow></msup><annotation encoding="application/x-tex">\mathbf q^{(0)}</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><msup><mi>𝐩</mi><mrow><mo stretchy="true" form="prefix" mathvariant="bold">(</mo><mi>𝐫</mi><mo stretchy="true" form="postfix" mathvariant="bold">)</mo></mrow></msup><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo stretchy="true" form="postfix">)</mo></mrow></msup><annotation encoding="application/x-tex">\mathbf {p^{(r)}}^{(0)}</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><msup><mi>𝐪</mi><mrow><mo stretchy="true" form="prefix" mathvariant="bold">(</mo><mi>𝐫</mi><mo stretchy="true" form="postfix" mathvariant="bold">)</mo></mrow></msup><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo stretchy="true" form="postfix">)</mo></mrow></msup><annotation encoding="application/x-tex">\mathbf {q^{(r)}}^{(0)}</annotation></semantics></math>
+based on their prior distributions. We use subscript
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi></mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><annotation encoding="application/x-tex">^{(t)}</annotation></semantics></math>
 to denote
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math><sup>th</sup>
@@ -1201,29 +1263,36 @@ proceeds as follows:</p>
 repeat</p>
 <ol style="list-style-type: decimal">
 <li><p>Determine the group memberships of mixture individuals at the
-broad-scale stage, <span class="math inline">$\mx z^{(t)}_m | \mx
-p^{(t-1)}, \mx q^{(t-1)}, \mx x_m \sim Mult(1,
-\mx{w}_m)$</span>.</p></li>
+broad-scale stage,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>𝐳</mi><mi>m</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo stretchy="false" form="prefix">|</mo><msup><mi>𝐩</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>−</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></msup><mo>,</mo><msup><mi>𝐪</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>−</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></msup><mo>,</mo><msub><mi>𝐱</mi><mi>m</mi></msub><mo>∼</mo><mi>M</mi><mi>u</mi><mi>l</mi><mi>t</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>,</mo><msub><mi>𝐰</mi><mi>m</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\mathbf z^{(t)}_m | \mathbf p^{(t-1)}, \mathbf q^{(t-1)}, \mathbf x_m \sim Mult(1, \mathbf{w}_m)</annotation></semantics></math>.</p></li>
 <li><p>Determine the group memberships of mixture individuals for each
-sub-region at the regional stage, <span class="math inline">${\mx
-z^{(r)}_m}^{(t)} | {\mx p^{(r)}}^{(t-1)}, {\mx q^{(r)}}^{(t-1)}, \mx
-x_m^{(r)} \sim Mult(1, \mx{w}^{(r)}_m)$</span>,
+sub-region at the regional stage,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><msubsup><mi>𝐳</mi><mi>m</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><mo stretchy="false" form="prefix">|</mo><msup><msup><mi>𝐩</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>−</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></msup><mo>,</mo><msup><msup><mi>𝐪</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>−</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></msup><mo>,</mo><msubsup><mi>𝐱</mi><mi>m</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo>∼</mo><mi>M</mi><mi>u</mi><mi>l</mi><mi>t</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>,</mo><msubsup><mi>𝐰</mi><mi>m</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">{\mathbf z^{(r)}_m}^{(t)} | {\mathbf p^{(r)}}^{(t-1)}, {\mathbf q^{(r)}}^{(t-1)}, \mathbf x_m^{(r)} \sim Mult(1, \mathbf{w}^{(r)}_m)</annotation></semantics></math>,
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi><mo>=</mo><mn>1</mn><mo>,</mo><mn>2</mn><mo>,</mo><mi>.</mi><mi>.</mi><mi>.</mi><mo>,</mo><mi>R</mi></mrow><annotation encoding="application/x-tex">r = 1, 2, ..., R</annotation></semantics></math>.</p></li>
-<li><p>Draw updated values, <span class="math inline">$\mx
-q^{(t)}$</span>, <span class="math inline">$\mx p^{(t)}$</span>, <span class="math inline">${{\mx q}^{(r)}}^{(t)}$</span> and <span class="math inline">${{\mx p}^{(r)}}^{(t)}$</span> from <span class="math inline">$p(\mx q | \mx x, \mx y, \mx z^{(t)}, \mx
-\beta)$</span>, <span class="math inline">$p(\mx p | \mx z^{(t)}, \mx
-\alpha)$</span>, <span class="math inline">$p(\mx q^{(r)} | \mx x^{(r)},
-\mx y^{(r)}, {\mx z^{(r)}}^{(t)}, \mx \beta^{(r)})$</span> and <span class="math inline">$p(\mx p^{(r)} | \mx {z^{(r)}}^{(t)}, \mx z^{(t)},
-\mx{\mathscr B}^{(r)}, \mx \alpha^{(r)})$</span> respectively.</p></li>
+<li><p>Draw updated values,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>𝐪</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><annotation encoding="application/x-tex">\mathbf q^{(t)}</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>𝐩</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><annotation encoding="application/x-tex">\mathbf p^{(t)}</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><msup><mi>𝐪</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><annotation encoding="application/x-tex">{{\mathbf q}^{(r)}}^{(t)}</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><msup><mi>𝐩</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><annotation encoding="application/x-tex">{{\mathbf p}^{(r)}}^{(t)}</annotation></semantics></math>
+from
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐪</mi><mo stretchy="false" form="prefix">|</mo><mi>𝐱</mi><mo>,</mo><mi>𝐲</mi><mo>,</mo><msup><mi>𝐳</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><mo>,</mo><mi>𝛃</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">p(\mathbf q | \mathbf x, \mathbf y, \mathbf z^{(t)}, \mathbf \beta)</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐩</mi><mo stretchy="false" form="prefix">|</mo><msup><mi>𝐳</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><mo>,</mo><mi>𝛂</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">p(\mathbf p | \mathbf z^{(t)}, \mathbf \alpha)</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>𝐪</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><mo stretchy="false" form="prefix">|</mo><msup><mi>𝐱</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><mo>,</mo><msup><mi>𝐲</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><mo>,</mo><msup><msup><mi>𝐳</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><mo>,</mo><msup><mi>𝛃</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">p(\mathbf q^{(r)} | \mathbf x^{(r)}, \mathbf y^{(r)}, {\mathbf z^{(r)}}^{(t)}, \mathbf \beta^{(r)})</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>𝐩</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><mo stretchy="false" form="prefix">|</mo><msup><msup><mi>𝐳</mi><mrow><mo stretchy="true" form="prefix" mathvariant="bold">(</mo><mi>𝐫</mi><mo stretchy="true" form="postfix" mathvariant="bold">)</mo></mrow></msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><mo>,</mo><msup><mi>𝐳</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><mo>,</mo><msup><mi>ℬ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><mo>,</mo><msup><mi>𝛂</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">p(\mathbf p^{(r)} | \mathbf {z^{(r)}}^{(t)}, \mathbf z^{(t)}, \mathbf{\mathscr B}^{(r)}, \mathbf \alpha^{(r)})</annotation></semantics></math>
+respectively.</p></li>
 </ol>
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>T</mi><annotation encoding="application/x-tex">T</annotation></semantics></math>
 should be large enough to ensure the simulations converge to the
 posterior distribution. Usually it takes thousands of iterations.
 Implementing the conditional GSI model only requires a slight
-modification from the above algorithm. <span class="math inline">$\mx
-q$</span> and <span class="math inline">$\mx q^{(r)}$</span> only need
-to be calculated once at the initial step without further updates,
-otherwise the procedures remain the same.</p>
+modification from the above algorithm.
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐪</mi><annotation encoding="application/x-tex">\mathbf q</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>𝐪</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><annotation encoding="application/x-tex">\mathbf q^{(r)}</annotation></semantics></math>
+only need to be calculated once at the initial step without further
+updates, otherwise the procedures remain the same.</p>
 </div>
 </div>
 </div>
