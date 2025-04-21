@@ -61,7 +61,7 @@ There's a function in the package to make trace plots and inspect mixing of chai
 
 ```{r example_trace_plot}
 
-tr_plot(obj = msgsi_out$trace_comb)
+tr_plot(obj = msgsi_out$trace_comb, pop_info = msgsi_out$comb_groups)
 
 ```
 

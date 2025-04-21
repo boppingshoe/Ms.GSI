@@ -43,7 +43,7 @@ msgsi_dat <-
   baseline1_data = base_templin, baseline2_data = base_yukon,
   pop1_info = templin_pops211, pop2_info = yukon_pops50, sub_group = 3:5)
 #> Compiling input data, may take a minute or two...
-#> Time difference of 9.442187 secs
+#> Time difference of 7.569319 secs
 ```
 
 Using the prepared input data, we run the model with four chains of 150
@@ -55,26 +55,26 @@ convergence diagnostics.
 ``` r
 
 msgsi_out <- msgsi_mdl(msgsi_dat, nreps = 150, nburn = 50, thin = 1, nchains = 4)
-#> Running model (and the category is... Snow Ball!)
-#> Time difference of 23.62524 secs
-#> June-09-2023 13:14
+#> Running model (and the category is... Femme Queen Vogue!)
+#> Time difference of 1.685267 secs
+#> April-21-2025 10:23
 
 msgsi_out$summ_comb
-#> # A tibble: 12 × 8
-#>    group                       mean  median      sd    ci.05   ci.95    GR n_eff
-#>    <chr>                      <dbl>   <dbl>   <dbl>    <dbl>   <dbl> <dbl> <dbl>
-#>  1 Russia                   2.90e-2 2.63e-2 0.0212  7.31e- 5 0.0702   1.13  92.8
-#>  2 Coastal West Alaska      1.34e-1 1.05e-1 0.135   1.23e-12 0.352    3.31  43.1
-#>  3 North Alaska Peninsula   1.95e-2 5.95e-3 0.0256  2.27e-13 0.0712   1.49  44.6
-#>  4 Northwest Gulf of Alaska 3.56e-1 3.54e-1 0.0792  2.12e- 1 0.480    1.35  89.6
-#>  5 Copper                   1.15e-3 2.53e-6 0.00330 6.33e-19 0.00686  1.05 272. 
-#>  6 Northeast Gulf of Alaska 8.12e-4 1.31e-6 0.00352 1.41e-20 0.00308  1.14 213. 
-#>  7 Coastal Southeast Alaska 2.17e-3 1.71e-5 0.00519 2.33e-15 0.0122   1.08 162. 
-#>  8 British Columbia         7.01e-4 1.46e-6 0.00203 6.21e-19 0.00481  1.01 355. 
-#>  9 WA/OR/CA                 6.22e-4 8.87e-7 0.00211 7.36e-18 0.00310  1.03 349. 
-#> 10 Lower Yukon              2.07e-1 2.17e-1 0.148   2.14e- 2 0.423    3.67 176. 
-#> 11 Middle Yukon             7.01e-2 6.68e-2 0.0224  3.93e- 2 0.111    1.09 436. 
-#> 12 Upper Yukon              1.79e-1 1.78e-1 0.0338  1.19e- 1 0.235    1.04 384.
+#> # A tibble: 12 × 9
+#>    group                 mean  median      sd    ci.05   ci.95    p0    GR n_eff
+#>    <chr>                <dbl>   <dbl>   <dbl>    <dbl>   <dbl> <dbl> <dbl> <dbl>
+#>  1 Russia             2.27e-2 1.91e-2 0.0213  8.31e-12 0.0634  0.11   1.35 102. 
+#>  2 Coastal West Alas… 9.83e-2 6.30e-2 0.110   1.21e-12 0.305   0.165  3.01  58.4
+#>  3 North Alaska Peni… 1.33e-2 9.47e-4 0.0204  1.06e-15 0.0535  0.265  1.20  58.8
+#>  4 Northwest Gulf of… 3.70e-1 3.72e-1 0.104   2.02e- 1 0.548   0      1.42  34.9
+#>  5 Copper             7.05e-4 6.04e-7 0.00258 1.49e-20 0.00433 0.49   1.01 336. 
+#>  6 Northeast Gulf of… 5.48e-4 1.08e-6 0.00195 1.11e-19 0.00258 0.475  1.02 400  
+#>  7 Coastal Southeast… 1.51e-3 3.36e-6 0.00449 4.26e-18 0.00948 0.415  1.10 183. 
+#>  8 British Columbia   6.31e-4 9.65e-7 0.00191 1.03e-18 0.00384 0.455  1.08 278. 
+#>  9 WA/OR/CA           5.13e-4 8.51e-7 0.00158 3.24e-18 0.00288 0.492  1.04 371. 
+#> 10 Lower Yukon        2.42e-1 2.58e-1 0.136   3.23e- 2 0.447   0      2.37 103. 
+#> 11 Middle Yukon       7.03e-2 6.85e-2 0.0229  3.61e- 2 0.110   0      1.03 433. 
+#> 12 Upper Yukon        1.79e-1 1.81e-1 0.0339  1.29e- 1 0.244   0      1.03 468.
 ```
 
 There’s a function in the package to make trace plots and inspect mixing
@@ -82,7 +82,7 @@ of chains.
 
 ``` r
 
-tr_plot(obj = msgsi_out$trace_comb)
+tr_plot(obj = msgsi_out$trace_comb, pop_info = msgsi_out$comb_groups)
 ```
 
 <img src="man/figures/README-example_trace_plot-1.png" width="100%" />
