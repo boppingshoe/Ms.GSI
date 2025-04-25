@@ -14,6 +14,8 @@
 #'   want to save the output.
 #' @param seed Random seed for reproducibility. Default is NULL (no random seed).
 #' @param iden_output Option to have trace history for individual assignments included in the final output. Default is TRUE.
+#' @param p1_prior_weight An optional tibble to specify weight for each broad-scale reporting group. Columns are `repunit`, `grpvec`, and `weight`.
+#' @param p2_prior_weight An optional tibble to specify weight for each regional reporting group. Columns are `repunit`, `grpvec`, and `weight`.
 #'
 #' @return A list contains reporting group proportion summary and trace for
 #'   tier 1 (summ_t1, trace_t1), tier 2 (summ_t2, trace_t2) and two tiers
@@ -35,7 +37,7 @@
 #' # run multistage model
 #' msgsi_out <- msgsi_mdl(msgsi_dat, nreps = 25, nburn = 15, thin = 1, nchains = 1)
 #'
-msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn = FALSE, cond_gsi = TRUE, file_path = NULL, seed = NULL, iden_output = TRUE) {
+msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn = FALSE, cond_gsi = TRUE, file_path = NULL, seed = NULL, iden_output = TRUE, p1_prior_weight = NULL, p2_prior_weight = NULL) {
 
   # save test file (specs) ----
   if(!is.null(file_path)) {
@@ -158,14 +160,23 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
   # rows = indiv, cols = pops
   freq[na_i, wildpops] <- exp(x[na_i,] %*% log(t_q[, 1:K]))
 
-  pPrior <- # alpha, hyper-param for p (pop props)
+  p_prior <- # alpha, hyper-param for p (pop props)
     (1 / table(grps) / max(grps))[grps]
 
+  if (!is.null(p1_prior_weight)) {
+    p_pr_wt <- p1_prior_weight %>%
+      dplyr::mutate(dplyr::across(weight, ~ replace(., . == 0, 1e-5))) %>%
+      dplyr::arrange(grpvec) %>%
+      dplyr::pull(weight)
+
+    p_prior <- prop.table(p_prior * p_pr_wt[grps])
+  }
+
   iden[na_i] <- unlist(lapply(na_i, function(m) {
-    sample(K, 1, FALSE, (pPrior * freq[m, ])[seq.int(K)]) # only for wild pops
+    sample(K, 1, FALSE, (p_prior * freq[m, ])[seq.int(K)]) # only for wild pops
   }))
 
-  p <- rdirich(table(iden) + pPrior)
+  p <- rdirich(table(iden) + p_prior)
 
   ## tier 2
   beta2  <-
@@ -188,16 +199,25 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
 
   freq2 <- exp(x2 %*% log(t_q2))
 
-  pPrior2 <- # alpha, hyper-param for p2 (pop props)
+  p2_prior <- # alpha, hyper-param for p2 (pop props)
     (1 / table(p2_grps) / max(p2_grps))[p2_grps]
 
+  if (!is.null(p2_prior_weight)) {
+    p2_pr_wt <- p2_prior_weight %>%
+      dplyr::mutate(dplyr::across(weight, ~ replace(., . == 0, 1e-5))) %>%
+      dplyr::arrange(grpvec) %>%
+      dplyr::pull(weight)
+
+    p2_prior <- prop.table(p2_prior * p2_pr_wt[p2_grps])
+  }
+
   iden2 <- apply(freq2, 1, function(frq_rw) {
-    sample(nrow(y2), 1, FALSE, (pPrior2 * frq_rw))
+    sample(nrow(y2), 1, FALSE, (p2_prior * frq_rw))
   })
 
   iden2 <- factor(iden2, levels = seq(nrow(y2)))
 
-  p2 <- rdirich(table(iden2[iden %in% which(grps %in% sub_grp)]) + pPrior2)
+  p2 <- rdirich(table(iden2[iden %in% which(grps %in% sub_grp)]) + p2_prior)
 
   # parallel chains ----
   out_list0 <- foreach::foreach(
@@ -255,7 +275,7 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
         i <- i + 1
       } # do this to help prevent no iden == sub_grp (when 1st tier markers are shit)
 
-      p <- rdirich(table(iden) + pPrior)
+      p <- rdirich(table(iden) + p_prior)
 
       iden2 <- apply(freq2, 1, function(frq_rw) {
         sample(nrow(y2), 1, FALSE, (p2 * frq_rw))
@@ -263,7 +283,7 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
 
       iden2 <- factor(iden2, levels = seq(nrow(y2)))
 
-      p2 <- rdirich(table(iden2[iden %in% which(grps %in% sub_grp)]) + pPrior2)
+      p2 <- rdirich(table(iden2[iden %in% which(grps %in% sub_grp)]) + p2_prior)
 
       # record output based on keep or not keep burn-ins
       if (rep > nadapt) { # after adaptation stage

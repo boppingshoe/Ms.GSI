@@ -17,7 +17,7 @@ Default is 1 (no thinning).}
 
 \item{pop_info}{Population information. A tibble with columns
 collection (collection names), repunit (reporting unit names),
-grpvec (group numbers), and optional origin (wild/hatchery).}
+and grpvec (group numbers).}
 }
 \value{
 Trace plot in ggplot
@@ -35,5 +35,5 @@ msgsi_dat <-
 msgsi_out <- msgsi_mdl(msgsi_dat, nreps = 25, nburn = 15, thin = 1, nchains = 1)
 
 # trace plot
-tr_plot(obj = msgsi_out$trace_comb)
+tr_plot(obj = msgsi_out$trace_comb, pop_info = msgsi_out$comb_groups)
 }

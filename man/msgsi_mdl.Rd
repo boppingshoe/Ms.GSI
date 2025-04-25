@@ -15,7 +15,9 @@ msgsi_mdl(
   cond_gsi = TRUE,
   file_path = NULL,
   seed = NULL,
-  iden_output = TRUE
+  iden_output = TRUE,
+  p1_prior_weight = NULL,
+  p2_prior_weight = NULL
 )
 }
 \arguments{
@@ -42,6 +44,10 @@ want to save the output.}
 \item{seed}{Random seed for reproducibility. Default is NULL (no random seed).}
 
 \item{iden_output}{Option to have trace history for individual assignments included in the final output. Default is TRUE.}
+
+\item{p1_prior_weight}{An optional tibble to specify weight for each broad-scale reporting group. Columns are \code{repunit}, \code{grpvec}, and \code{weight}.}
+
+\item{p2_prior_weight}{An optional tibble to specify weight for each regional reporting group. Columns are \code{repunit}, \code{grpvec}, and \code{weight}.}
 }
 \value{
 A list contains reporting group proportion summary and trace for
