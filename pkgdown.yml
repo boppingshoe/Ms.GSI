@@ -3,7 +3,7 @@ pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   msgsi_vignette: msgsi_vignette.html
-last_built: 2025-04-21T18:25Z
+last_built: 2025-04-25T19:09Z
 urls:
   reference: https://boppingshoe.github.io/Ms.GSI/reference
   article: https://boppingshoe.github.io/Ms.GSI/articles
