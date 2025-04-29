@@ -202,9 +202,9 @@ tr_plot(obj = msgsi_out$trace_comb, pop_info = msgsi_out$comb_groups)
 `stratified_estimator-msgsi()` can also combine variances of different sources for a single mixture. That is, if you want to convert your total harvest number (with CV provided) to harvest for individual reporting groups, `stratified_estimator-msgsi()` can do that. In this case, we use the example model output with a new grouping:
 
 ```{r}
-new_groups <- msgsi_out$summ_comb %>%
-  dplyr::select(group) %>%
-  dplyr::mutate(new_repunit = c(rep("Broad", 9), rep("Regional", 3))) %>%
+new_groups <- msgsi_out$summ_comb |>
+  dplyr::select(group) |>
+  dplyr::mutate(new_repunit = c(rep("Broad", 9), rep("Regional", 3))) |>
   dplyr::rename(repunit = group)
 
 stratified_estimator_msgsi(mdl_out = msgsi_out, mixvec = "Bering example",
