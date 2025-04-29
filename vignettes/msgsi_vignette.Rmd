@@ -1,10 +1,10 @@
 ---
-title: "*Ms.GSI* in the multistage of genetic stock identification madness"
+title: "Ms.GSI in the multistage of genetic stock identification madness"
 output:
   rmarkdown::html_vignette:
     toc: yes
 vignette: >
-  %\VignetteIndexEntry{*Ms.GSI* in the multistage of genetic stock identification madness}
+  %\VignetteIndexEntry{Ms.GSI in the multistage of genetic stock identification madness}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -17,8 +17,8 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-library(Ms.GSI)
-# devtools::load_all()
+# library(Ms.GSI)
+devtools::load_all()
 
 ```
 
@@ -145,7 +145,7 @@ msgsi_out <- msgsi_mdl(msgsi_dat, nreps = 150, nburn = 50, thin = 1, nchains = 1
 
 ### Stock proportions
 
-The output of model contains eight items: `summ_t1`, `trace_t1`, `summ_t2`, `trace_t2`, `summ_comb`, `trace_comb`, `comb_groups`, `iden_t1` and `idens_t2`. Items with "summ" are summary for reporting group proportions and associated convergence diagnostics. If you want to see summaries for stage one and two individually, `summ_t1` and `summ_t2` will show you that. Most people probably want to see the combined summary, `summ_comb`.
+The output of model contains nine items: `summ_t1`, `trace_t1`, `summ_t2`, `trace_t2`, `summ_comb`, `trace_comb`, `comb_groups`, `comb_groups`, `iden_t1` and `idens_t2`. Items with "summ" are summary for reporting group proportions and associated convergence diagnostics. If you want to see summaries for stage one and two individually, `summ_t1` and `summ_t2` will show you that. Most people probably want to see the combined summary, `summ_comb`.
 
 ```{r}
 
@@ -153,11 +153,11 @@ msgsi_out$summ_comb
 
 ```
 
-Most column names are self explanatory, but others might need some additional descriptions. `ci.05` and `ci.95` are the lower and upper bounds of 90% credible interval. `GR` is the Gelman-Rubin statistic (a.k.a. $\hat R$). In this example, Gelman-Rubin statistic is not calculated because we only run one chain. `n_eff` is the effective size, or $N_{eff}$. We will not discuss how to diagnose convergence in this document. Please consult Gelman et al. 2014, Gelman & Rubin 1992, Brooks & Gelman 1998 and other literature on statistical methods.
+Most column names are self explanatory, but others might need some additional descriptions. `ci.05` and `ci.95` are the lower and upper bounds of 90% credible interval. `p0` is the probability of an estimate equals zero. We estimate `p0` by calculating the portion of posterior samples that is less than $5 \times 10^{-7}$. `GR` is the Gelman-Rubin statistic (a.k.a. $\hat R$). In this example, Gelman-Rubin statistic is not calculated because we only run one chain. `n_eff` is the effective size, or $N_{eff}$. We will not discuss how to diagnose convergence in this document. Please consult Gelman et al. 2014, Gelman & Rubin 1992, Brooks & Gelman 1998 and other literature on statistical methods.
 
 Items with "trace" are the posterior sample history, or trace history, for either stage one, two, or combined. Trace history is needed for making trace plots. And if you need to combine reporting groups proportions or combine variance, trace histories are what you need. `trace_` items are tibbles with each collection as a column. There are two additional columns, `itr` and `chain`, to identify Markov chain Monte Carlo (MCMC) sampling iteration and chain.
 
-`comb_groups` are provided in the output as reference for trace plot and stratified estimator. Grouping for stage one and two can also be found in the input data.
+`comb_groups` are provided in the output as reference for functions making trace plots (`tr_plot()`) and stratified estimator (`stratified_estimator_msgsi()`). Grouping for stage one and two can also be found in the input data.
 
 ```{r}
 
@@ -183,7 +183,7 @@ indiv_assign(mdl_out = msgsi_out, mdl_dat = msgsi_dat)
 
 ```
 
-The summary for individual assignment has a column named `ID` that identifies each individual in the mixture. `Not regional` column shows the probability of an individual not belong to the group of interest, or, not from within region of focus. The rest of the columns are probabilities for the regional reporting groups. Probabilities in each row should sum up to one.
+The summary for individual assignment has a column named `ID` that identifies each individual in the mixture. The reporting groups represent the combined grouping of the broad and regional baselines. Probabilities in each row should sum up to one.
 
 ### Trace plot
 
@@ -194,6 +194,24 @@ The summary for individual assignment has a column named `ID` that identifies ea
 tr_plot(obj = msgsi_out$trace_comb, pop_info = msgsi_out$comb_groups)
 
 ```
+
+### Stratified estimator
+
+`stratified_estimator-msgsi()` function combines the stock group estimates of multiple mixtures (i.e., strata) weighted by harvest numbers or fishing efforts. It is designed to work in the same way as the `stratified_estimator_rubias()` function from the *GCLr* package by the GCL, although the input format is slightly different. To do so, you would save the *Ms.GSI* output for each mixture in a separate folder under your preferred directory, then specify the path by `stratified_estimator_rubias(path = ...)`.
+
+`stratified_estimator-msgsi()` can also combine variances of different sources for a single mixture. That is, if you want to convert your total harvest number (with CV provided) to harvest for individual reporting groups, `stratified_estimator-msgsi()` can do that. In this case, we use the example model output with a new grouping:
+
+```{r}
+new_groups <- msgsi_out$summ_comb %>%
+  dplyr::select(group) %>%
+  dplyr::mutate(new_repunit = c(rep("Broad", 9), rep("Regional", 3))) %>%
+  dplyr::rename(repunit = group)
+
+stratified_estimator_msgsi(mdl_out = msgsi_out, mixvec = "Bering example",
+                           catchvec = 500, cv = 0.1, new_pop_info = new_groups)
+
+```
+
 
 
 # Methods (math!)
