@@ -17,8 +17,8 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-# library(Ms.GSI)
-devtools::load_all()
+library(Ms.GSI)
+# devtools::load_all()
 
 ```
 
