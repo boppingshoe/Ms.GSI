@@ -3,6 +3,7 @@
 #'
 #' @param mdl_out Model output object name.
 #' @param mdl_dat Input data object name.
+#' @param show_broadscale_grps Set it to be `FALSE` if you want the proportions of broad-scale groups to be combined. Default = `TRUE`.
 #'
 #' @return Individual assignment summary
 #' @importFrom magrittr %>%
@@ -21,14 +22,13 @@
 #' # individual assignment summary
 #' ind_iden <- indiv_assign(msgsi_out, msgsi_dat)
 #'
-indiv_assign <- function(mdl_out, mdl_dat) {
+indiv_assign <- function(mdl_out, mdl_dat, show_broadscale_grps = TRUE) {
   p <- apply(mdl_out$idens_t1, 2,
              function (idens) {
                factor(idens, levels = seq(length(mdl_dat$groups$grpvec))) %>%
                  table(.) %>%
                  prop.table(.)
              }) %>% rowsum(., mdl_dat$groups$grpvec) %>% t()
-  pho <- rowSums(p[, mdl_dat$sub_group])
 
   pi <- apply(mdl_out$idens_t2, 2,
               function (idens) {
@@ -37,11 +37,25 @@ indiv_assign <- function(mdl_out, mdl_dat) {
                   prop.table(.)
               }) %>% rowsum(., mdl_dat$p2_groups$grpvec) %>% t()
 
+  if (show_broadscale_grps == TRUE) {
+    pho <- rowSums(p[, mdl_dat$sub_group])
+
     tidyr::tibble(ID = mdl_dat$x$indiv) %>%
-    dplyr::bind_cols({
-      cbind(p[, -mdl_dat$sub_group], pho * pi) %>%
-        as.data.frame() %>%
-        stats::setNames(c(mdl_dat$group_names_t1[-mdl_dat$sub_group], mdl_dat$group_names_t2))
-    })
+      dplyr::bind_cols({
+        cbind(p[, -mdl_dat$sub_group], pho * pi) %>%
+          as.data.frame() %>%
+          stats::setNames(c(mdl_dat$group_names_t1[-mdl_dat$sub_group], mdl_dat$group_names_t2))
+      })
+  } else {
+    pho <- apply(mdl_out$idens_t1, 2,
+                 function (idens) mean(idens %in% which(mdl_dat$groups %in% mdl_dat$sub_group)))
+
+    tidyr::tibble(ID = mdl_dat$x$indiv) %>%
+      dplyr::bind_cols({
+        cbind(1 - pho, pho * pi) %>%
+          as.data.frame() %>%
+          stats::setNames(c("Not regional", mdl_dat$group_names_t2))
+      })
+  }
 }
 
