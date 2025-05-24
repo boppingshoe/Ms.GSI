@@ -37,7 +37,9 @@ indiv_assign <- function(mdl_out, mdl_dat, show_t2_grps = TRUE) {
                   prop.table(.)
               }) %>% rowsum(., mdl_dat$p2_groups$grpvec) %>% t()
 
-  pho <- rowSums(p[, mdl_dat$sub_group])
+  # pho <- rowSums(p[, mdl_dat$sub_group])
+  pho <- apply(mdl_out$idens_t1, 2,
+               function (idens) mean(idens %in% which(mdl_dat$groups$grpvec %in% mdl_dat$sub_group)))
 
   if (show_t2_grps == TRUE) {
     tidyr::tibble(ID = mdl_dat$x$indiv) %>%
