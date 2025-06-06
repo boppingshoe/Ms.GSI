@@ -3,7 +3,7 @@
 #'
 #' @param mdl_out Model output object name.
 #' @param mdl_dat Input data object name.
-#' @param show_t2_grps Set it to be `FALSE` if you want the proportions of broad-scale groups to be combined. Default = `TRUE`.
+#' @param show_t1_grps Set it to be `FALSE` if you want the proportions of broad-scale groups to be combined. Default = `TRUE`.
 #'
 #' @return Individual assignment summary
 #' @importFrom magrittr %>%
@@ -22,7 +22,7 @@
 #' # individual assignment summary
 #' ind_iden <- indiv_assign(msgsi_out, msgsi_dat)
 #'
-indiv_assign <- function(mdl_out, mdl_dat, show_t2_grps = TRUE) {
+indiv_assign <- function(mdl_out, mdl_dat, show_t1_grps = TRUE) {
   p <- apply(mdl_out$idens_t1, 2,
              function (idens) {
                factor(idens, levels = seq(length(mdl_dat$groups$grpvec))) %>%

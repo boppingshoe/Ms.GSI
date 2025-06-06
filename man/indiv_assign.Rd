@@ -4,14 +4,14 @@
 \alias{indiv_assign}
 \title{Individual assignment summary}
 \usage{
-indiv_assign(mdl_out, mdl_dat, show_t2_grps = TRUE)
+indiv_assign(mdl_out, mdl_dat, show_t1_grps = TRUE)
 }
 \arguments{
 \item{mdl_out}{Model output object name.}
 
 \item{mdl_dat}{Input data object name.}
 
-\item{show_t2_grps}{Set it to be \code{FALSE} if you want the proportions of broad-scale groups to be combined. Default = \code{TRUE}.}
+\item{show_t1_grps}{Set it to be \code{FALSE} if you want the proportions of broad-scale groups to be combined. Default = \code{TRUE}.}
 }
 \value{
 Individual assignment summary
