@@ -41,7 +41,7 @@ indiv_assign <- function(mdl_out, mdl_dat, show_t1_grps = TRUE) {
   pho <- apply(mdl_out$idens_t1, 2,
                function (idens) mean(idens %in% which(mdl_dat$groups$grpvec %in% mdl_dat$sub_group)))
 
-  if (show_t2_grps == TRUE) {
+  if (show_t1_grps == TRUE) {
     tidyr::tibble(ID = mdl_dat$x$indiv) %>%
       dplyr::bind_cols({
         cbind(p[, -mdl_dat$sub_group], pho * pi) %>%
