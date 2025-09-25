@@ -16,6 +16,7 @@
 #' @param iden_output Option to have trace history for individual assignments included in the final output. Default is TRUE.
 #' @param p1_prior_weight An optional tibble to specify weight for each broad-scale reporting group. Columns are `repunit`, `grpvec`, and `weight`.
 #' @param p2_prior_weight An optional tibble to specify weight for each regional reporting group. Columns are `repunit`, `grpvec`, and `weight`.
+#' @param harvest An optional harvest number for calculating the probability of p = 0. A proportion is considered as 0 if it's less than 5e-7 by default. If harvest number is provided, p = 0 is calculated as 0.5 / harvest of that stock.
 #'
 #' @return A list contains reporting group proportion summary and trace for
 #'   tier 1 (summ_t1, trace_t1), tier 2 (summ_t2, trace_t2) and two tiers

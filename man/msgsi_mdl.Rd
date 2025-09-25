@@ -17,7 +17,8 @@ msgsi_mdl(
   seed = NULL,
   iden_output = TRUE,
   p1_prior_weight = NULL,
-  p2_prior_weight = NULL
+  p2_prior_weight = NULL,
+  harvest = NULL
 )
 }
 \arguments{
@@ -48,6 +49,8 @@ want to save the output.}
 \item{p1_prior_weight}{An optional tibble to specify weight for each broad-scale reporting group. Columns are \code{repunit}, \code{grpvec}, and \code{weight}.}
 
 \item{p2_prior_weight}{An optional tibble to specify weight for each regional reporting group. Columns are \code{repunit}, \code{grpvec}, and \code{weight}.}
+
+\item{harvest}{An optional harvest number for calculating the probability of p = 0. A proportion is considered as 0 if it's less than 5e-7 by default. If harvest number is provided, p = 0 is calculated as 0.5 / harvest of that stock.}
 }
 \value{
 A list contains reporting group proportion summary and trace for
