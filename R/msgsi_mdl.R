@@ -37,7 +37,7 @@
 #' # run multistage model
 #' msgsi_out <- msgsi_mdl(msgsi_dat, nreps = 25, nburn = 15, thin = 1, nchains = 1)
 #'
-msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn = FALSE, cond_gsi = TRUE, file_path = NULL, seed = NULL, iden_output = TRUE, p1_prior_weight = NULL, p2_prior_weight = NULL) {
+msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn = FALSE, cond_gsi = TRUE, file_path = NULL, seed = NULL, iden_output = TRUE, p1_prior_weight = NULL, p2_prior_weight = NULL, harvest = NULL) {
 
   # save test file (specs) ----
   if(!is.null(file_path)) {
@@ -346,7 +346,7 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
     lapply(p1_combo, function(rlist) coda::mcmc(rlist[keep_list,]))
     )
 
-  summ_pop1 <- summ_func(p1_combo, keep_list, mc_pop1, grp_names_t1, nchains)
+  summ_pop1 <- summ_func(p1_combo, keep_list, mc_pop1, grp_names_t1, nchains, harvest)
 
   ## tier 2
   out_list2 <- lapply(out_list0, function(ol) ol[[2]])
@@ -363,7 +363,13 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
     lapply(p2_combo, function(rlist) coda::mcmc(rlist[keep_list,]))
     )
 
-  summ_pop2 <- summ_func(p2_combo, keep_list, mc_pop2, grp_names_t2, nchains)
+  harvest2 <- if (is.null(harvest)) {
+    NULL
+  } else {
+    sum(summ_pop1$mean[sub_grp]) * harvest
+  }
+
+  summ_pop2 <- summ_func(p2_combo, keep_list, mc_pop2, grp_names_t2, nchains, harvest2)
 
   ## combine tiers
   out_list <- lapply(out_list0, function(ol) ol[[3]])
@@ -383,7 +389,7 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
     lapply(p_combo, function(rlist) coda::mcmc(rlist[keep_list,]))
     )
 
-  summ_pop <- summ_func(p_combo, keep_list, mc_pop, grp_names, nchains)
+  summ_pop <- summ_func(p_combo, keep_list, mc_pop, grp_names, nchains, harvest)
 
   # get output together
   msgsi_out <- list()
@@ -457,7 +463,7 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
 #' @param n_ch Number of MCMC chains
 #'
 #' @noRd
-summ_func <- function(combo_file, keeplist, mc_file, groupnames, n_ch) {
+summ_func <- function(combo_file, keeplist, mc_file, groupnames, n_ch, harv) {
 
   lapply(combo_file, function(rlist) rlist[keeplist, ]) %>%
     dplyr::bind_rows() %>%
@@ -468,7 +474,9 @@ summ_func <- function(combo_file, keeplist, mc_file, groupnames, n_ch) {
       sd = stats::sd(value),
       ci.05 = stats::quantile(value, 0.05),
       ci.95 = stats::quantile(value, 0.95),
-      p0 = mean(value < 5e-7),
+      # p0 = mean(value < 5e-7),
+      p0 = {if (is.null(harv)) mean(value < 5e-7)
+        else mean(value < (0.5/ max(1, harv * mean)))},
       .by = name
     ) %>%
     dplyr::mutate(
