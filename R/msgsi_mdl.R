@@ -42,8 +42,8 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
 
   # save test file (specs) ----
   if(!is.null(file_path)) {
-    specs <- data.frame(name = c("nreps", "nburn", "thin", "nchains", "keep_burn"),
-                        value = c(nreps, nburn, thin, nchains, keep_burn))
+    specs <- data.frame(name = c("nreps", "nburn", "thin", "nchains", "keep_burn", "seed", "harvest"),
+                        value = c(nreps, nburn, thin, nchains, keep_burn, seed, harvest))
     message(paste0("Ms.GSI specifications saved in ", file_path, "/msgsi_specs.csv"))
     readr::write_csv(specs, file = paste0(file_path, "/msgsi_specs.csv"))
   }
@@ -475,7 +475,6 @@ summ_func <- function(combo_file, keeplist, mc_file, groupnames, n_ch, harv) {
       sd = stats::sd(value),
       ci.05 = stats::quantile(value, 0.05),
       ci.95 = stats::quantile(value, 0.95),
-      # p0 = mean(value < 5e-7),
       p0 = {if (is.null(harv)) mean(value < 5e-7)
         else mean(value < (0.5/ max(1, harv * mean)))},
       .by = name
