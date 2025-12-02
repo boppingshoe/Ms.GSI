@@ -43,7 +43,7 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
   # save test file (specs) ----
   if(!is.null(file_path)) {
     specs <- data.frame(name = c("nreps", "nburn", "thin", "nchains", "keep_burn", "seed", "harvest"),
-                        value = c(nreps, nburn, thin, nchains, keep_burn, seed, ifelse(is.null(harvest), "NULL", harvest)))
+                        value = c(nreps, nburn, thin, nchains, keep_burn, ifelse(is.null(seed), "NULL", seed), ifelse(is.null(harvest), "NULL", harvest)))
     message(paste0("Ms.GSI specifications saved in ", file_path, "/msgsi_specs.csv"))
     readr::write_csv(specs, file = paste0(file_path, "/msgsi_specs.csv"))
   }
