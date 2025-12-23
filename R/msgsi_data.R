@@ -225,7 +225,7 @@ allefreq <- function(gble_in, gble_ref, loci, collect_by = indiv) {
     }) %>%
     as.vector()
 
-  gble_in %>%
+  allefreq_out = gble_in %>%
     dplyr::select(c({{ collect_by }}, dplyr::all_of(scores_cols))) %>%
     tidyr::pivot_longer(
       cols = -{{ collect_by }},
@@ -250,6 +250,14 @@ allefreq <- function(gble_in, gble_ref, loci, collect_by = indiv) {
     tidyr::pivot_wider(names_from = altyp, values_from = n) %>%
     dplyr::ungroup()
 
+  # if collect_by = indiv for mixture, preserve original indiv order
+  collect_by_name <- rlang::as_name(rlang::enquo(collect_by))
+  if(collect_by_name == "indiv") {
+    allefreq_out %>%
+      dplyr::arrange(match(indiv, unique(gble_in$indiv)))
+  } else {
+    allefreq_out
+  }
 }
 
 
