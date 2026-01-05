@@ -25,6 +25,7 @@ Imports:
     ggplot2,
     magrittr,
     parallel,
+    rlang,
     stats,
     stringr,
     tidyr

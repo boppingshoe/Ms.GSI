@@ -25,21 +25,21 @@
 indiv_assign <- function(mdl_out, mdl_dat, show_t1_grps = TRUE) {
   p <- apply(mdl_out$idens_t1, 2,
              function (idens) {
-               factor(idens, levels = seq(length(mdl_dat$groups$grpvec))) %>%
+               factor(idens, levels = seq(length(mdl_dat$groups_t1$grpvec))) %>%
                  table(.) %>%
                  prop.table(.)
-             }) %>% rowsum(., mdl_dat$groups$grpvec) %>% t()
+             }) %>% rowsum(., mdl_dat$groups_t1$grpvec) %>% t()
 
   pi <- apply(mdl_out$idens_t2, 2,
               function (idens) {
-                factor(idens, levels = seq(length(mdl_dat$p2_groups$grpvec))) %>%
+                factor(idens, levels = seq(length(mdl_dat$groups_t2$grpvec))) %>%
                   table(.) %>%
                   prop.table(.)
-              }) %>% rowsum(., mdl_dat$p2_groups$grpvec) %>% t()
+              }) %>% rowsum(., mdl_dat$groups_t2$grpvec) %>% t()
 
   # pho <- rowSums(p[, mdl_dat$sub_group])
   pho <- apply(mdl_out$idens_t1, 2,
-               function (idens) mean(idens %in% which(mdl_dat$groups$grpvec %in% mdl_dat$sub_group)))
+               function (idens) mean(idens %in% which(mdl_dat$groups_t1$grpvec %in% mdl_dat$sub_group)))
 
   if (show_t1_grps == TRUE) {
     tidyr::tibble(ID = mdl_dat$x$indiv) %>%

@@ -69,7 +69,20 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
     dplyr::select(order(colnames(.))) %>%
     as.matrix() # base 2
 
-  if (is.null(dat_in$iden)) iden <- rep(NA, nrow(x)) else iden <- dat_in$iden # iden info
+  # if (is.null(dat_in$iden)) iden <- rep(NA, nrow(x)) else iden <- dat_in$iden # iden info
+  # iden <- dat_in$iden$id
+  iden <- dplyr::select(dat_in$x, indiv) %>%
+    dplyr::left_join(dat_in$iden, by = "indiv") %>%
+    dplyr::mutate(id1 = factor(id1, levels = dat_in$y$collection) %>% as.numeric()) %>%
+    dplyr::pull(id1)
+  if(!"id2" %in% names(dat_in$iden)) {
+    iden2 <- rep(NA_character_, nrow(x2))
+  } else {
+    iden2 <- dplyr::select(dat_in$x2, indiv) %>%
+      dplyr::left_join(dat_in$iden, by = "indiv") %>%
+      dplyr::mutate(id2 = factor(id2, levels = dat_in$y2$collection) %>% as.numeric()) %>%
+      dplyr::pull(id2)
+  }
   nalleles <- dat_in$nalleles # number of allele types
   nalleles2 <- dat_in$nalleles2 # number of allele types
   grps <- dat_in$y$grpvec # vector id for the 1st tier reporting groups (aka groupvec)
@@ -90,6 +103,13 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
   na_i <- which(is.na(iden))
 
   iden <- factor(iden, levels = seq(K + H))
+
+  allpops2 <- dat_in$y2$collection
+  K2 <- length(allpops2)
+
+  na_i2 <- which(is.na(iden2))
+
+  iden2 <- factor(iden2, levels = seq(K2))
 
   trait_fac <- factor(rep(names(nalleles), nalleles), levels = names(nalleles))
 
@@ -198,7 +218,15 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
     }, simplify = FALSE)[names(nalleles2)])
   }) # transposed allele freq
 
-  freq2 <- exp(x2 %*% log(t_q2))
+  freq2 <- matrix(
+    0,
+    nrow = nrow(x),
+    ncol = K2,
+    dimnames = list(rownames(x), allpops2)
+  )
+
+  freq2[na_i2,] <- exp(x2[na_i2,] %*% log(t_q2))
+  # freq2 <- exp(x2 %*% log(t_q2))
 
   p2_prior <- # alpha, hyper-param for p2 (pop props)
     (1 / table(p2_grps) / max(p2_grps))[p2_grps]
@@ -212,11 +240,17 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
     p2_prior <- prop.table(p2_prior * p2_pr_wt[p2_grps])
   }
 
-  iden2 <- apply(freq2, 1, function(frq_rw) {
-    sample(nrow(y2), 1, FALSE, (p2_prior * frq_rw))
-  })
+  iden2[na_i2] <- unlist(lapply(na_i2, function(m) {
+    sample(K2, 1, FALSE, (p2_prior * freq2[m, ]))
+  }))
 
-  iden2 <- factor(iden2, levels = seq(nrow(y2)))
+  iden2 <- factor(iden2, levels = seq(K2))
+
+  # iden2 <- apply(freq2, 1, function(frq_rw) {
+  #   sample(nrow(y2), 1, FALSE, (p2_prior * frq_rw))
+  # })
+
+  # iden2 <- factor(iden2, levels = seq(nrow(y2)))
 
   p2 <- rdirich(table(iden2[iden %in% which(grps %in% sub_grp)]) + p2_prior)
 
@@ -259,7 +293,8 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
           unlist(tapply(rw, INDEX = trait_fac2, FUN = rdirich))
         })
 
-        freq2 <- exp(x2 %*% log(t_q2))
+        # freq2 <- exp(x2 %*% log(t_q2))
+        freq2[na_i2,] <- exp(x2[na_i2,] %*% log(t_q2))
 
       } # if no cond_gsi
 
@@ -278,11 +313,17 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
 
       p <- rdirich(table(iden) + p_prior)
 
-      iden2 <- apply(freq2, 1, function(frq_rw) {
-        sample(nrow(y2), 1, FALSE, (p2 * frq_rw))
-      })
+      # iden2 <- apply(freq2, 1, function(frq_rw) {
+      #   sample(nrow(y2), 1, FALSE, (p2 * frq_rw))
+      # })
+      #
+      # iden2 <- factor(iden2, levels = seq(nrow(y2)))
 
-      iden2 <- factor(iden2, levels = seq(nrow(y2)))
+      iden2[na_i2] <- unlist(lapply(na_i2, function(m) {
+        sample(K2, 1, FALSE, (p2_prior * freq2[m, ]))
+      }))
+
+      iden2 <- factor(iden2, levels = seq(K2))
 
       p2 <- rdirich(table(iden2[iden %in% which(grps %in% sub_grp)]) + p2_prior)
 
