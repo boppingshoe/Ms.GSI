@@ -62,7 +62,7 @@ print(dplyr::as_tibble(mix))
 
 Columns 5 to 358 contain genotype information for loci in **BOTH** broad-scale and regional baselines. You do not have to specify the loci for each baseline (you can if you want to double check, more on that later). *Ms.GSI* matches the loci between mixture and baselines as long as the locus names are consistent.
 
-If you have fish with known-origin, you can specify their identities by adding a column called `known_collection` in the mixture data set. The entry for known-origin should match the collection name in the broad-scale baseline. Fish with unknown-origin should have a `NA` entry.
+If you have fish with known-origin, you can specify their identities by adding columns called `known_collection_t1` and `known_collection_t2` for the broad-scale and regional baselines, respectively, in the mixture data set. The entry for known-origin should match the collection name in the baseline. Fish with unknown-origin should have a `NA` entry.
 
 ### Broad-scale baseline
 
