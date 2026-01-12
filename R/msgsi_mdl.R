@@ -48,8 +48,14 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
     readr::write_csv(specs, file = paste0(file_path, "/msgsi_specs.csv"))
   }
 
-  # Message categories ----
+  # ballroom categories ----
   categories <- c("Live, Werk, Pose", "Bring It Like Royalty", "Face", "Best Mother", "Best Dressed", "High Class In A Fur Coat", "Snow Ball", "Butch Queen Body", "Weather Girl", "Labels", "Mother-Daughter Realness", "Working Girl", "Linen Vs. Silk", "Perfect Tens", "Modele Effet", "Stone Cold Face", "Realness", "Intergalatic Best Dressed", "House Vs. House", "Femme Queen Vogue", "High Fashion In Feathers", "Femme Queen Runway", "Lofting", "Higher Than Heaven", "Once Upon A Time")
+
+  encouragements <- c("I'm proud of ", "keep your ", "be a ", "find strength in ", "worry will never change ", "work for a cause, not for ", "gradtitude turns what we have into ", "good things come to ", "your attitude determines your ", "the only limits in life are ", "find joy in ", "surround yourself with only ", "if oppotunity doesn't knock, build ")
+
+  message(paste0("Running model... and ", sample(encouragements, 1), sample(categories, 1), "!"))
+
+  run_time <- Sys.time()
 
   # data input ----
   x <- dat_in$x %>%
@@ -84,35 +90,34 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
       dplyr::pull(id2)
   }
   nalleles <- dat_in$nalleles # number of allele types
-  nalleles2 <- dat_in$nalleles2 # number of allele types
-  grps <- dat_in$y$grpvec # vector id for the 1st tier reporting groups (aka groupvec)
-  p2_grps <- dat_in$y2$grpvec # vector id for the 2nd tier reporting groups
+  nalleles2 <- dat_in$nalleles2
+
+  grps <- dat_in$y$grpvec # vector id for the reporting groups (aka groupvec)
+  p2_grps <- dat_in$y2$grpvec
+
   sub_grp <- dat_in$sub_group
+
   grp_names_t1 <- dat_in$group_names_t1
   grp_names_t2 <- dat_in$group_names_t2
-  grp_names <- c(grp_names_t1[-sub_grp], grp_names_t2) # reporting groups for final output
+
+  grp_names <- c(grp_names_t1[-sub_grp], grp_names_t2) # reporting groups for final combined output
 
   wildpops <- dat_in$wildpops
   K <- length(wildpops)
-
   hatcheries <- dat_in$hatcheries
   H <- length(hatcheries)
-
   allpops <- c(wildpops, hatcheries)
 
   na_i <- which(is.na(iden))
-
   iden <- factor(iden, levels = seq(K + H))
 
   allpops2 <- dat_in$y2$collection
   K2 <- length(allpops2)
 
   na_i2 <- which(is.na(iden2))
-
   iden2 <- factor(iden2, levels = seq(K2))
 
   trait_fac <- factor(rep(names(nalleles), nalleles), levels = names(nalleles))
-
   trait_fac2 <- factor(rep(names(nalleles2), nalleles2), levels = names(nalleles2))
 
   # specifications ----
@@ -126,9 +131,6 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
       rep(0, length(alpha0))
     }
   } # og random dirichlet by jj
-
-  message(paste0("Running model (and the category is... ", sample(categories, 1), "!)"))
-  run_time <- Sys.time()
 
   if (isTRUE(cond_gsi)) nadapt = 0
   n_burn <- ifelse(keep_burn, 0, nburn)
@@ -226,7 +228,6 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
   )
 
   freq2[na_i2,] <- exp(x2[na_i2,] %*% log(t_q2))
-  # freq2 <- exp(x2 %*% log(t_q2))
 
   p2_prior <- # alpha, hyper-param for p2 (pop props)
     (1 / table(p2_grps) / max(p2_grps))[p2_grps]
@@ -245,12 +246,6 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
   }))
 
   iden2 <- factor(iden2, levels = seq(K2))
-
-  # iden2 <- apply(freq2, 1, function(frq_rw) {
-  #   sample(nrow(y2), 1, FALSE, (p2_prior * frq_rw))
-  # })
-
-  # iden2 <- factor(iden2, levels = seq(nrow(y2)))
 
   p2 <- rdirich(table(iden2[iden %in% which(grps %in% sub_grp)]) + p2_prior)
 
@@ -293,7 +288,6 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
           unlist(tapply(rw, INDEX = trait_fac2, FUN = rdirich))
         })
 
-        # freq2 <- exp(x2 %*% log(t_q2))
         freq2[na_i2,] <- exp(x2[na_i2,] %*% log(t_q2))
 
       } # if no cond_gsi
@@ -313,12 +307,6 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
 
       p <- rdirich(table(iden) + p_prior)
 
-      # iden2 <- apply(freq2, 1, function(frq_rw) {
-      #   sample(nrow(y2), 1, FALSE, (p2 * frq_rw))
-      # })
-      #
-      # iden2 <- factor(iden2, levels = seq(nrow(y2)))
-
       iden2[na_i2] <- unlist(lapply(na_i2, function(m) {
         sample(K2, 1, FALSE, (p2_prior * freq2[m, ]))
       }))
@@ -332,13 +320,6 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
         if ((rep - nadapt) > n_burn & (rep - nadapt - n_burn) %% thin == 0) {
 
           it <- (rep - nadapt - n_burn) / thin
-          # trace output in reporting groups
-          # p_grp <- tapply(p, grps, sum)
-          # p2_grp <- tapply(p2, p2_grps, sum)
-          # p_out[[it]] <- c(p_grp, it, ch)
-          # p2_out[[it]] <- c(p2_grp, it, ch)
-          # pp2_out[[it]] <- c(p_grp[-sub_grp], p2_grp * sum(p_grp[sub_grp]), it, ch)
-
           # trace output in collections
           p_out[[it]] <- c(p, it, ch)
           p2_out[[it]] <- c(p2, it, ch)
@@ -470,7 +451,6 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
       dplyr::bind_rows()
   }
 
-  # if (!is.null(file_path)) save(msgsi_out, file = file_path)
   if (!is.null(file_path)) {
     message(paste("Ms.GSI output saved in", file_path))
     out_files <- c("summ_t1", "trace_t1", "summ_t2", "trace_t2", "summ_comb", "trace_comb", "comb_groups")
