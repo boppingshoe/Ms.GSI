@@ -148,17 +148,35 @@ prep_msgsi_data <-
 
     # iden if specified in mixture data
     if (any(grepl("known_", names(mixture_data)))) {
+      # iden <- mixture_data %>%
+      #   dplyr::select(tidyr::contains("known_")) %>%
+      #   dplyr::pull()
+      # if (!all(stats::na.omit(iden) %in% c(wildpops, hatcheries))) {
+      #   stop(c("Unidentified populations found in 'known_collection': ",
+      #          paste0(unique(stats::na.omit(iden)[which(!stats::na.omit(iden) %in% c(wildpops, hatcheries))]), ", ")))
+      # }
+      # iden <- factor(iden, levels = c(wildpops, hatcheries)) %>%
+      #   as.numeric()
       iden <- mixture_data %>%
-        dplyr::select(tidyr::contains("known_")) %>%
-        dplyr::pull()
-      if (!all(stats::na.omit(iden) %in% c(wildpops, hatcheries))) {
-        stop(c("Unidentified populations found in 'known_collection': ",
-               paste0(unique(stats::na.omit(iden)[which(!stats::na.omit(iden) %in% c(wildpops, hatcheries))]), ", ")))
+        dplyr::select(indiv, tidyr::contains("known_")) %>%
+        dplyr::rename(id1 = known_collection_t1)
+      if (!all(stats::na.omit(iden$id1) %in% c(wildpops, hatcheries))) {
+        stop(c("Unidentified populations found in 'known_collection_t1': ",
+               paste0(unique(stats::na.omit(iden$id1)[which(!stats::na.omit(iden$id1) %in% c(wildpops, hatcheries))]), ", ")))
       }
-      iden <- factor(iden, levels = c(wildpops, hatcheries)) %>%
-        as.numeric()
+      if("known_collection_t2" %in% colnames(iden)) {
+        iden <- iden %>%
+          dplyr::rename(id2 = known_collection_t2)
+        if (!all(stats::na.omit(iden$id2) %in% base2$collection)) {
+          stop(c("Unidentified populations found in 'known_collection_t2': ",
+                 paste0(unique(stats::na.omit(iden$id2)[which(!stats::na.omit(iden$id2) %in% base2$collection)]), ", ")))
+        }
+      }
     } else {
-      iden <- NULL
+      # iden <- NULL
+      iden <- mixture_data %>%
+        dplyr::select(indiv) %>%
+        dplyr::mutate(id1 = NA_character_)
     }
 
     # output
@@ -170,8 +188,8 @@ prep_msgsi_data <-
       iden = iden,
       nalleles = n_alleles_t1,
       nalleles2 = n_alleles_t2,
-      groups = dplyr::select(base1, collection, repunit, grpvec), # base1$grpvec,
-      p2_groups = dplyr::select(base2, collection, repunit, grpvec), # base2$grpvec,
+      groups_t1 = dplyr::select(base1, collection, repunit, grpvec), # base1$grpvec,
+      groups_t2 = dplyr::select(base2, collection, repunit, grpvec), # base2$grpvec,
       comb_groups = dplyr::select(base1, collection, repunit, grpvec) %>%
         dplyr::filter(!grpvec %in% sub_group) %>%
         dplyr::bind_rows({
@@ -225,7 +243,7 @@ allefreq <- function(gble_in, gble_ref, loci, collect_by = indiv) {
     }) %>%
     as.vector()
 
-  gble_in %>%
+  allefreq_out = gble_in %>%
     dplyr::select(c({{ collect_by }}, dplyr::all_of(scores_cols))) %>%
     tidyr::pivot_longer(
       cols = -{{ collect_by }},
@@ -250,6 +268,14 @@ allefreq <- function(gble_in, gble_ref, loci, collect_by = indiv) {
     tidyr::pivot_wider(names_from = altyp, values_from = n) %>%
     dplyr::ungroup()
 
+  # if collect_by = indiv for mixture, preserve original indiv order
+  collect_by_name <- rlang::as_name(rlang::enquo(collect_by))
+  if(collect_by_name == "indiv") {
+    allefreq_out %>%
+      dplyr::arrange(match(indiv, unique(gble_in$indiv)))
+  } else {
+    allefreq_out
+  }
 }
 
 
