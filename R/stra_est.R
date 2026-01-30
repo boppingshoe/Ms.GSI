@@ -68,18 +68,19 @@ stratified_estimator_msgsi <- function(mdl_out = NULL, path = NULL, mixvec, catc
   }) %>% dplyr::bind_rows() %>%
     tidyr::pivot_longer(-c(itr, chain, mix, harvest), names_to = "collection") %>%
     dplyr::left_join(grp_info, by = "collection") %>%
-    dplyr::summarise(p = sum(value), .by = c(repunit, itr, chain, mix, harvest)) %>%
-    dplyr::summarise(mean_harv = mean(p),
-                     sd_harv = stats::sd(p),
-                     median_harv = stats::median(p),
-                     ci05_harv = stats::quantile(p, 0.05),
-                     ci95_harv = stats::quantile(p, 0.95),
-                     mean = mean(p / harvest),
-                     sd = stats::sd(p / harvest),
-                     median = stats::median(p / harvest),
-                     ci05 = stats::quantile(p / harvest, 0.05),
-                     ci95 = stats::quantile(p / harvest, 0.95),
-                     `P=0` = mean(p < 0.5),
+    dplyr::summarise(harv_p = sum(value), .by = c(repunit, itr, chain)) %>%
+    dplyr::mutate(p = harv_p / sum(harv_p), .by = c(itr, chain)) %>%
+    dplyr::summarise(mean_harv = mean(harv_p),
+                     sd_harv = stats::sd(harv_p),
+                     median_harv = stats::median(harv_p),
+                     ci05_harv = stats::quantile(harv_p, 0.05),
+                     ci95_harv = stats::quantile(harv_p, 0.95),
+                     mean = mean(p),
+                     sd = stats::sd(p),
+                     median = stats::median(p),
+                     ci05 = stats::quantile(p, 0.05),
+                     ci95 = stats::quantile(p, 0.95),
+                     `P=0` = mean(harv_p < 0.5),
                      .by = c(repunit))
 
 }
