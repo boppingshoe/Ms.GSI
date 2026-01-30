@@ -105,11 +105,11 @@ msgsi_dat <-
   baseline1_data = base_templin, baseline2_data = base_yukon,
   pop1_info = templin_pops211, pop2_info = yukon_pops50, sub_group = 3:5)
 #> Compiling input data, may take a minute or two...
-#> Time difference of 9.005001 secs
+#> Time difference of 9.125312 secs
 
 # run multistage model
 msgsi_out <- msgsi_mdl(msgsi_dat, nreps = 25, nburn = 15, thin = 1, nchains = 1)
-#> Running model (and the category is... Femme Queen Runway!)
-#> Time difference of 1.43145 secs
-#> December-02-2025 01:41
+#> Running model... and surround yourself with only Perfect Tens!
+#> Time difference of 1.345426 secs
+#> January-30-2026 23:03
 ```

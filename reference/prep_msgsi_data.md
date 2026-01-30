@@ -75,5 +75,5 @@ msgsi_dat <-
   baseline1_data = base_templin, baseline2_data = base_yukon,
   pop1_info = templin_pops211, pop2_info = yukon_pops50, sub_group = 3:5)
 #> Compiling input data, may take a minute or two...
-#> Time difference of 9.135107 secs
+#> Time difference of 9.23191 secs
 ```

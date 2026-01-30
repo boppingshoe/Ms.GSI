@@ -42,12 +42,12 @@ msgsi_dat <-
   baseline1_data = base_templin, baseline2_data = base_yukon,
   pop1_info = templin_pops211, pop2_info = yukon_pops50, sub_group = 3:5)
 #> Compiling input data, may take a minute or two...
-#> Time difference of 9.009824 secs
+#> Time difference of 9.22858 secs
 
 msgsi_out <- msgsi_mdl(msgsi_dat, nreps = 25, nburn = 15, thin = 1, nchains = 1)
-#> Running model (and the category is... Femme Queen Vogue!)
-#> Time difference of 1.425168 secs
-#> December-02-2025 01:42
+#> Running model... and gradtitude turns what we have into Stone Cold Face!
+#> Time difference of 1.341786 secs
+#> January-30-2026 23:03
 
 # trace plot
 tr_plot(obj = msgsi_out$trace_comb, pop_info = msgsi_out$comb_groups)

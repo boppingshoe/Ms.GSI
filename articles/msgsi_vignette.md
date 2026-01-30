@@ -120,9 +120,10 @@ later). *Ms.GSI* matches the loci between mixture and baselines as long
 as the locus names are consistent.
 
 If you have fish with known-origin, you can specify their identities by
-adding a column called `known_collection` in the mixture data set. The
-entry for known-origin should match the collection name in the
-broad-scale baseline. Fish with unknown-origin should have a `NA` entry.
+adding columns called `known_collection_t1` and `known_collection_t2`
+for the broad-scale and regional baselines, respectively, in the mixture
+data set. The entry for known-origin should match the collection name in
+the baseline. Fish with unknown-origin should have a `NA` entry.
 
 #### Broad-scale baseline
 
@@ -276,7 +277,7 @@ msgsi_dat <-
   baseline1_data = base_templin, baseline2_data = base_yukon,
   pop1_info = templin_pops211, pop2_info = yukon_pops50, sub_group = 3:5)
 #> Compiling input data, may take a minute or two...
-#> Time difference of 9.453304 secs
+#> Time difference of 9.600968 secs
 ```
 
 [`prep_msgsi_data()`](https://boppingshoe.github.io/Ms.GSI/reference/prep_msgsi_data.md)
@@ -289,14 +290,14 @@ Here are the first few rows/items in the input data list:
 lapply(msgsi_dat, head)
 #> $x
 #> # A tibble: 6 × 57
-#>   indiv    `GTH2B-550_1` `GTH2B-550_2` NOD1_1 NOD1_2 `Ots_2KER-137_1`
-#>   <chr>            <int>         <int>  <int>  <int>            <int>
-#> 1 fish_1               1             1      2      0                0
-#> 2 fish_10              1             1      0      0                1
-#> 3 fish_100             1             1      1      1                1
-#> 4 fish_101             1             1      1      1                1
-#> 5 fish_102             0             2      0      2                0
-#> 6 fish_103             2             0      1      1                1
+#>   indiv  `GTH2B-550_1` `GTH2B-550_2` NOD1_1 NOD1_2 `Ots_2KER-137_1`
+#>   <chr>          <int>         <int>  <int>  <int>            <int>
+#> 1 fish_1             1             1      2      0                0
+#> 2 fish_2             2             0      1      1                0
+#> 3 fish_3             2             0      1      1                0
+#> 4 fish_4             2             0      2      0                0
+#> 5 fish_5             1             1      1      1                0
+#> 6 fish_6             2             0      1      1                0
 #> # ℹ 51 more variables: `Ots_2KER-137_2` <int>, `Ots_AsnRS-72_1` <int>,
 #> #   `Ots_AsnRS-72_2` <int>, Ots_ETIF1A_1 <int>, Ots_ETIF1A_2 <int>,
 #> #   `Ots_GPH-318_1` <int>, `Ots_GPH-318_2` <int>, `Ots_GST-207_1` <int>,
@@ -307,14 +308,14 @@ lapply(msgsi_dat, head)
 #> 
 #> $x2
 #> # A tibble: 6 × 355
-#>   indiv    `GTH2B-550_1` `GTH2B-550_2` NOD1_1 NOD1_2 `Ots_100884-287_1`
-#>   <chr>            <int>         <int>  <int>  <int>              <int>
-#> 1 fish_1               1             1      2      0                  2
-#> 2 fish_10              1             1      0      0                  0
-#> 3 fish_100             1             1      1      1                  1
-#> 4 fish_101             1             1      1      1                  2
-#> 5 fish_102             2             0      0      2                  1
-#> 6 fish_103             0             2      1      1                  1
+#>   indiv  `GTH2B-550_1` `GTH2B-550_2` NOD1_1 NOD1_2 `Ots_100884-287_1`
+#>   <chr>          <int>         <int>  <int>  <int>              <int>
+#> 1 fish_1             1             1      2      0                  2
+#> 2 fish_2             0             2      1      1                  2
+#> 3 fish_3             0             2      1      1                  1
+#> 4 fish_4             0             2      2      0                  1
+#> 5 fish_5             1             1      1      1                  2
+#> 6 fish_6             0             2      1      1                  1
 #> # ℹ 349 more variables: `Ots_100884-287_2` <int>, `Ots_101554-407_1` <int>,
 #> #   `Ots_101554-407_2` <int>, `Ots_102414-395_1` <int>,
 #> #   `Ots_102414-395_2` <int>, `Ots_102867-609_1` <int>,
@@ -360,7 +361,15 @@ lapply(msgsi_dat, head)
 #> #   `Ots_104048-194_2` <int>, `Ots_104063-132_1` <int>, …
 #> 
 #> $iden
-#> NULL
+#> # A tibble: 6 × 2
+#>   indiv  id1  
+#>   <chr>  <chr>
+#> 1 fish_1 NA   
+#> 2 fish_2 NA   
+#> 3 fish_3 NA   
+#> 4 fish_4 NA   
+#> 5 fish_5 NA   
+#> 6 fish_6 NA   
 #> 
 #> $nalleles
 #>    GTH2B-550         NOD1 Ots_2KER-137 Ots_AsnRS-72   Ots_ETIF1A  Ots_GPH-318 
@@ -372,7 +381,7 @@ lapply(msgsi_dat, head)
 #> Ots_102867-609 
 #>              2 
 #> 
-#> $groups
+#> $groups_t1
 #> # A tibble: 6 × 3
 #>   collection                      repunit                  grpvec
 #>   <chr>                           <chr>                     <dbl>
@@ -383,7 +392,7 @@ lapply(msgsi_dat, head)
 #> 5 CHKOG92.KIKOG93.KKOGR05         Coastal West Alaska           2
 #> 6 CHNUU92.KINUS93                 Coastal West Alaska           2
 #> 
-#> $p2_groups
+#> $groups_t2
 #> # A tibble: 6 × 3
 #>   collection                repunit      grpvec
 #>   <chr>                     <chr>         <dbl>
@@ -456,9 +465,9 @@ seed for reproducible results. We don’t show them in this example though
 ``` r
 
 msgsi_out <- msgsi_mdl(msgsi_dat, nreps = 150, nburn = 50, thin = 1, nchains = 1)
-#> Running model (and the category is... Linen Vs. Silk!)
-#> Time difference of 2.195146 secs
-#> December-02-2025 01:42
+#> Running model... and if oppotunity doesn't knock, build Lofting!
+#> Time difference of 2.116536 secs
+#> January-30-2026 23:03
 ```
 
 ### Summarizing results
@@ -477,20 +486,20 @@ see the combined summary, `summ_comb`.
 
 msgsi_out$summ_comb
 #> # A tibble: 12 × 9
-#>    group                mean  median      sd    ci.05   ci.95    p0 GR     n_eff
-#>    <chr>               <dbl>   <dbl>   <dbl>    <dbl>   <dbl> <dbl> <lgl>  <dbl>
-#>  1 Russia            5.21e-2 4.82e-2 0.0203  2.29e- 2 0.0857   0    NA     45.4 
-#>  2 Coastal West Ala… 7.27e-2 7.15e-2 0.0560  2.55e-12 0.179    0.12 NA      7.96
-#>  3 North Alaska Pen… 3.59e-2 3.45e-2 0.0197  1.11e- 2 0.0720   0    NA     29.1 
-#>  4 Northwest Gulf o… 3.10e-1 3.10e-1 0.0593  2.14e- 1 0.410    0    NA     23.2 
-#>  5 Copper            1.50e-3 6.36e-6 0.00398 3.16e-21 0.00856  0.39 NA     67.8 
-#>  6 Northeast Gulf o… 1.38e-3 6.74e-7 0.00424 1.53e-16 0.00783  0.48 NA     59.2 
-#>  7 Coastal Southeas… 6.10e-4 1.70e-6 0.00202 4.02e-16 0.00296  0.44 NA    100   
-#>  8 British Columbia  5.57e-4 3.83e-7 0.00214 2.25e-19 0.00245  0.5  NA    100   
-#>  9 WA/OR/CA          6.68e-4 1.32e-5 0.00161 2.55e-17 0.00413  0.38 NA    100   
-#> 10 Lower Yukon       2.56e-1 2.60e-1 0.0645  1.56e- 1 0.358    0    NA     17.2 
-#> 11 Middle Yukon      7.60e-2 7.59e-2 0.0222  4.66e- 2 0.122    0    NA    100   
-#> 12 Upper Yukon       1.93e-1 1.88e-1 0.0321  1.42e- 1 0.240    0    NA    100
+#>    group                 mean  median      sd    ci.05   ci.95    p0 GR    n_eff
+#>    <chr>                <dbl>   <dbl>   <dbl>    <dbl>   <dbl> <dbl> <lgl> <dbl>
+#>  1 Russia             4.89e-2 4.64e-2 0.0183  2.09e- 2 0.0819   0    NA     68.1
+#>  2 Coastal West Alas… 3.56e-2 3.20e-2 0.0344  1.21e-10 0.0984   0.14 NA     10.6
+#>  3 North Alaska Peni… 3.06e-2 2.52e-2 0.0218  4.39e- 3 0.0742   0.03 NA     26.2
+#>  4 Northwest Gulf of… 2.83e-1 2.83e-1 0.0503  2.02e- 1 0.360    0    NA     36.7
+#>  5 Copper             8.95e-4 1.48e-6 0.00299 2.86e-14 0.00437  0.48 NA     63.5
+#>  6 Northeast Gulf of… 6.73e-4 2.77e-7 0.00318 4.00e-23 0.00316  0.52 NA     65.9
+#>  7 Coastal Southeast… 2.06e-3 6.40e-6 0.00507 5.50e-19 0.00934  0.4  NA     38.8
+#>  8 British Columbia   4.36e-4 2.82e-6 0.00153 3.74e-18 0.00332  0.43 NA    100  
+#>  9 WA/OR/CA           4.90e-4 6.07e-6 0.00144 4.64e-19 0.00206  0.4  NA    100  
+#> 10 Lower Yukon        3.30e-1 3.33e-1 0.0683  2.19e- 1 0.449    0    NA     19.2
+#> 11 Middle Yukon       8.22e-2 8.27e-2 0.0243  4.62e- 2 0.115    0    NA    100  
+#> 12 Upper Yukon        1.85e-1 1.83e-1 0.0335  1.30e- 1 0.241    0    NA    139.
 ```
 
 Most column names are self explanatory, but others might need some
@@ -526,16 +535,16 @@ msgsi_out$trace_comb
 #> # A tibble: 100 × 238
 #>    CHBIG92.KIBIG93.KBIGB04.KBIGB95 CHCRY92.KICRY94.KCRYA05 CHDMT92.KDEER94
 #>                              <dbl>                   <dbl>           <dbl>
-#>  1                       2.65e-  3               3.74e-223       8.74e- 41
-#>  2                       1.49e-  2               9.40e- 82       1.64e- 39
-#>  3                       4.62e-  3               1.47e-102       9.82e- 99
-#>  4                       3.60e-125               2.03e- 34       2.85e-176
-#>  5                       2.80e- 38               7.29e- 58       2.79e- 72
-#>  6                       7.57e- 87               9.73e-231       3.04e- 24
-#>  7                       7.36e- 27               7.77e- 22       3.52e-  8
-#>  8                       1.16e- 47               1.75e-164       3.04e-154
-#>  9                       9.03e- 29               1.23e-245       2.33e- 17
-#> 10                       1.61e- 40               4.42e-320       2.06e- 22
+#>  1                        5.84e-18               2.84e- 39       2.39e- 13
+#>  2                        3.08e-88               2.97e- 24       8.34e- 29
+#>  3                        1.11e-57               9.30e- 66       9.07e-147
+#>  4                        4.36e-22               3.27e-188       3.21e- 19
+#>  5                        2.32e-18               2.23e-308       1.18e-101
+#>  6                        5.31e-57               1.24e- 61       2.23e-308
+#>  7                        1.17e-24               1.54e-242       7.33e- 55
+#>  8                        8.94e-37               7.34e-125       2.23e-188
+#>  9                        2.72e-97               1.55e-207       2.23e-308
+#> 10                        3.40e-13               2.23e-308       3.79e-202
 #> # ℹ 90 more rows
 #> # ℹ 235 more variables: CHKAN92.KIKAN93.KKANE05 <dbl>,
 #> #   CHKOG92.KIKOG93.KKOGR05 <dbl>, CHNUU92.KINUS93 <dbl>,
@@ -561,16 +570,16 @@ msgsi_out$idens_t1
 #> # A tibble: 100 × 150
 #>       V1    V2    V3    V4    V5    V6    V7    V8    V9   V10   V11   V12   V13
 #>    <int> <int> <int> <int> <int> <int> <int> <int> <int> <int> <int> <int> <int>
-#>  1   200   200    11    97    97   125    97   101   101   114    11   157    11
-#>  2   200    32    21    87   114    11    97    32   200   114    97   200   200
-#>  3   200    11    21    87   101   125    97    87    97   114    11   200    11
-#>  4    11   200    21    87   101    11    97   200    11   114    11   200    11
-#>  5    11    11    21    32   101   125    97   200    97   101    11    11    11
-#>  6    87    97    21    87    32   125    97    32   101    87    11    32   200
-#>  7    11    87    21    11   101   125    97    32   200   114    11   157    11
-#>  8    32    21    21    87    87   125    97    87    97   114    97    11    11
-#>  9    87    87    21    87   200   125    97    32    32   114    87   101    11
-#> 10   200    97    21   101    97   200    97    87    32    87    11    97   200
+#>  1    11    11    22    11   202    11    25    11    11   152    11    11    11
+#>  2    11    11   202    11    11    11    11    25   202   202    11    11    11
+#>  3    11    11   202    11   202    11    11    11    11    35    11    11    11
+#>  4    11    11    22    11    11    11    11   202   202    25    11    11    11
+#>  5   202    11    11    11   202    11    22    25   202   202    11    11   125
+#>  6    11    11    22    11    11    11    11    25   202    22    11    11    11
+#>  7   202    11    11    11    11   202    11    25   202    11    11    11    11
+#>  8    11    11   202    35   202    11    11    25    11   125    11    11    11
+#>  9    11    11    22    11    11    11    11    11   202    11    11    11    11
+#> 10    11    11   202    11   202    11    11    11    11   202    11    11    11
 #> # ℹ 90 more rows
 #> # ℹ 137 more variables: V14 <int>, V15 <int>, V16 <int>, V17 <int>, V18 <int>,
 #> #   V19 <int>, V20 <int>, V21 <int>, V22 <int>, V23 <int>, V24 <int>,
@@ -590,18 +599,18 @@ individual in the mixture.
 
 indiv_assign(mdl_out = msgsi_out, mdl_dat = msgsi_dat)
 #> # A tibble: 150 × 13
-#>    ID       Russia `Coastal West Alaska` `North Alaska Peninsula`
-#>  * <chr>     <dbl>                 <dbl>                    <dbl>
-#>  1 fish_1     0                     0.31                     0   
-#>  2 fish_10    0.11                  0.07                     0.05
-#>  3 fish_100   0.96                  0                        0   
-#>  4 fish_101   0                     0.05                     0.01
-#>  5 fish_102   0                     0.03                     0.06
-#>  6 fish_103   0                     0.01                     0   
-#>  7 fish_104   0                     0                        0   
-#>  8 fish_105   0                     0.1                      0   
-#>  9 fish_106   0                     0.15                     0   
-#> 10 fish_107   0                     0                        0.62
+#>    ID      Russia `Coastal West Alaska` `North Alaska Peninsula`
+#>  * <chr>    <dbl>                 <dbl>                    <dbl>
+#>  1 fish_1    0                     0.06                     0   
+#>  2 fish_2    0                     0.08                     0   
+#>  3 fish_3    0.01                  0.01                     0.13
+#>  4 fish_4    0                     0.19                     0.02
+#>  5 fish_5    0                     0.07                     0   
+#>  6 fish_6    0                     0.07                     0   
+#>  7 fish_7    0.09                  0.02                     0.12
+#>  8 fish_8    0.22                  0.09                     0.03
+#>  9 fish_9    0                     0.07                     0   
+#> 10 fish_10   0.05                  0.05                     0.04
 #> # ℹ 140 more rows
 #> # ℹ 9 more variables: `Northwest Gulf of Alaska` <dbl>, Copper <dbl>,
 #> #   `Northeast Gulf of Alaska` <dbl>, `Coastal Southeast Alaska` <dbl>,
@@ -659,8 +668,8 @@ stratified_estimator_msgsi(mdl_out = msgsi_out, mixvec = "Bering example",
 #> # A tibble: 2 × 12
 #>   repunit  mean_harv sd_harv median_harv ci05_harv ci95_harv  mean     sd median
 #>   <chr>        <dbl>   <dbl>       <dbl>     <dbl>     <dbl> <dbl>  <dbl>  <dbl>
-#> 1 Broad         235.    42.5        231.      175.      311. 0.475 0.0645  0.475
-#> 2 Regional      258.    38.7        253.      202.      327. 0.525 0.0645  0.525
+#> 1 Broad         202.    40.8        207.      131.      270. 0.403 0.0691  0.399
+#> 2 Regional      299.    43.0        296.      234.      372. 0.597 0.0691  0.601
 #> # ℹ 3 more variables: ci05 <dbl>, ci95 <dbl>, `P=0` <dbl>
 ```
 
