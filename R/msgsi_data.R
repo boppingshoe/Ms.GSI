@@ -148,15 +148,6 @@ prep_msgsi_data <-
 
     # iden if specified in mixture data
     if (any(grepl("known_", names(mixture_data)))) {
-      # iden <- mixture_data %>%
-      #   dplyr::select(tidyr::contains("known_")) %>%
-      #   dplyr::pull()
-      # if (!all(stats::na.omit(iden) %in% c(wildpops, hatcheries))) {
-      #   stop(c("Unidentified populations found in 'known_collection': ",
-      #          paste0(unique(stats::na.omit(iden)[which(!stats::na.omit(iden) %in% c(wildpops, hatcheries))]), ", ")))
-      # }
-      # iden <- factor(iden, levels = c(wildpops, hatcheries)) %>%
-      #   as.numeric()
       iden <- mixture_data %>%
         dplyr::select(indiv, tidyr::contains("known_")) %>%
         dplyr::rename(id1 = known_collection_t1)
