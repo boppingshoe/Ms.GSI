@@ -23,14 +23,21 @@
 #' ind_iden <- indiv_assign(msgsi_out, msgsi_dat)
 #'
 indiv_assign <- function(mdl_out, mdl_dat, show_t1_grps = TRUE) {
-  p <- apply(mdl_out$idens_t1, 2,
+  nburn <- as.numeric(mdl_out$specs["nburn"])
+  keep_burn <- mdl_out$specs["keep_burn"] == "TRUE"
+  nreps <- as.numeric(mdl_out$specs["nreps"])
+  thin <- as.numeric(mdl_out$specs["thin"])
+
+  keep_list <- ((nburn*keep_burn + 1):(nreps - nburn * isFALSE(keep_burn)))[!((nburn*keep_burn + 1):(nreps - nburn * isFALSE(keep_burn))) %% thin] / thin
+
+  p <- apply(mdl_out$idens_t1[keep_list,], 2,
              function (idens) {
                factor(idens, levels = seq(length(mdl_dat$groups_t1$grpvec))) %>%
                  table(.) %>%
                  prop.table(.)
              }) %>% rowsum(., mdl_dat$groups_t1$grpvec) %>% t()
 
-  pi <- apply(mdl_out$idens_t2, 2,
+  pi <- apply(mdl_out$idens_t2[keep_list,], 2,
               function (idens) {
                 factor(idens, levels = seq(length(mdl_dat$groups_t2$grpvec))) %>%
                   table(.) %>%
@@ -38,7 +45,7 @@ indiv_assign <- function(mdl_out, mdl_dat, show_t1_grps = TRUE) {
               }) %>% rowsum(., mdl_dat$groups_t2$grpvec) %>% t()
 
   # pho <- rowSums(p[, mdl_dat$sub_group])
-  pho <- apply(mdl_out$idens_t1, 2,
+  pho <- apply(mdl_out$idens_t1[keep_list,], 2,
                function (idens) mean(idens %in% which(mdl_dat$groups_t1$grpvec %in% mdl_dat$sub_group)))
 
   if (show_t1_grps == TRUE) {
