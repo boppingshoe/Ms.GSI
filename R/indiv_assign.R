@@ -30,22 +30,29 @@ indiv_assign <- function(mdl_out, mdl_dat, show_t1_grps = TRUE) {
 
   keep_list <- ((nburn*keep_burn + 1):(nreps - nburn * isFALSE(keep_burn)))[!((nburn*keep_burn + 1):(nreps - nburn * isFALSE(keep_burn))) %% thin] / thin
 
-  p <- apply(mdl_out$idens_t1[keep_list,], 2,
+  idens_t1 <- mdl_out$idens_t1 %>%
+    dplyr::filter(itr %in% keep_list) %>%
+    dplyr::select(-c(itr, ch))
+
+  idens_t2 <- mdl_out$idens_t2 %>%
+    dplyr::filter(itr %in% keep_list) %>%
+    dplyr::select(-c(itr, ch))
+
+  p <- apply(idens_t1, 2,
              function (idens) {
                factor(idens, levels = seq(length(mdl_dat$groups_t1$grpvec))) %>%
                  table(.) %>%
                  prop.table(.)
              }) %>% rowsum(., mdl_dat$groups_t1$grpvec) %>% t()
 
-  pi <- apply(mdl_out$idens_t2[keep_list,], 2,
+  pi <- apply(idens_t2, 2,
               function (idens) {
                 factor(idens, levels = seq(length(mdl_dat$groups_t2$grpvec))) %>%
                   table(.) %>%
                   prop.table(.)
               }) %>% rowsum(., mdl_dat$groups_t2$grpvec) %>% t()
 
-  # pho <- rowSums(p[, mdl_dat$sub_group])
-  pho <- apply(mdl_out$idens_t1[keep_list,], 2,
+  pho <- apply(idens_t1, 2,
                function (idens) mean(idens %in% which(mdl_dat$groups_t1$grpvec %in% mdl_dat$sub_group)))
 
   if (show_t1_grps == TRUE) {
