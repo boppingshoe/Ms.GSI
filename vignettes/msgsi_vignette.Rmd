@@ -17,8 +17,8 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-library(Ms.GSI)
-# devtools::load_all()
+# library(Ms.GSI)
+devtools::load_all()
 
 ```
 
@@ -56,7 +56,7 @@ First we will take a look at the baseline and mixture samples. *Ms.GSI* accepts 
 
 ```{r}
 
-mix
+print(dplyr::as_tibble(mix))
 
 ```
 
@@ -70,7 +70,7 @@ Next, we will take a look at the broad-scale (Templin) baseline example provided
 
 ```{r}
 
-base_templin
+print(dplyr::as_tibble(base_templin))
 
 ```
 
@@ -80,7 +80,7 @@ The regional baseline (Yukon) is in the same format. There are originally 380 lo
 
 ```{r}
 
-base_yukon
+print(dplyr::as_tibble(base_yukon))
 
 ```
 
@@ -90,7 +90,7 @@ Another piece of information needed is the population details for each baseline.
 
 ```{r}
 
-templin_pops211
+print(dplyr::as_tibble(templin_pops211))
 
 ```
 
@@ -100,7 +100,7 @@ Population information table for the Yukon (regional) baseline is in the same fo
 
 ```{r}
 
-yukon_pops50
+print(dplyr::as_tibble(yukon_pops50))
 
 ```
 
