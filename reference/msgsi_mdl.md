@@ -100,11 +100,11 @@ msgsi_dat <-
   pop1_info = templin_pops211, pop2_info = yukon_pops50, sub_group = 3:5,
   harvest_mean = 500, harvest_cv = 0.05)
 #> Compiling input data, may take a minute or two...
-#> Time difference of 9.602284 secs
+#> Time difference of 9.960564 secs
 
 # run multistage model
 msgsi_out <- msgsi_mdl(msgsi_dat, nreps = 25, nburn = 15, thin = 1, nchains = 1)
 #> Running model... and gradtitude turns what we have into Weather Girl!
-#> Time difference of 1.401608 secs
-#> March-26-2026 21:52
+#> Time difference of 1.520529 secs
+#> March-26-2026 22:00
 ```
