@@ -18,8 +18,7 @@ msgsi_mdl(
   seed = NULL,
   iden_output = TRUE,
   p1_prior_weight = NULL,
-  p2_prior_weight = NULL,
-  harvest = NULL
+  p2_prior_weight = NULL
 )
 ```
 
@@ -82,19 +81,14 @@ msgsi_mdl(
   An optional tibble to specify weight for each regional reporting
   group. Columns are `repunit`, `grpvec`, and `weight`.
 
-- harvest:
-
-  An optional harvest number for calculating the probability of p = 0. A
-  proportion is considered as 0 if it's less than 5e-7 by default. If
-  harvest number is provided, p = 0 is calculated as 0.5 / harvest of
-  that stock.
-
 ## Value
 
 A list contains reporting group proportion summary and trace for tier 1
 (summ_t1, trace_t1), tier 2 (summ_t2, trace_t2) and two tiers combined
-(summ_comb, trace_comb), and record of individual assignment during
-first tier for each individual (idens).
+(summ_comb, trace_comb), a tibble of combined collections (comb_groups),
+records of stock-specific total catch (sstc_trace_t1, sstc_trace_t2),
+records of individual assignment for each individual (idens_t1,
+idens_t2), and model run specifications (specs).
 
 ## Examples
 
@@ -103,13 +97,14 @@ first tier for each individual (idens).
 msgsi_dat <-
   prep_msgsi_data(mixture_data = mix,
   baseline1_data = base_templin, baseline2_data = base_yukon,
-  pop1_info = templin_pops211, pop2_info = yukon_pops50, sub_group = 3:5)
+  pop1_info = templin_pops211, pop2_info = yukon_pops50, sub_group = 3:5,
+  harvest_mean = 500, harvest_cv = 0.05)
 #> Compiling input data, may take a minute or two...
-#> Time difference of 9.125312 secs
+#> Time difference of 9.459248 secs
 
 # run multistage model
 msgsi_out <- msgsi_mdl(msgsi_dat, nreps = 25, nburn = 15, thin = 1, nchains = 1)
-#> Running model... and surround yourself with only Perfect Tens!
-#> Time difference of 1.345426 secs
-#> January-30-2026 23:03
+#> Running model... and gradtitude turns what we have into Weather Girl!
+#> Time difference of 1.441667 secs
+#> March-26-2026 21:27
 ```

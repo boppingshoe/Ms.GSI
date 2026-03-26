@@ -9,9 +9,8 @@ stratified_estimator_msgsi(
   mdl_out = NULL,
   path = NULL,
   mixvec,
-  catchvec,
-  cv = NULL,
-  new_pop_info = NULL
+  new_pop_info = NULL,
+  new_pop_by = "repunit"
 )
 ```
 
@@ -31,21 +30,17 @@ stratified_estimator_msgsi(
   Character vector of mixture sillies that are used to locate the
   folders where output .csv files lives, if `mdl_out` is not provided.
 
-- catchvec:
-
-  Numeric vector of harvest for each mixture/stratum, must be in the
-  same order as `mixvec`.
-
-- cv:
-
-  Numeric vector of harvest estimate coefficients of variation for each
-  stratum, must be the same order as `mixvec`.
-
 - new_pop_info:
 
   Population information for the new grouping. A tibble with columns
   `repunit` and `new_repunit`. `repunit` is the names of the original
-  reporting groups.
+  reporting groups. Can include a column for `collection` if
+  reorganizing using collections.
+
+- new_pop_by:
+
+  Option to reorganize the reporting groups by "repunit" or
+  "collection". Default is "repunit".
 
 ## Value
 
@@ -60,6 +55,6 @@ new_groups <- mdl_out$summ_comb %>% dplyr::select(group) %>%
  dplyr::mutate(new_repunit = c(rep("broad", 9), rep("regional", 3))) %>%
  dplyr::rename(repunit = group)
 
-stratified_estimator_msgsi(path = "test", mixvec = c("m1", "m2", "m3"), catchvec = c(4500, 5000, 3000), cv = c(0.5, 0.1 ,0.3), new_pop_info = new_groups)
+stratified_estimator_msgsi(path = "test", mixvec = c("m1", "m2", "m3"), new_pop_info = new_groups)
 } # }
 ```

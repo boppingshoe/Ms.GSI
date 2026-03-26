@@ -48,6 +48,8 @@
 <span>  <span class="va">pop1_info</span>,</span>
 <span>  <span class="va">pop2_info</span>,</span>
 <span>  <span class="va">sub_group</span>,</span>
+<span>  harvest_mean <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  harvest_cv <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  file_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  loci1 <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  loci2 <span class="op">=</span> <span class="cn">NULL</span></span>
@@ -88,6 +90,14 @@ grpvec (group numbers).</p></dd>
 1 that identify groups in tier 2.</p></dd>
 
 
+<dt id="arg-harvest-mean">harvest_mean<a class="anchor" aria-label="anchor" href="#arg-harvest-mean"></a></dt>
+<dd><p>An optional harvest number entered as a point estimate or as the mean harvest for generating a distribution of harvest if CV is provided (as harvest_cv). The harvest information is used during the model run for 1) calculating the probability of p = 0 and 2) estimating uncertainty of the stock-specific harvest. A proportion estimate is considered 0 if it is less than 5e-7 by default. If harvest information is provided, a proportion estimate is considered 0 if it is less than 0.5 / stock-specific harvest. If harvest information is provided as a distribution, the mean will be used for the calculation.</p></dd>
+
+
+<dt id="arg-harvest-cv">harvest_cv<a class="anchor" aria-label="anchor" href="#arg-harvest-cv"></a></dt>
+<dd><p>(Optional) estimated coefficient of variation of harvest.</p></dd>
+
+
 <dt id="arg-file-path">file_path<a class="anchor" aria-label="anchor" href="#arg-file-path"></a></dt>
 <dd><p>Where you want to save a copy of input data. Leave it empty if
 you don't want to save a copy.</p></dd>
@@ -111,9 +121,10 @@ you don't want to save a copy.</p></dd>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">msgsi_dat</span> <span class="op">&lt;-</span></span></span>
 <span class="r-in"><span>  <span class="fu">prep_msgsi_data</span><span class="op">(</span>mixture_data <span class="op">=</span> <span class="va">mix</span>,</span></span>
 <span class="r-in"><span>  baseline1_data <span class="op">=</span> <span class="va">base_templin</span>, baseline2_data <span class="op">=</span> <span class="va">base_yukon</span>,</span></span>
-<span class="r-in"><span>  pop1_info <span class="op">=</span> <span class="va">templin_pops211</span>, pop2_info <span class="op">=</span> <span class="va">yukon_pops50</span>, sub_group <span class="op">=</span> <span class="fl">3</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  pop1_info <span class="op">=</span> <span class="va">templin_pops211</span>, pop2_info <span class="op">=</span> <span class="va">yukon_pops50</span>, sub_group <span class="op">=</span> <span class="fl">3</span><span class="op">:</span><span class="fl">5</span>,</span></span>
+<span class="r-in"><span>  harvest_mean <span class="op">=</span> <span class="fl">500</span>, harvest_cv <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Compiling input data, may take a minute or two...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Time difference of 9.23191 secs</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Time difference of 9.649634 secs</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

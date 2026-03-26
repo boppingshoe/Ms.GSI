@@ -1,6 +1,6 @@
-# Individual assignment summary
+# Individual assignment summary for Ms.GSI
 
-Individual assignment summary
+Individual assignment summary for Ms.GSI
 
 ## Usage
 
@@ -36,13 +36,13 @@ msgsi_dat <-
   baseline1_data = base_templin, baseline2_data = base_yukon,
   pop1_info = templin_pops211, pop2_info = yukon_pops50, sub_group = 3:5)
 #> Compiling input data, may take a minute or two...
-#> Time difference of 9.930295 secs
+#> Time difference of 10.12549 secs
 
 # run model
 msgsi_out <- msgsi_mdl(msgsi_dat, nreps = 25, nburn = 15, thin = 1, nchains = 1)
-#> Running model... and surround yourself with only Best Dressed!
-#> Time difference of 1.427971 secs
-#> January-30-2026 23:03
+#> Running model... and good things come to Femme Queen Vogue!
+#> Time difference of 1.536101 secs
+#> March-26-2026 21:27
 
 # individual assignment summary
 ind_iden <- indiv_assign(msgsi_out, msgsi_dat)

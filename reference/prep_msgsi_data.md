@@ -12,6 +12,8 @@ prep_msgsi_data(
   pop1_info,
   pop2_info,
   sub_group,
+  harvest_mean = 0,
+  harvest_cv = 0,
   file_path = NULL,
   loci1 = NULL,
   loci2 = NULL
@@ -50,6 +52,22 @@ prep_msgsi_data(
   Group numbers for groups of interest. Group id numbers in tier 1 that
   identify groups in tier 2.
 
+- harvest_mean:
+
+  An optional harvest number entered as a point estimate or as the mean
+  harvest for generating a distribution of harvest if CV is provided (as
+  harvest_cv). The harvest information is used during the model run
+  for 1) calculating the probability of p = 0 and 2) estimating
+  uncertainty of the stock-specific harvest. A proportion estimate is
+  considered 0 if it is less than 5e-7 by default. If harvest
+  information is provided, a proportion estimate is considered 0 if it
+  is less than 0.5 / stock-specific harvest. If harvest information is
+  provided as a distribution, the mean will be used for the calculation.
+
+- harvest_cv:
+
+  (Optional) estimated coefficient of variation of harvest.
+
 - file_path:
 
   Where you want to save a copy of input data. Leave it empty if you
@@ -73,7 +91,8 @@ A list objects as the input data for msgsi_mdl()
 msgsi_dat <-
   prep_msgsi_data(mixture_data = mix,
   baseline1_data = base_templin, baseline2_data = base_yukon,
-  pop1_info = templin_pops211, pop2_info = yukon_pops50, sub_group = 3:5)
+  pop1_info = templin_pops211, pop2_info = yukon_pops50, sub_group = 3:5,
+  harvest_mean = 500, harvest_cv = 0.05)
 #> Compiling input data, may take a minute or two...
-#> Time difference of 9.23191 secs
+#> Time difference of 9.649634 secs
 ```

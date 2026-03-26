@@ -81,38 +81,80 @@
 <span><span class="va">msgsi_dat</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="reference/prep_msgsi_data.html">prep_msgsi_data</a></span><span class="op">(</span>mixture_data <span class="op">=</span> <span class="va">mix</span>,</span>
 <span>  baseline1_data <span class="op">=</span> <span class="va">base_templin</span>, baseline2_data <span class="op">=</span> <span class="va">base_yukon</span>,</span>
-<span>  pop1_info <span class="op">=</span> <span class="va">templin_pops211</span>, pop2_info <span class="op">=</span> <span class="va">yukon_pops50</span>, sub_group <span class="op">=</span> <span class="fl">3</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span>
+<span>  pop1_info <span class="op">=</span> <span class="va">templin_pops211</span>, pop2_info <span class="op">=</span> <span class="va">yukon_pops50</span>, sub_group <span class="op">=</span> <span class="fl">3</span><span class="op">:</span><span class="fl">5</span>,</span>
+<span>  harvest_mean <span class="op">=</span> <span class="fl">500</span>, harvest_cv <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Compiling input data, may take a minute or two...</span></span>
-<span><span class="co">#&gt; Time difference of 7.569319 secs</span></span></code></pre></div>
+<span><span class="co">#&gt; Time difference of 7.764232 secs</span></span></code></pre></div>
 <p>Using the prepared input data, we run the model with four chains of 150 iterations. In reality, you should of course run it with more iterations. We set the first 50 iterations in each chain as the warm-ups (not kept in the final output). Here’s the summary for the estimates and convergence diagnostics.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">msgsi_out</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/msgsi_mdl.html">msgsi_mdl</a></span><span class="op">(</span><span class="va">msgsi_dat</span>, nreps <span class="op">=</span> <span class="fl">150</span>, nburn <span class="op">=</span> <span class="fl">50</span>, thin <span class="op">=</span> <span class="fl">1</span>, nchains <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Running model (and the category is... Femme Queen Vogue!)</span></span>
-<span><span class="co">#&gt; Time difference of 1.685267 secs</span></span>
-<span><span class="co">#&gt; April-21-2025 10:23</span></span>
+<span><span class="co">#&gt; Running model... and good things come to Best Dressed!</span></span>
+<span><span class="co">#&gt; Time difference of 1.927239 secs</span></span>
+<span><span class="co">#&gt; March-26-2026 13:23</span></span>
 <span></span>
 <span><span class="va">msgsi_out</span><span class="op">$</span><span class="va">summ_comb</span></span>
-<span><span class="co">#&gt; # A tibble: 12 × 9</span></span>
-<span><span class="co">#&gt;    group                 mean  median      sd    ci.05   ci.95    p0    GR n_eff</span></span>
-<span><span class="co">#&gt;    &lt;chr&gt;                &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt;  1 Russia             2.27e-2 1.91e-2 0.0213  8.31e-12 0.0634  0.11   1.35 102. </span></span>
-<span><span class="co">#&gt;  2 Coastal West Alas… 9.83e-2 6.30e-2 0.110   1.21e-12 0.305   0.165  3.01  58.4</span></span>
-<span><span class="co">#&gt;  3 North Alaska Peni… 1.33e-2 9.47e-4 0.0204  1.06e-15 0.0535  0.265  1.20  58.8</span></span>
-<span><span class="co">#&gt;  4 Northwest Gulf of… 3.70e-1 3.72e-1 0.104   2.02e- 1 0.548   0      1.42  34.9</span></span>
-<span><span class="co">#&gt;  5 Copper             7.05e-4 6.04e-7 0.00258 1.49e-20 0.00433 0.49   1.01 336. </span></span>
-<span><span class="co">#&gt;  6 Northeast Gulf of… 5.48e-4 1.08e-6 0.00195 1.11e-19 0.00258 0.475  1.02 400  </span></span>
-<span><span class="co">#&gt;  7 Coastal Southeast… 1.51e-3 3.36e-6 0.00449 4.26e-18 0.00948 0.415  1.10 183. </span></span>
-<span><span class="co">#&gt;  8 British Columbia   6.31e-4 9.65e-7 0.00191 1.03e-18 0.00384 0.455  1.08 278. </span></span>
-<span><span class="co">#&gt;  9 WA/OR/CA           5.13e-4 8.51e-7 0.00158 3.24e-18 0.00288 0.492  1.04 371. </span></span>
-<span><span class="co">#&gt; 10 Lower Yukon        2.42e-1 2.58e-1 0.136   3.23e- 2 0.447   0      2.37 103. </span></span>
-<span><span class="co">#&gt; 11 Middle Yukon       7.03e-2 6.85e-2 0.0229  3.61e- 2 0.110   0      1.03 433. </span></span>
-<span><span class="co">#&gt; 12 Upper Yukon        1.79e-1 1.81e-1 0.0339  1.29e- 1 0.244   0      1.03 468.</span></span></code></pre></div>
-<p>There’s a function in the package to make trace plots and inspect mixing of chains.</p>
+<span><span class="co">#&gt; # A tibble: 12 × 10</span></span>
+<span><span class="co">#&gt;    group           mean  median      sd    ci.05   ci.95    p0    GR n_eff    z0</span></span>
+<span><span class="co">#&gt;    &lt;chr&gt;          &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt;  1 Russia       4.77e-2 4.42e-2 0.0202  2.13e- 2 0.0874   0.01  1.02 259.  0    </span></span>
+<span><span class="co">#&gt;  2 Coastal Wes… 1.25e-1 1.10e-1 0.0979  1.58e-10 0.292    0.2   1.85  36.2 0.182</span></span>
+<span><span class="co">#&gt;  3 North Alask… 4.69e-2 4.44e-2 0.0237  1.41e- 2 0.0873   0.08  1.01 143.  0    </span></span>
+<span><span class="co">#&gt;  4 Northwest G… 3.37e-1 3.31e-1 0.0610  2.41e- 1 0.444    0     1.22 124.  0    </span></span>
+<span><span class="co">#&gt;  5 Copper       1.24e-3 1.29e-6 0.00437 1.99e-19 0.00849  1     1.20 253.  0.945</span></span>
+<span><span class="co">#&gt;  6 Northeast G… 2.54e-3 5.27e-6 0.00874 1.11e-17 0.0152   1     1.20 125.  0.89 </span></span>
+<span><span class="co">#&gt;  7 Coastal Sou… 2.32e-3 3.15e-5 0.00512 3.89e-16 0.0122   1     1.04 148.  0.818</span></span>
+<span><span class="co">#&gt;  8 British Col… 7.83e-4 1.39e-6 0.00267 4.98e-19 0.00429  1     1.10 319.  0.978</span></span>
+<span><span class="co">#&gt;  9 WA/OR/CA     5.70e-4 2.08e-6 0.00166 8.82e-20 0.00379  1     1.01 248.  0.99 </span></span>
+<span><span class="co">#&gt; 10 Lower Yukon  1.75e-1 1.82e-1 0.0970  2.88e- 2 0.335    0     2.03  45.8 0    </span></span>
+<span><span class="co">#&gt; 11 Middle Yukon 7.21e-2 7.06e-2 0.0225  4.12e- 2 0.112    0     1.01 331.  0    </span></span>
+<span><span class="co">#&gt; 12 Upper Yukon  1.88e-1 1.87e-1 0.0333  1.40e- 1 0.247    0     1.00 457.  0</span></span></code></pre></div>
+<p>Summary for the stock-specific harvest is called separately:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
-<span><span class="fu"><a href="reference/tr_plot.html">tr_plot</a></span><span class="op">(</span>obj <span class="op">=</span> <span class="va">msgsi_out</span><span class="op">$</span><span class="va">trace_comb</span>, pop_info <span class="op">=</span> <span class="va">msgsi_out</span><span class="op">$</span><span class="va">comb_groups</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-example_trace_plot-1.png" width="100%"></p>
+<span><span class="fu"><a href="reference/msgsi_harv_summ.html">msgsi_harv_summ</a></span><span class="op">(</span><span class="va">msgsi_out</span>, <span class="va">msgsi_dat</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 12 × 6</span></span>
+<span><span class="co">#&gt;    repunit                  mean_harv median_harv sd_harv ci05_harv ci95_harv</span></span>
+<span><span class="co">#&gt;    &lt;chr&gt;                        &lt;dbl&gt;       &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt;  1 Northeast Gulf of Alaska     1.12            0   4.00         0       7.05</span></span>
+<span><span class="co">#&gt;  2 Coastal Southeast Alaska     1.06            0   2.53         0       6   </span></span>
+<span><span class="co">#&gt;  3 Coastal West Alaska         63.5            59  49.0          0     149   </span></span>
+<span><span class="co">#&gt;  4 WA/OR/CA                     0.23            0   0.827        0       1   </span></span>
+<span><span class="co">#&gt;  5 Northwest Gulf of Alaska   170.            167  29.6        128.    222.  </span></span>
+<span><span class="co">#&gt;  6 British Columbia             0.288           0   1.09         0       2   </span></span>
+<span><span class="co">#&gt;  7 Russia                      24.4            22   9.25        13      41   </span></span>
+<span><span class="co">#&gt;  8 North Alaska Peninsula      23.8            22  11.0          8      44.0 </span></span>
+<span><span class="co">#&gt;  9 Copper                       0.612           0   2.14         0       5   </span></span>
+<span><span class="co">#&gt; 10 Upper Yukon                 56.6            56  18.3         30      85.0 </span></span>
+<span><span class="co">#&gt; 11 Lower Yukon                140.            138  28.1        106     192.  </span></span>
+<span><span class="co">#&gt; 12 Middle Yukon                22.9            22   8.19        12      38</span></span></code></pre></div>
+<p>Individual assignment summary:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="fu"><a href="reference/indiv_assign.html">indiv_assign</a></span><span class="op">(</span><span class="va">msgsi_out</span>, <span class="va">msgsi_dat</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 150 × 13</span></span>
+<span><span class="co">#&gt;    ID      Russia `Coastal West Alaska` `North Alaska Peninsula`</span></span>
+<span><span class="co">#&gt;  * &lt;chr&gt;    &lt;dbl&gt;                 &lt;dbl&gt;                    &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt;  1 fish_1  0                     0.485                    0     </span></span>
+<span><span class="co">#&gt;  2 fish_2  0                     0.3                      0.0875</span></span>
+<span><span class="co">#&gt;  3 fish_3  0.01                  0.0575                   0.405 </span></span>
+<span><span class="co">#&gt;  4 fish_4  0                     0.415                    0.0275</span></span>
+<span><span class="co">#&gt;  5 fish_5  0                     0.457                    0.01  </span></span>
+<span><span class="co">#&gt;  6 fish_6  0                     0.31                     0     </span></span>
+<span><span class="co">#&gt;  7 fish_7  0.09                  0.172                    0.178 </span></span>
+<span><span class="co">#&gt;  8 fish_8  0.155                 0.225                    0.0325</span></span>
+<span><span class="co">#&gt;  9 fish_9  0.0075                0.258                    0.005 </span></span>
+<span><span class="co">#&gt; 10 fish_10 0.0425                0.155                    0.06  </span></span>
+<span><span class="co">#&gt; # ℹ 140 more rows</span></span>
+<span><span class="co">#&gt; # ℹ 9 more variables: `Northwest Gulf of Alaska` &lt;dbl&gt;, Copper &lt;dbl&gt;,</span></span>
+<span><span class="co">#&gt; #   `Northeast Gulf of Alaska` &lt;dbl&gt;, `Coastal Southeast Alaska` &lt;dbl&gt;,</span></span>
+<span><span class="co">#&gt; #   `British Columbia` &lt;dbl&gt;, `WA/OR/CA` &lt;dbl&gt;, `Lower Yukon` &lt;dbl&gt;,</span></span>
+<span><span class="co">#&gt; #   `Middle Yukon` &lt;dbl&gt;, `Upper Yukon` &lt;dbl&gt;</span></span></code></pre></div>
+<p>There’s a function in the package to make trace plots and inspect mixing of chains.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="fu"><a href="reference/tr_plot.html">tr_plot</a></span><span class="op">(</span>mdl_out <span class="op">=</span> <span class="va">msgsi_out</span>, trace_obj <span class="op">=</span> <span class="st">"trace_comb"</span>, pop_info <span class="op">=</span> <span class="va">msgsi_out</span><span class="op">$</span><span class="va">comb_groups</span><span class="op">)</span></span></code></pre></div>
+<p><img src="reference/figures/README-example_trace_plot-1.png" alt="" width="100%"></p>
 <p>Details of the mathematical model of integrated multistage framework and instructions for using <em>Ms.GSI</em> package can be found in the “articles” tab of the package website. Or, once you installed <em>Ms.GSI</em>, you can call the article using <code><a href="articles/msgsi_vignette.html">vignette("msgsi_vignette")</a></code>.</p>
 </div>
 </div>

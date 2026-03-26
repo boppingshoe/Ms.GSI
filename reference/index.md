@@ -6,10 +6,14 @@
   : Templin baseline data.
 - [`base_yukon`](https://boppingshoe.github.io/Ms.GSI/reference/base_yukon.md)
   : Yukon baseline data.
+- [`harv_func()`](https://boppingshoe.github.io/Ms.GSI/reference/harv_func.md)
+  : Sample total harvest numbers from a lognormal distribution
 - [`indiv_assign()`](https://boppingshoe.github.io/Ms.GSI/reference/indiv_assign.md)
-  : Individual assignment summary
+  : Individual assignment summary for Ms.GSI
 - [`mix`](https://boppingshoe.github.io/Ms.GSI/reference/mix.md) :
   Mixture data.
+- [`msgsi_harv_summ()`](https://boppingshoe.github.io/Ms.GSI/reference/msgsi_harv_summ.md)
+  : Summarize trace output for stock-specific harvest
 - [`msgsi_mdl()`](https://boppingshoe.github.io/Ms.GSI/reference/msgsi_mdl.md)
   : Run multistage GSI model
 - [`prep_msgsi_data()`](https://boppingshoe.github.io/Ms.GSI/reference/prep_msgsi_data.md)
