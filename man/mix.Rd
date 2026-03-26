@@ -5,7 +5,7 @@
 \alias{mix}
 \title{Mixture data.}
 \format{
-A tibble with 150 rows and 358 variables:
+A tibble with 150 rows and 360 variables:
 }
 \source{
 ADF&G GCL database LOKI

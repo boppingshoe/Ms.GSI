@@ -1,5 +1,5 @@
 
-#' Individual assignment summary
+#' Individual assignment summary for Ms.GSI
 #'
 #' @param mdl_out Model output object name.
 #' @param mdl_dat Input data object name.
@@ -24,18 +24,13 @@
 #'
 indiv_assign <- function(mdl_out, mdl_dat, show_t1_grps = TRUE) {
   nburn <- as.numeric(mdl_out$specs["nburn"])
-  keep_burn <- mdl_out$specs["keep_burn"] == "TRUE"
-  nreps <- as.numeric(mdl_out$specs["nreps"])
-  thin <- as.numeric(mdl_out$specs["thin"])
-
-  keep_list <- ((nburn*keep_burn + 1):(nreps - nburn * isFALSE(keep_burn)))[!((nburn*keep_burn + 1):(nreps - nburn * isFALSE(keep_burn))) %% thin] / thin
 
   idens_t1 <- mdl_out$idens_t1 %>%
-    dplyr::filter(itr %in% keep_list) %>%
+    dplyr::filter(itr > nburn) %>%
     dplyr::select(-c(itr, ch))
 
   idens_t2 <- mdl_out$idens_t2 %>%
-    dplyr::filter(itr %in% keep_list) %>%
+    dplyr::filter(itr > nburn) %>%
     dplyr::select(-c(itr, ch))
 
   p <- apply(idens_t1, 2,

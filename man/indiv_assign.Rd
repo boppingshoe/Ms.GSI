@@ -2,7 +2,7 @@
 % Please edit documentation in R/indiv_assign.R
 \name{indiv_assign}
 \alias{indiv_assign}
-\title{Individual assignment summary}
+\title{Individual assignment summary for Ms.GSI}
 \usage{
 indiv_assign(mdl_out, mdl_dat, show_t1_grps = TRUE)
 }
@@ -17,7 +17,7 @@ indiv_assign(mdl_out, mdl_dat, show_t1_grps = TRUE)
 Individual assignment summary
 }
 \description{
-Individual assignment summary
+Individual assignment summary for Ms.GSI
 }
 \examples{
 # set up input data and run multistage model

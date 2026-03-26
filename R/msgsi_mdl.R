@@ -16,12 +16,10 @@
 #' @param iden_output Option to have trace history for individual assignments included in the final output. Default is TRUE.
 #' @param p1_prior_weight An optional tibble to specify weight for each broad-scale reporting group. Columns are `repunit`, `grpvec`, and `weight`.
 #' @param p2_prior_weight An optional tibble to specify weight for each regional reporting group. Columns are `repunit`, `grpvec`, and `weight`.
-#' @param harvest An optional harvest number for calculating the probability of p = 0. A proportion is considered as 0 if it's less than 5e-7 by default. If harvest number is provided, p = 0 is calculated as 0.5 / harvest of that stock.
 #'
 #' @return A list contains reporting group proportion summary and trace for
 #'   tier 1 (summ_t1, trace_t1), tier 2 (summ_t2, trace_t2) and two tiers
-#'   combined (summ_comb, trace_comb), and record of individual assignment
-#'   during first tier for each individual (idens).
+#'   combined (summ_comb, trace_comb), a tibble of combined collections (comb_groups), records of stock-specific total catch (sstc_trace_t1, sstc_trace_t2), records of individual assignment for each individual (idens_t1, idens_t2), and model run specifications (specs).
 #'
 #' @export
 #' @importFrom magrittr %>%
@@ -33,17 +31,20 @@
 #' msgsi_dat <-
 #'   prep_msgsi_data(mixture_data = mix,
 #'   baseline1_data = base_templin, baseline2_data = base_yukon,
-#'   pop1_info = templin_pops211, pop2_info = yukon_pops50, sub_group = 3:5)
+#'   pop1_info = templin_pops211, pop2_info = yukon_pops50, sub_group = 3:5,
+#'   harvest_mean = 500, harvest_cv = 0.05)
 #'
 #' # run multistage model
 #' msgsi_out <- msgsi_mdl(msgsi_dat, nreps = 25, nburn = 15, thin = 1, nchains = 1)
 #'
-msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn = FALSE, cond_gsi = TRUE, file_path = NULL, seed = NULL, iden_output = TRUE, p1_prior_weight = NULL, p2_prior_weight = NULL, harvest = NULL) {
+msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn = FALSE, cond_gsi = TRUE, file_path = NULL, seed = NULL, iden_output = TRUE, p1_prior_weight = NULL, p2_prior_weight = NULL) {
 
   # save test file (specs) ----
+  specs <-
+    data.frame(name = c("nreps", "nburn", "thin", "nchains", "keep_burn", "seed"),
+               value = c(nreps, nburn, thin, nchains, keep_burn, ifelse(is.null(seed), "NULL", seed)))
+
   if(!is.null(file_path)) {
-    specs <- data.frame(name = c("nreps", "nburn", "thin", "nchains", "keep_burn", "seed", "harvest"),
-                        value = c(nreps, nburn, thin, nchains, keep_burn, ifelse(is.null(seed), "NULL", seed), ifelse(is.null(harvest), "NULL", harvest)))
     message(paste0("Ms.GSI specifications saved in ", file_path, "/msgsi_specs.csv"))
     readr::write_csv(specs, file = paste0(file_path, "/msgsi_specs.csv"))
   }
@@ -75,8 +76,6 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
     dplyr::select(order(colnames(.))) %>%
     as.matrix() # base 2
 
-  # if (is.null(dat_in$iden)) iden <- rep(NA, nrow(x)) else iden <- dat_in$iden # iden info
-  # iden <- dat_in$iden$id
   iden <- dplyr::select(dat_in$x, indiv) %>%
     dplyr::left_join(dat_in$iden, by = "indiv") %>%
     dplyr::mutate(id1 = factor(id1, levels = dat_in$y$collection) %>% as.numeric()) %>%
@@ -120,6 +119,8 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
   trait_fac <- factor(rep(names(nalleles), nalleles), levels = names(nalleles))
   trait_fac2 <- factor(rep(names(nalleles2), nalleles2), levels = names(nalleles2))
 
+  harvest <- dat_in$harvest
+
   # specifications ----
   rdirich <- function(alpha0) {
     if (sum(alpha0) > 0) {
@@ -131,6 +132,10 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
       rep(0, length(alpha0))
     }
   } # og random dirichlet by jj
+
+  resample <- function(x, ...) {
+    x[sample.int(length(x), ...)]
+  } # able to sample from single element
 
   if (isTRUE(cond_gsi)) nadapt = 0
   n_burn <- ifelse(keep_burn, 0, nburn)
@@ -243,9 +248,7 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
 
   iden2[na_i2] <- unlist(lapply(na_i2, function(m) {
     sample(K2, 1, FALSE, (p2_prior * freq2[m, ]))
-  }))
-
-  iden2 <- factor(iden2, levels = seq(K2))
+  })) %>% factor(levels = seq(K2))
 
   p2 <- rdirich(table(iden2[iden %in% which(grps %in% sub_grp)]) + p2_prior)
 
@@ -254,7 +257,7 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
     ch = chains, .packages = c("magrittr", "tidyr", "dplyr")
     ) %dorng% {
 
-      p_out <- p2_out <- pp2_out <- list()
+      p_out <- p2_out <- pp2_out <- sstc1_out <- sstc2_out <- list()
       if (iden_output == TRUE) iden1_out <- iden2_out <- list()
 
     ## gibbs loop ##
@@ -305,13 +308,26 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
         i <- i + 1
       } # do this to help prevent no iden == sub_grp (when 1st tier markers are shit)
 
+      # tier 1 stock-specific harvest estimate
+      n_harv <- resample(harvest, 1)
+      iden_harv <-
+        sample(K + H, max(0, n_harv - nrow(x)), replace = TRUE, prob = p) %>%
+        factor(levels = seq(K + H))
+      sstc <- table(c(iden, iden_harv)) # t1 stock-specific total catch
+
       p <- rdirich(table(iden) + p_prior)
 
       iden2[na_i2] <- unlist(lapply(na_i2, function(m) {
-        sample(K2, 1, FALSE, (p2_prior * freq2[m, ]))
-      }))
+        sample(K2, 1, FALSE, (p2 * freq2[m, ]))
+      })) %>% factor(levels = seq(K2))
 
-      iden2 <- factor(iden2, levels = seq(K2))
+      # tier 2 stock-specific harvest estimate
+      n_harv2 <- sum(sstc[which(grps %in% sub_grp)])
+      iden_harv2 <-
+        sample(K2, max(0, n_harv2 - length(iden %in% which(grps %in% sub_grp))),
+               replace = TRUE, prob = p2) %>%
+        factor(levels = seq(K2))
+      sstc2 <- table(c(iden2, iden_harv2)) # t2 stock-specific total catch
 
       p2 <- rdirich(table(iden2[iden %in% which(grps %in% sub_grp)]) + p2_prior)
 
@@ -319,32 +335,35 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
       if (rep > nadapt) { # after adaptation stage
         if ((rep - nadapt) > n_burn & (rep - nadapt - n_burn) %% thin == 0) {
 
-          it <- (rep - nadapt - n_burn) / thin
+          # it <- (rep - nadapt - n_burn) / thin
+          it <- rep - nadapt
           # trace output in collections
-          p_out[[it]] <- c(p, it, ch)
-          p2_out[[it]] <- c(p2, it, ch)
-          pp2_out[[it]] <- c(p[which(!grps %in% sub_grp)], p2 * sum(p[which(grps %in% sub_grp)]), it, ch)
-          if (iden_output == TRUE) {
-            iden1_out[[it]] <- iden
-            iden2_out[[it]] <- iden2
-          }
+          p_out[[it]] <- stats::setNames(c(p, it, ch),
+                                         c(dat_in$y$collection, "itr", "ch"))
+          p2_out[[it]] <- stats::setNames(c(p2, it, ch),
+                                          c(dat_in$y2$collection, "itr", "ch"))
+          pp2_out[[it]] <- stats::setNames(c(p[which(!grps %in% sub_grp)], p2 * sum(p[which(grps %in% sub_grp)]), it, ch), c(dat_in$y$collection[which(!grps %in% sub_grp)], dat_in$y2$collection, "itr", "ch"))
+
+          sstc1_out[[it]] <-
+            stats::setNames(c(sstc, it, ch), c(dat_in$y$collection, "itr", "ch"))
+          sstc2_out[[it]] <-
+            stats::setNames(c(sstc2, it, ch), c(dat_in$y2$collection, "itr", "ch"))
+
+          iden1_out[[it]] <-
+            stats::setNames(c(iden, it, ch), c(dat_in$x$indiv, "itr", "ch"))
+          iden2_out[[it]] <-
+            stats::setNames(c(iden2, it, ch), c(dat_in$x2$indiv, "itr", "ch"))
 
         } # if rep > nburn & (rep-nburn) %% thin == 0
       } # if rep > nadapt
 
     } # end gibbs loop
 
-      if (iden_output == TRUE) {
-        out_items <- list(p_out, p2_out, pp2_out, iden1_out, iden2_out)
-      } else {
-        out_items <- list(p_out, p2_out, pp2_out)
-      }
+      out_items <- list(p_out, p2_out, pp2_out, sstc1_out, sstc2_out, iden1_out, iden2_out)
 
       lapply(out_items, function(oi) {
-        sapply(oi, rbind) %>%
-          t() %>%
-          dplyr::as_tibble()
-        })
+        dplyr::bind_rows(oi)
+      })
 
   } # end parallel chains
   # return list[[chains]][[posteriors]]
@@ -360,16 +379,26 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
   p1_combo <-
     lapply(out_list1, function(ol) {
       ol %>%
-        dplyr::select(1:(ncol(.)-2)) %>%
-        t() %>% rowsum(., grps) %>% t() %>% as.data.frame() %>%
-        stats::setNames(grp_names_t1)
+        dplyr::select(-c(itr, ch)) %>%
+        t() %>% rowsum(., dat_in$y$repunit) %>% t() %>% as.data.frame()
       })
 
   mc_pop1 <- coda::as.mcmc.list(
     lapply(p1_combo, function(rlist) coda::mcmc(rlist[keep_list,]))
     )
 
-  summ_pop1 <- summ_func(p1_combo, keep_list, mc_pop1, grp_names_t1, nchains, harvest)
+  idens_t1 <-
+    lapply(out_list0, function(ol) ol[[6]]) %>%
+    dplyr::bind_rows()
+
+  iden_tbl1 <- idens_t1 %>%
+    dplyr::filter(itr > nburn) %>%
+    dplyr::select(-c(itr, ch)) %>%
+    apply(., 1, function(ids) table(factor(ids, levels = 1:K))) %>%
+    rowsum(., dat_in$groups_t1$repunit) %>%
+    t()
+
+  summ_pop1 <- summ_func(p1_combo, keep_list, mc_pop1, grp_names_t1, nchains, harvest, iden_tbl1)
 
   ## tier 2
   out_list2 <- lapply(out_list0, function(ol) ol[[2]])
@@ -377,22 +406,28 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
   p2_combo <-
     lapply(out_list2, function(ol) {
       ol %>%
-        dplyr::select(1:(ncol(.)-2)) %>%
-        t() %>% rowsum(., p2_grps) %>% t() %>% as.data.frame() %>%
-        stats::setNames(grp_names_t2)
+        dplyr::select(-c(itr, ch)) %>%
+        t() %>% rowsum(., dat_in$y2$repunit) %>% t() %>% as.data.frame()
       })
 
   mc_pop2 <- coda::as.mcmc.list(
     lapply(p2_combo, function(rlist) coda::mcmc(rlist[keep_list,]))
     )
 
-  harvest2 <- if (is.null(harvest)) {
-    NULL
-  } else {
-    sum(summ_pop1$mean[sub_grp]) * harvest
-  }
+  harvest2 <- sum(summ_pop1$mean[sub_grp]) * harvest
 
-  summ_pop2 <- summ_func(p2_combo, keep_list, mc_pop2, grp_names_t2, nchains, harvest2)
+  idens_t2 <-
+    lapply(out_list0, function(ol) ol[[7]]) %>%
+    dplyr::bind_rows()
+
+  iden_tbl2 <- idens_t2 %>%
+    dplyr::filter(itr > nburn) %>%
+    dplyr::select(-c(itr, ch)) %>%
+    apply(., 1, function(ids) table(factor(ids, levels = 1:K2))) %>%
+    rowsum(., dat_in$groups_t2$repunit) %>%
+    t()
+
+  summ_pop2 <- summ_func(p2_combo, keep_list, mc_pop2, grp_names_t2, nchains, harvest2, iden_tbl2)
 
   ## combine tiers
   out_list <- lapply(out_list0, function(ol) ol[[3]])
@@ -400,19 +435,20 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
   p_combo <-
     lapply(out_list, function(ol) {
       ol %>%
-        dplyr::select(1:(ncol(.)-2)) %>%
+        dplyr::select(-c(itr, ch)) %>%
         t() %>%
-        rowsum(., c(grps[which(!grps %in% sub_grp)], (p2_grps + max(grps)))) %>%
+        rowsum(., c(dat_in$y$repunit[which(!grps %in% sub_grp)], dat_in$y2$repunit)) %>%
         t() %>%
-        as.data.frame() %>%
-        stats::setNames(grp_names)
+        as.data.frame()
       })
 
   mc_pop <- coda::as.mcmc.list(
     lapply(p_combo, function(rlist) coda::mcmc(rlist[keep_list,]))
     )
 
-  summ_pop <- summ_func(p_combo, keep_list, mc_pop, grp_names, nchains, harvest)
+  iden_tbl_comb <- cbind(iden_tbl1[, grp_names_t1[-sub_grp]], iden_tbl2)
+
+  summ_pop <- summ_func(p_combo, keep_list, mc_pop, grp_names, nchains, harvest, iden_tbl_comb)
 
   # get output together
   msgsi_out <- list()
@@ -421,39 +457,40 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
 
   msgsi_out$trace_t1 <-
     out_list1 %>%
-    dplyr::bind_rows() %>%
-    stats::setNames(c(dat_in$y$collection, "itr", "chain"))
+    dplyr::bind_rows()
 
   msgsi_out$summ_t2 <- summ_pop2
 
   msgsi_out$trace_t2 <-
     out_list2 %>%
-    dplyr::bind_rows() %>%
-    stats::setNames(c(dat_in$y2$collection, "itr", "chain"))
+    dplyr::bind_rows()
 
   msgsi_out$summ_comb <- summ_pop
 
   msgsi_out$trace_comb <-
     out_list %>%
-    dplyr::bind_rows() %>%
-    stats::setNames(c(c(dat_in$y$collection[which(!grps %in% sub_grp)], dat_in$y2$collection),
-                      "itr", "chain"))
+    dplyr::bind_rows()
 
   msgsi_out$comb_groups <- dat_in$comb_groups
 
-  if (iden_output == TRUE) {
-    msgsi_out$idens_t1 <-
-      lapply(out_list0, function(ol) ol[[4]]) %>%
-      dplyr::bind_rows()
+  msgsi_out$sstc_trace_t1 <-
+    lapply(out_list0, function(ol) ol[[4]]) %>%
+    dplyr::bind_rows()
 
-    msgsi_out$idens_t2 <-
-      lapply(out_list0, function(ol) ol[[5]]) %>%
-      dplyr::bind_rows()
+  msgsi_out$sstc_trace_t2 <-
+    lapply(out_list0, function(ol) ol[[5]]) %>%
+    dplyr::bind_rows()
+
+  if (iden_output == TRUE) {
+    msgsi_out$idens_t1 <- idens_t1
+    msgsi_out$idens_t2 <- idens_t2
   }
+
+  msgsi_out$specs <- stats::setNames(specs$value, specs$name)
 
   if (!is.null(file_path)) {
     message(paste("Ms.GSI output saved in", file_path))
-    out_files <- c("summ_t1", "trace_t1", "summ_t2", "trace_t2", "summ_comb", "trace_comb", "comb_groups")
+    out_files <- c("summ_t1", "trace_t1", "summ_t2", "trace_t2", "summ_comb", "trace_comb", "comb_groups", "sstc_trace_t1", "sstc_trace_t2")
     sapply(out_files, function(i) {
       readr::write_csv(msgsi_out[[i]], file = paste0(file_path, "/", i, ".csv"))
     })
@@ -478,14 +515,15 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
 #'
 #' Calculate statistics for summary output.
 #'
-#' @param combo_file Trace file.
-#' @param keeplist Which iteration to keep in output.
-#' @param mc_file Trace formatted as MC file.
-#' @param groupnames Group names for specific stage.
+#' @param combo_file Trace file
+#' @param keeplist Which iteration to keep in output
+#' @param mc_file Trace formatted as MC file
+#' @param groupnames Group names for specific stage
 #' @param n_ch Number of MCMC chains
+#' @param iden_tbl Table of individuals in each reporting group
 #'
 #' @noRd
-summ_func <- function(combo_file, keeplist, mc_file, groupnames, n_ch, harv) {
+summ_func <- function(combo_file, keeplist, mc_file, groupnames, n_ch, harv, iden_tbl) {
 
   lapply(combo_file, function(rlist) rlist[keeplist, ]) %>%
     dplyr::bind_rows() %>%
@@ -496,7 +534,7 @@ summ_func <- function(combo_file, keeplist, mc_file, groupnames, n_ch, harv) {
       sd = stats::sd(value),
       ci.05 = stats::quantile(value, 0.05),
       ci.95 = stats::quantile(value, 0.95),
-      p0 = {if (is.null(harv)) mean(value < 5e-7)
+      p0 = {if (mean(harv) == 0) mean(value < 5e-7)
         else mean(value < (0.5/ max(1, harv * mean)))},
       .by = name
     ) %>%
@@ -509,6 +547,10 @@ summ_func <- function(combo_file, keeplist, mc_file, groupnames, n_ch, harv) {
       } else NA },
       n_eff = coda::effectiveSize(mc_file) # in alphabetical order like tidyverse summarise()
     ) %>%
+    dplyr::left_join({
+      apply(iden_tbl, 2, function(ct) mean(ct == 0)) %>%
+        tibble::enframe(value = 'z0')
+    }, by = "name") %>%
     dplyr::mutate(name_fac = factor(name, levels = groupnames)) %>%
     dplyr::arrange(name_fac) %>%
     dplyr::select(-name_fac) %>%
@@ -516,7 +558,7 @@ summ_func <- function(combo_file, keeplist, mc_file, groupnames, n_ch, harv) {
 
 }
 
-utils::globalVariables(c(".", "ch", "chain", "itr", "name", "name_fac", "value"))
+utils::globalVariables(c(".", "ch", "chain", "itr", "name", "name_fac", "value", "id1", "id2", "weight"))
 
 
 

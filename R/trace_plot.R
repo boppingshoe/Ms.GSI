@@ -1,11 +1,8 @@
 
 #' Plot MCMC trace
 #'
-#' @param obj Trace from the model output.
-#' @param nburn Number of burn-in you set up when you ran the model.
-#'   Default is 0 if you didn't save the burn-ins (keep_burn = FALSE).
-#' @param thin Number of thinning you set up when you ran the model.
-#'   Default is 1 (no thinning).
+#' @param mdl_out Model output object name.
+#' @param trace_obj Trace from the model output.
 #' @param pop_info Population information. A tibble with columns
 #'   collection (collection names), repunit (reporting unit names),
 #'    and grpvec (group numbers).
@@ -25,26 +22,33 @@
 #' msgsi_out <- msgsi_mdl(msgsi_dat, nreps = 25, nburn = 15, thin = 1, nchains = 1)
 #'
 #' # trace plot
-#' tr_plot(obj = msgsi_out$trace_comb, pop_info = msgsi_out$comb_groups)
+#' tr_plot(mdl_out = msgsi_out, trace_obj = "trace_comb", pop_info = msgsi_out$comb_groups)
 
-tr_plot <- function (obj, nburn = 0, thin = 1, pop_info = NULL) {
+tr_plot <- function (mdl_out, trace_obj, pop_info = NULL) {
+
+  nburn <- as.numeric(mdl_out$specs["nburn"])
+  keep_burn <- mdl_out$specs["keep_burn"] == "TRUE"
+  thin <- as.numeric(mdl_out$specs["thin"])
+
+  obj <- mdl_out[[trace_obj]] %>%
+    dplyr::mutate(itr = (itr - nburn*isFALSE(keep_burn)) / thin)
 
   if (is.null(pop_info)) {
-    name_order <- dplyr::select(obj, -c(itr, chain)) %>% colnames()
-    trace <- tidyr::pivot_longer({{ obj }}, cols = -c(chain, itr),
+    name_order <- dplyr::select(obj, -c(itr, ch)) %>% colnames()
+    trace <- tidyr::pivot_longer(obj, cols = -c(ch, itr),
                                  names_to = "repunit", values_to = "p")
   } else {
     name_order <- unique(pop_info$repunit)
-    trace <- tidyr::pivot_longer({{ obj }}, cols = -c(chain, itr), names_to = "collection") %>%
+    trace <- tidyr::pivot_longer(obj, cols = -c(ch, itr), names_to = "collection") %>%
       dplyr::left_join(pop_info, by = "collection") %>%
-      dplyr::summarise(p = sum(value), .by = c(chain, itr, repunit))
+      dplyr::summarise(p = sum(value), .by = c(ch, itr, repunit))
   }
 
   trace %>%
     dplyr::mutate(repunit = factor(repunit, levels = name_order)) %>%
     ggplot2::ggplot() +
-    ggplot2::geom_line(ggplot2::aes(x = itr, y = p, color = factor(chain))) +
-    {if (nburn > 0) {
+    ggplot2::geom_line(ggplot2::aes(x = itr, y = p, color = factor(ch))) +
+    {if (keep_burn) {
       ggplot2::annotate("rect", fill = "red", alpha = 0.15,
                         xmin = 0, xmax = nburn/thin, ymin = -Inf, ymax = Inf)
     }} +
@@ -53,7 +57,7 @@ tr_plot <- function (obj, nburn = 0, thin = 1, pop_info = NULL) {
 
 } # nburn = 0 if keep_burn = FALSE
 
-utils::globalVariables(c("chain", "itr", "repunit", "p"))
+utils::globalVariables(c("ch", "itr", "repunit", "p"))
 
 
 

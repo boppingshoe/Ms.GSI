@@ -24,7 +24,7 @@ library(Ms.GSI)
 
 # Overview
 
-This document contains the background information for a integrated multistage genetic stock identification (GSI) model in two parts. The first part the describes how to use package *Ms.GSI* to conduct a GSI analysis. The steps include formatting input data, running the integrated multistage GSI model, and summarizing results. The second part details the technical background of integrated multistage GSI model and its mathematical theory. There is a separate article describe the general background of the integrated multistage framework (*add link to integrated multistage paper*).
+This document contains the background information for a integrated multistage genetic stock identification (GSI) model in two parts. The first part the describes how to use package *Ms.GSI* to conduct a GSI analysis. The steps include formatting input data, running the integrated multistage GSI model, and summarizing results. The second part details the technical background of integrated multistage GSI model and its mathematical theory. There is a separate [article](https://onlinelibrary.wiley.com/doi/full/10.1111/eva.13621) describe the general background of the integrated multistage framework.
 
 # How to use *Ms.GSI*
 
@@ -56,7 +56,7 @@ First we will take a look at the baseline and mixture samples. *Ms.GSI* accepts 
 
 ```{r}
 
-print(dplyr::as_tibble(mix))
+mix
 
 ```
 
@@ -70,7 +70,7 @@ Next, we will take a look at the broad-scale (Templin) baseline example provided
 
 ```{r}
 
-print(dplyr::as_tibble(base_templin))
+base_templin
 
 ```
 
@@ -80,7 +80,7 @@ The regional baseline (Yukon) is in the same format. There are originally 380 lo
 
 ```{r}
 
-print(dplyr::as_tibble(base_yukon))
+base_yukon
 
 ```
 
@@ -90,7 +90,7 @@ Another piece of information needed is the population details for each baseline.
 
 ```{r}
 
-print(dplyr::as_tibble(templin_pops211))
+templin_pops211
 
 ```
 
@@ -100,11 +100,13 @@ Population information table for the Yukon (regional) baseline is in the same fo
 
 ```{r}
 
-print(dplyr::as_tibble(yukon_pops50))
+yukon_pops50
 
 ```
 
 Once you have the data files ready (I recommend saving them as .Rdata or .Rds files), you can use `prep_msgsi_data()` function to convert them into input data set for model run. You'll also need to identify "groups of interest" in parameter `sub-group`. In this example, groups of interests are Lower Yukon, Middle Yukon and Upper Yukon reporting groups. Their identify numbers are 3, 4, and 5 in the broad-scale baseline. There's an option to save the input data at a designated directory by identifying the location in parameter `file_path`.
+
+If you have harvest information (or fishing effort), you should input them using `harvest_mean` and `harvest_cv` arguments. `harvest_cv` can be left without input if harvest was estimated without errors. If no inputs here for harvest, we will assume sample consists 100% of the harvest. Here we just made up a fake total catch of 500 fish with CV of 0.05.
 
 `prep_msgsi_data()` function matches the loci between mixture and baselines. But if you want to make sure that you didn't miss any locus in your baselines or mixture, you can manually provide loci names (in string vector) for each baseline by inputting them in `loci1` and `loci2`. In this example we don't manually provide lists of loci because we trust that mixture and baselines all have the correct loci.
 
@@ -113,7 +115,8 @@ Once you have the data files ready (I recommend saving them as .Rdata or .Rds fi
 msgsi_dat <-
   prep_msgsi_data(mixture_data = mix,
   baseline1_data = base_templin, baseline2_data = base_yukon,
-  pop1_info = templin_pops211, pop2_info = yukon_pops50, sub_group = 3:5)
+  pop1_info = templin_pops211, pop2_info = yukon_pops50, sub_group = 3:5,
+  harvest_mean = 500, harvest_cv = 0.05)
 
 ```
 
@@ -153,7 +156,7 @@ msgsi_out$summ_comb
 
 ```
 
-Most column names are self explanatory, but others might need some additional descriptions. `ci.05` and `ci.95` are the lower and upper bounds of 90% credible interval. `p0` is the probability of an estimate equals zero. We estimate `p0` by calculating the portion of posterior samples that is less than $5 \times 10^{-7}$. `GR` is the Gelman-Rubin statistic (a.k.a. $\hat R$). In this example, Gelman-Rubin statistic is not calculated because we only run one chain. `n_eff` is the effective size, or $N_{eff}$. We will not discuss how to diagnose convergence in this document. Please consult Gelman et al. 2014, Gelman & Rubin 1992, Brooks & Gelman 1998 and other literature on statistical methods.
+Most column names are self explanatory, but others might need some additional descriptions. `ci.05` and `ci.95` are the lower and upper bounds of 90% credible interval. `p0` is the probability of an estimate equals zero. We estimate `p0` by calculating the portion of posterior samples that is less than $5 \times 10^{-7}$, or 0.5/stock-specific harvest if harvest information is provided. `GR` is the Gelman-Rubin statistic (a.k.a. $\hat R$). In this example, Gelman-Rubin statistic is not calculated because we only run one chain. `n_eff` is the effective size, or $N_{eff}$. We will not discuss how to diagnose convergence in this document. Please consult Gelman et al. 2014, Gelman & Rubin 1992, Brooks & Gelman 1998 and other literature on statistical methods. `z0` is the probability of an estimate equals zero based on history of individuals assigned to each collection and reporting groups. Details of the theory and calculation can be found [here](https://eriqande.github.io/rubias/articles/ppns_less_than_1_over_n.html).
 
 Items with "trace" are the posterior sample history, or trace history, for either stage one, two, or combined. Trace history is needed for making trace plots. And if you need to combine reporting groups proportions or combine variance, trace histories are what you need. `trace_` items are tibbles with each collection as a column. There are two additional columns, `itr` and `chain`, to identify Markov chain Monte Carlo (MCMC) sampling iteration and chain.
 
@@ -165,9 +168,26 @@ msgsi_out$trace_comb
 
 ```
 
+### Stock-specific total catch
+The output also includes the trace history of total catch for each reporting group (i.e., stock-specific total catch). Each column represents a reporting group in the baseline, and each row records the harvest count during each iteration in each chain.
+
+```{r}
+
+msgsi_out$sstc_trace_t2
+
+```
+
+*Ms.GSI* has a function `msgsi_harv_summ()` that summarize the stock-specific total catch for the reporting groups of the combined baselines.
+
+```{r}
+
+msgsi_harv_summ(mdl_out = msgsi_out, mdl_dat = msgsi_dat)
+
+```
+
 ### Individual assignments
 
-The last two items in the output are the identity assignment history of each individual in the mixture sample. Each column represents an individual in the mixture, and each row records the identity assigned during each iteration in each chain. These numbers are the population identifiers in the same order as your population information files (and baseline files). Individuals are ordered in the same as the input data (i.e., mixture data).
+The next two items in the output are the identity assignment history of each individual in the mixture sample. Each column represents an individual in the mixture, and each row records the identity assigned during each iteration in each chain. These numbers are the population identifiers in the same order as your population information files (and baseline files). Individuals are ordered in the same as the input data (i.e., mixture data).
 
 ```{r}
 
@@ -191,15 +211,15 @@ The summary for individual assignment has a column named `ID` that identifies ea
 
 ```{r, fig.height=12, fig.width=8, out.width="100%", fig.cap="Trace plots for reporting group proportions."}
 
-tr_plot(obj = msgsi_out$trace_comb, pop_info = msgsi_out$comb_groups)
+tr_plot(mdl_out = msgsi_out, trace_obj = "trace_comb", pop_info = msgsi_out$comb_groups)
 
 ```
 
 ### Stratified estimator
 
-`stratified_estimator-msgsi()` function combines the stock group estimates of multiple mixtures (i.e., strata) weighted by harvest numbers or fishing efforts. It is designed to work in the same way as the `stratified_estimator_rubias()` function from the *GCLr* package by the GCL, although the input format is slightly different. To do so, you would save the *Ms.GSI* output for each mixture in a separate folder under your preferred directory, then specify the path by `stratified_estimator_rubias(path = ...)`.
+`stratified_estimator_msgsi()` function combines the stock group estimates of multiple mixtures (i.e., strata) weighted by harvest numbers or fishing efforts. To do so, you would save the *Ms.GSI* output for each mixture in a separate folder under your preferred directory, then specify the path in the function: `stratified_estimator_rubias(path = ...)`.
 
-`stratified_estimator-msgsi()` can also combine variances of different sources for a single mixture. That is, if you want to convert your total harvest number (with CV provided) to harvest for individual reporting groups, `stratified_estimator-msgsi()` can do that. In this case, we use the example model output with a new grouping:
+`stratified_estimator_msgsi()` extracts the stock-specific total catch/harvest output from the model runs of multiple mixtures and combine them in the same format of reporting groups or in forms of new reporting groups by combining old reporting groups or reorganizing collections. For example, we use the example model output with a new grouping:
 
 ```{r}
 new_groups <- msgsi_out$summ_comb |>
@@ -207,11 +227,25 @@ new_groups <- msgsi_out$summ_comb |>
   dplyr::mutate(new_repunit = c(rep("Broad", 9), rep("Regional", 3))) |>
   dplyr::rename(repunit = group)
 
+new_groups
+
 stratified_estimator_msgsi(mdl_out = msgsi_out, mixvec = "Bering example",
-                           catchvec = 500, cv = 0.1, new_pop_info = new_groups)
+                           new_pop_info = new_groups, new_pop_by = "repunit")
 
 ```
 
+The same can be done by specifying collections:
+
+```{r}
+new_groups_collection <- msgsi_out$comb_groups |>
+  dplyr::left_join(new_groups, by = "repunit")
+
+new_groups_collection
+
+stratified_estimator_msgsi(mdl_out = msgsi_out, mixvec = "Bering example",
+                           new_pop_info = new_groups_collection, new_pop_by = "collection")
+
+```
 
 
 # Methods (math!)

@@ -4,16 +4,12 @@
 \alias{tr_plot}
 \title{Plot MCMC trace}
 \usage{
-tr_plot(obj, nburn = 0, thin = 1, pop_info = NULL)
+tr_plot(mdl_out, trace_obj, pop_info = NULL)
 }
 \arguments{
-\item{obj}{Trace from the model output.}
+\item{mdl_out}{Model output object name.}
 
-\item{nburn}{Number of burn-in you set up when you ran the model.
-Default is 0 if you didn't save the burn-ins (keep_burn = FALSE).}
-
-\item{thin}{Number of thinning you set up when you ran the model.
-Default is 1 (no thinning).}
+\item{trace_obj}{Trace from the model output.}
 
 \item{pop_info}{Population information. A tibble with columns
 collection (collection names), repunit (reporting unit names),
@@ -35,5 +31,5 @@ msgsi_dat <-
 msgsi_out <- msgsi_mdl(msgsi_dat, nreps = 25, nburn = 15, thin = 1, nchains = 1)
 
 # trace plot
-tr_plot(obj = msgsi_out$trace_comb, pop_info = msgsi_out$comb_groups)
+tr_plot(mdl_out = msgsi_out, trace_obj = "trace_comb", pop_info = msgsi_out$comb_groups)
 }

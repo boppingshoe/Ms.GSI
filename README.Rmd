@@ -13,9 +13,10 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Ms.GSI <a href="https://boppingshoe.github.io/Ms.GSI/"><img src="man/figures/logo.png" align="right" height="139" alt="Ms.GSI website" /></a>
+# Ms.GSI <a href="https://boppingshoe.github.io/Ms.GSI/"><img src="man/figures/logo.png" alt="Ms.GSI website" align="right" height="139"/></a>
 
 <!-- badges: start -->
+
 <!-- badges: end -->
 
 *Ms.GSI* is here to help you conducting multistage genetic stock identification. This package includes functions to setup input data, run the multistage model, and make summary statistics and convergence diagnostics. It also includes a function for making trace plots.
@@ -42,8 +43,8 @@ library(Ms.GSI)
 msgsi_dat <-
   prep_msgsi_data(mixture_data = mix,
   baseline1_data = base_templin, baseline2_data = base_yukon,
-  pop1_info = templin_pops211, pop2_info = yukon_pops50, sub_group = 3:5)
-
+  pop1_info = templin_pops211, pop2_info = yukon_pops50, sub_group = 3:5,
+  harvest_mean = 500, harvest_cv = 0.05)
 
 ```
 
@@ -57,14 +58,28 @@ msgsi_out$summ_comb
 
 ```
 
+Summary for the stock-specific harvest is called separately:
+
+```{r example_harv_summ}
+
+msgsi_harv_summ(msgsi_out, msgsi_dat)
+
+```
+
+Individual assignment summary:
+
+```{r example_indiv_assign}
+
+indiv_assign(msgsi_out, msgsi_dat)
+
+```
+
 There's a function in the package to make trace plots and inspect mixing of chains.
 
 ```{r example_trace_plot}
 
-tr_plot(obj = msgsi_out$trace_comb, pop_info = msgsi_out$comb_groups)
+tr_plot(mdl_out = msgsi_out, trace_obj = "trace_comb", pop_info = msgsi_out$comb_groups)
 
 ```
 
 Details of the mathematical model of integrated multistage framework and instructions for using *Ms.GSI* package can be found in the "articles" tab of the package website. Or, once you installed *Ms.GSI*, you can call the article using `vignette("msgsi_vignette")`.
-
-
