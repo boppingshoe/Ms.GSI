@@ -394,7 +394,7 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
   iden_tbl1 <- idens_t1 %>%
     dplyr::filter(itr > nburn) %>%
     dplyr::select(-c(itr, ch)) %>%
-    apply(., 1, function(ids) table(factor(ids, levels = 1:K))) %>%
+    apply(., 1, function(ids) table(factor(ids, levels = seq(K + H)))) %>%
     rowsum(., dat_in$groups_t1$repunit) %>%
     t()
 
