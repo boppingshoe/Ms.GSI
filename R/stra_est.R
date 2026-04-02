@@ -57,7 +57,7 @@ stratified_estimator_msgsi <- function(mdl_out = NULL, path = NULL, mixvec, new_
         sstc_trace_t2 <- readr::read_csv(file = file.path(path, mixvec[i], "sstc_trace_t2.csv"),
                                          col_types = readr::cols(.default = "d"))
         nburn <- readr::read_csv(file = file.path(path, mixvec[i], "msgsi_specs.csv"),
-                                 col_types = readr::cols(.default = "d")) %>%
+                                 col_types = readr::cols(.default = "c")) %>%
           dplyr::filter(name == "nburn") %>%
           dplyr::pull(value)
       } else {
@@ -78,6 +78,7 @@ stratified_estimator_msgsi <- function(mdl_out = NULL, path = NULL, mixvec, new_
         dplyr::mutate(mix = mixvec[i])
 
     }) %>% dplyr::bind_rows() %>%
+      dplyr::summarise(sstc = sum(sstc), .by = c(itr, ch, repunit)) %>%
       dplyr::mutate(p = sstc / sum(sstc), .by = c(itr, ch)) %>%
       dplyr::summarise(mean_sstc = mean(sstc),
                        sd_sstc = stats::sd(sstc),
@@ -110,7 +111,7 @@ stratified_estimator_msgsi <- function(mdl_out = NULL, path = NULL, mixvec, new_
     lapply(1:length(mixvec), function(i) {
       if (is.null(mdl_out)) {
         nburn <- readr::read_csv(file = file.path(path, mixvec[i], "msgsi_specs.csv"),
-                                 col_types = readr::cols(.default = "d")) %>%
+                                 col_types = readr::cols(.default = "c")) %>%
           dplyr::filter(name == "nburn") %>%
           dplyr::pull(value)
         trace <- readr::read_csv(file = file.path(path, mixvec[i], "trace_comb.csv"),

@@ -247,6 +247,15 @@ stratified_estimator_msgsi(mdl_out = msgsi_out, mixvec = "Bering example",
 
 ```
 
+And for those prefer doing things the old way (by multiplying fishing effort by the stock proportions):
+
+```{r}
+stratified_estimator_msgsi(mdl_out = msgsi_out, mixvec = "Bering example",
+                           new_pop_info = new_groups, new_pop_by = "repunit",
+                           naive = TRUE, catchvec = 500, cv = 0.05)
+
+```
+
 
 # Methods (math!)
 
