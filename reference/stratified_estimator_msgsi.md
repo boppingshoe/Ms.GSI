@@ -10,7 +10,10 @@ stratified_estimator_msgsi(
   path = NULL,
   mixvec,
   new_pop_info = NULL,
-  new_pop_by = "repunit"
+  new_pop_by = "repunit",
+  naive = FALSE,
+  catchvec = NULL,
+  cv = NULL
 )
 ```
 

@@ -285,7 +285,7 @@ msgsi_dat <-
   pop1_info = templin_pops211, pop2_info = yukon_pops50, sub_group = 3:5,
   harvest_mean = 500, harvest_cv = 0.05)
 #> Compiling input data, may take a minute or two...
-#> Time difference of 9.541426 secs
+#> Time difference of 9.904204 secs
 ```
 
 [`prep_msgsi_data()`](https://boppingshoe.github.io/Ms.GSI/reference/prep_msgsi_data.md)
@@ -477,8 +477,8 @@ seed for reproducible results. We don’t show them in this example though
 
 msgsi_out <- msgsi_mdl(msgsi_dat, nreps = 150, nburn = 50, thin = 1, nchains = 1)
 #> Running model... and good things come to Femme Queen Vogue!
-#> Time difference of 2.247831 secs
-#> April-01-2026 00:49
+#> Time difference of 2.34708 secs
+#> April-02-2026 19:30
 ```
 
 ### Summarizing results
@@ -790,6 +790,21 @@ stratified_estimator_msgsi(mdl_out = msgsi_out, mixvec = "Bering example",
 #>   <chr>        <dbl>   <dbl>       <dbl>     <dbl>     <dbl> <dbl>  <dbl>  <dbl>
 #> 1 Broad         215.    31.0        214.      173.      261. 0.434 0.0554  0.434
 #> 2 Regional      279.    28.5        278       235.      324. 0.566 0.0554  0.566
+#> # ℹ 3 more variables: ci05 <dbl>, ci95 <dbl>, `P=0` <dbl>
+```
+
+And for those prefer doing things the old way (by multiplying fishing
+effort by the stock proportions):
+
+``` r
+stratified_estimator_msgsi(mdl_out = msgsi_out, mixvec = "Bering example",
+                           new_pop_info = new_groups, new_pop_by = "repunit",
+                           naive = TRUE, catchvec = 500, cv = 0.05)
+#> # A tibble: 2 × 12
+#>   repunit  mean_harv sd_harv median_harv ci05_harv ci95_harv  mean     sd median
+#>   <chr>        <dbl>   <dbl>       <dbl>     <dbl>     <dbl> <dbl>  <dbl>  <dbl>
+#> 1 Broad         213.    31.7        213.      166.      267. 0.428 0.0601  0.423
+#> 2 Regional      286.    34.1        281.      234.      345. 0.572 0.0601  0.577
 #> # ℹ 3 more variables: ci05 <dbl>, ci95 <dbl>, `P=0` <dbl>
 ```
 
