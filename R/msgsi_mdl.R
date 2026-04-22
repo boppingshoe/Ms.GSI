@@ -535,7 +535,7 @@ summ_func <- function(combo_file, keeplist, mc_file, groupnames, n_ch, harv, ide
       ci.05 = stats::quantile(value, 0.05),
       ci.95 = stats::quantile(value, 0.95),
       p0 = {if (mean(harv) == 0) mean(value < 5e-7)
-        else mean(value < (0.5/ max(1, harv * mean)))},
+        else mean(value < (0.5/ max(1, harv)))},
       .by = name
     ) %>%
     dplyr::mutate(
