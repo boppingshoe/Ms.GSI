@@ -285,7 +285,7 @@ msgsi_dat <-
   pop1_info = templin_pops211, pop2_info = yukon_pops50, sub_group = 3:5,
   harvest_mean = 500, harvest_cv = 0.05)
 #> Compiling input data, may take a minute or two...
-#> Time difference of 9.904204 secs
+#> Time difference of 10.10383 secs
 ```
 
 [`prep_msgsi_data()`](https://boppingshoe.github.io/Ms.GSI/reference/prep_msgsi_data.md)
@@ -477,8 +477,8 @@ seed for reproducible results. We don’t show them in this example though
 
 msgsi_out <- msgsi_mdl(msgsi_dat, nreps = 150, nburn = 50, thin = 1, nchains = 1)
 #> Running model... and good things come to Femme Queen Vogue!
-#> Time difference of 2.34708 secs
-#> April-02-2026 19:30
+#> Time difference of 2.193119 secs
+#> April-22-2026 19:22
 ```
 
 ### Summarizing results
@@ -499,15 +499,15 @@ msgsi_out$summ_comb
 #> # A tibble: 12 × 10
 #>    group          mean  median      sd    ci.05   ci.95    p0 GR     n_eff    z0
 #>    <chr>         <dbl>   <dbl>   <dbl>    <dbl>   <dbl> <dbl> <lgl>  <dbl> <dbl>
-#>  1 Russia      5.14e-2 4.94e-2 0.0201  2.56e- 2 0.0856   0.01 NA     51.5   0   
-#>  2 Coastal We… 3.79e-2 4.68e-4 0.0586  1.78e-14 0.150    0.66 NA      4.48  0.55
-#>  3 North Alas… 1.78e-2 7.21e-3 0.0223  2.40e-14 0.0588   0.88 NA      6.41  0.39
+#>  1 Russia      5.14e-2 4.94e-2 0.0201  2.56e- 2 0.0856   0    NA     51.5   0   
+#>  2 Coastal We… 3.79e-2 4.68e-4 0.0586  1.78e-14 0.150    0.53 NA      4.48  0.55
+#>  3 North Alas… 1.78e-2 7.21e-3 0.0223  2.40e-14 0.0588   0.37 NA      6.41  0.39
 #>  4 Northwest … 3.16e-1 3.12e-1 0.0595  2.17e- 1 0.410    0    NA     25.7   0   
-#>  5 Copper      3.59e-4 4.91e-7 0.00106 7.96e-18 0.00224  1    NA    100     1   
-#>  6 Northeast … 5.93e-4 1.76e-6 0.00248 2.72e-19 0.00157  1    NA    100     0.98
-#>  7 Coastal So… 2.38e-3 6.45e-6 0.00501 1.11e-15 0.0125   1    NA     29.0   0.79
-#>  8 British Co… 3.99e-4 8.94e-7 0.00102 1.57e-15 0.00234  1    NA    100     1   
-#>  9 WA/OR/CA    4.82e-4 4.20e-6 0.00113 1.13e-17 0.00264  1    NA    100     1   
+#>  5 Copper      3.59e-4 4.91e-7 0.00106 7.96e-18 0.00224  0.89 NA    100     1   
+#>  6 Northeast … 5.93e-4 1.76e-6 0.00248 2.72e-19 0.00157  0.91 NA    100     0.98
+#>  7 Coastal So… 2.38e-3 6.45e-6 0.00501 1.11e-15 0.0125   0.67 NA     29.0   0.79
+#>  8 British Co… 3.99e-4 8.94e-7 0.00102 1.57e-15 0.00234  0.88 NA    100     1   
+#>  9 WA/OR/CA    4.82e-4 4.20e-6 0.00113 1.13e-17 0.00264  0.83 NA    100     1   
 #> 10 Lower Yukon 3.13e-1 3.13e-1 0.0543  2.20e- 1 0.397    0    NA     38.6   0   
 #> 11 Middle Yuk… 7.97e-2 7.82e-2 0.0242  4.37e- 2 0.120    0    NA    100     0   
 #> 12 Upper Yukon 1.79e-1 1.82e-1 0.0254  1.38e- 1 0.219    0    NA    324.    0
@@ -517,16 +517,16 @@ Most column names are self explanatory, but others might need some
 additional descriptions. `ci.05` and `ci.95` are the lower and upper
 bounds of 90% credible interval. `p0` is the probability of an estimate
 equals zero. We estimate `p0` by calculating the portion of posterior
-samples that is less than $5 \times 10^{- 7}$, or 0.5/stock-specific
-harvest if harvest information is provided. `GR` is the Gelman-Rubin
-statistic (a.k.a. $\widehat{R}$). In this example, Gelman-Rubin
-statistic is not calculated because we only run one chain. `n_eff` is
-the effective size, or $N_{eff}$. We will not discuss how to diagnose
-convergence in this document. Please consult Gelman et al. 2014, Gelman
-& Rubin 1992, Brooks & Gelman 1998 and other literature on statistical
-methods. `z0` is the probability of an estimate equals zero based on
-history of individuals assigned to each collection and reporting groups.
-Details of the theory and calculation can be found
+samples that is less than $5 \times 10^{- 7}$, or 0.5/total harvest if
+harvest information is provided. `GR` is the Gelman-Rubin statistic
+(a.k.a. $\widehat{R}$). In this example, Gelman-Rubin statistic is not
+calculated because we only run one chain. `n_eff` is the effective size,
+or $N_{eff}$. We will not discuss how to diagnose convergence in this
+document. Please consult Gelman et al. 2014, Gelman & Rubin 1992, Brooks
+& Gelman 1998 and other literature on statistical methods. `z0` is the
+probability of an estimate equals zero based on history of individuals
+assigned to each collection and reporting groups. Details of the theory
+and calculation can be found
 [here](https://eriqande.github.io/rubias/articles/ppns_less_than_1_over_n.html).
 
 Items with “trace” are the posterior sample history, or trace history,

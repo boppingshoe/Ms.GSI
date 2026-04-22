@@ -1,5 +1,10 @@
 # Changelog
 
+## Ms.GSI 0.1.1
+
+- Calculation of p0 = 0.5 / total harvest. Changed from stock-specific
+  harvest.
+
 ## Ms.GSI 0.1.0
 
 - Updated from the earlier version to estimate uncertainty for
