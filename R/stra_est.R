@@ -1,11 +1,16 @@
 
 #' Stratified estimator for Ms.GSI
 #'
+#' Combines the stock group estimates of multiple mixtures (i.e., strata) weighted by harvest numbers or fishing efforts. Summary can be done by extracting the stock-specific total catch/harvest output from the model runs or by multiplying harvest (provided as input) by stock proportions. Reporting groups can stay in the same format or be reorganized by combining old reporting groups or reorganizing collections. See vignette for details.
+#'
 #' @param mdl_out Optional. Ms.GSI output object name for combining group proportions and harvest of a single mixture.
 #' @param path Where to find output from each mixture as a folder.
 #' @param mixvec Character vector of mixture sillies that are used to locate the folders where output .csv files lives, if `mdl_out` is not provided.
 #' @param new_pop_info Population information for the new grouping. A tibble with columns `repunit` and `new_repunit`. `repunit` is the names of the original reporting groups. Can include a column for `collection` if reorganizing using collections.
 #' @param new_pop_by Option to reorganize the reporting groups by "repunit" or "collection". Default is "repunit".
+#' @param naive TRUE if you want the summary done by the old way (stock-specific harvets = harvest * stock proportion), or you are using fishing effort instead of catch number.
+#' @param catchvec If `naive = TRUE`, manually input harvest or fishing effort means with the same order as `mixvec`.
+#' @param cv If `naive = TRUE`, manually input harvest or fishing effort cv's with the same order as `mixvec`.
 #'
 #' @return A tibble of proportions and harvest numbers by reporting group for combined mixtures/strata.
 #' @importFrom magrittr %>%
@@ -66,7 +71,7 @@ stratified_estimator_msgsi <- function(mdl_out = NULL, path = NULL, mixvec, new_
         nburn <- as.numeric(mdl_out$specs["nburn"])
       }
 
-      coll_names_t1 <- names(sstc_trace_t1)[!names(sstc_trace_t1) %in% names(sstc_trace_t2)]
+      coll_names_t1 <- names(sstc_trace_t1)[names(sstc_trace_t1) %in% grp_info$collection & !names(sstc_trace_t1) %in% names(sstc_trace_t2)]
 
       sstc_trace_t1[, c(coll_names_t1, "itr", "ch")] %>%
         dplyr::left_join(sstc_trace_t2, by = dplyr::join_by(itr, ch)) %>%
