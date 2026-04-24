@@ -1,6 +1,8 @@
 
 #' Individual assignment summary for Ms.GSI
 #'
+#' Summarize the reporting group assignment probabilities for each individual in the mixture. See vignette for details.
+#'
 #' @param mdl_out Model output object name.
 #' @param mdl_dat Input data object name.
 #' @param show_t1_grps Set it to be `FALSE` if you want the proportions of broad-scale groups to be combined. Default = `TRUE`.

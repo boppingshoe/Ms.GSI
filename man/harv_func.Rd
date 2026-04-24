@@ -17,7 +17,7 @@ harv_func(x, n = 5000, seed = NULL)
 A vector of harvest numbers drawn from a lognormal distribution with specified mean and CV.
 }
 \description{
-Sample total harvest numbers from a lognormal distribution
+Generate harvest number using a lognormal distribution. This function is used in \code{prep_msgsi_data()} to generate a vector of harvest numbers.
 }
 \examples{
 tot_harv <- harv_func(c(500, 0.05))

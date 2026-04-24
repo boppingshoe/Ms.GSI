@@ -1,6 +1,8 @@
 
 #' Preparing multistage GSI input data
 #'
+#' Convert data files into input data set for model run. See vignette for details.
+#'
 #' @param mixture_data Individual fish with loci for both tier 1 and tier 2.
 #'   Mixture data in GCL or *rubias* format.
 #' @param baseline1_data Tier 1 baseline data in GCL or *rubias* format.

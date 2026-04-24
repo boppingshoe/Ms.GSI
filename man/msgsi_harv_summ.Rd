@@ -15,7 +15,7 @@ msgsi_harv_summ(mdl_out, mdl_dat)
 A tibble of harvest estimates for each reporting group as columns and MCMC iterations as rows.
 }
 \description{
-Summarize trace output for stock-specific harvest
+Summarize the stock-specific total catch for the reporting groups of the combined baselines. Note that \code{stratified_estimator_msgsi()} function can produce the same summary.
 }
 \examples{
 # prep input data

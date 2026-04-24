@@ -1,7 +1,7 @@
 
 #' Stratified estimator for Ms.GSI
 #'
-#' Combines the stock group estimates of multiple mixtures (i.e., strata) weighted by harvest numbers or fishing efforts. Summary can be done by extracting the stock-specific total catch/harvest output from the model runs or by multiplying harvest (provided as input) by stock proportions. Reporting groups can stay in the same format or be reorganized by combining old reporting groups or reorganizing collections. See vignette for details.
+#' Combine the stock group estimates of multiple mixtures (i.e., strata) weighted by harvest numbers or fishing efforts. Summary can be done by extracting the stock-specific total catch/harvest output from the model runs or by multiplying harvest (provided as input) by stock proportions. Reporting groups can stay in the same format or be reorganized by combining old reporting groups or reorganizing collections. See vignette for details.
 #'
 #' @param mdl_out Optional. Ms.GSI output object name for combining group proportions and harvest of a single mixture.
 #' @param path Where to find output from each mixture as a folder.

@@ -36,7 +36,7 @@ stratified_estimator_msgsi(
 A tibble of proportions and harvest numbers by reporting group for combined mixtures/strata.
 }
 \description{
-Combines the stock group estimates of multiple mixtures (i.e., strata) weighted by harvest numbers or fishing efforts. Summary can be done by extracting the stock-specific total catch/harvest output from the model runs or by multiplying harvest (provided as input) by stock proportions. Reporting groups can stay in the same format or be reorganized by combining old reporting groups or reorganizing collections. See vignette for details.
+Combine the stock group estimates of multiple mixtures (i.e., strata) weighted by harvest numbers or fishing efforts. Summary can be done by extracting the stock-specific total catch/harvest output from the model runs or by multiplying harvest (provided as input) by stock proportions. Reporting groups can stay in the same format or be reorganized by combining old reporting groups or reorganizing collections. See vignette for details.
 }
 \examples{
 \dontrun{

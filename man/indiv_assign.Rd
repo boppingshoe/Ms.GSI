@@ -17,7 +17,7 @@ indiv_assign(mdl_out, mdl_dat, show_t1_grps = TRUE)
 Individual assignment summary
 }
 \description{
-Individual assignment summary for Ms.GSI
+Summarize the reporting group assignment probabilities for each individual in the mixture. See vignette for details.
 }
 \examples{
 # set up input data and run multistage model

@@ -1,6 +1,8 @@
 
 #' Sample total harvest numbers from a lognormal distribution
 #'
+#' Generate harvest number using a lognormal distribution. This function is used in `prep_msgsi_data()` to generate a vector of harvest numbers.
+#'
 #' @param x A vector consists of harvest mean and CV.
 #' @param n Number of sample draws.
 #' @param seed Optional random seed.
@@ -20,6 +22,8 @@ harv_func <- function(x, n = 5000, seed = NULL) {
 
 
 #' Summarize trace output for stock-specific harvest
+#'
+#' Summarize the stock-specific total catch for the reporting groups of the combined baselines. Note that `stratified_estimator_msgsi()` function can produce the same summary.
 #'
 #' @param mdl_out Output of GSI model run
 #' @param mdl_dat Input data for GSI model

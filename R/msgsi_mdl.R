@@ -1,6 +1,8 @@
 
 #' Run multistage GSI model
 #'
+#' Run Gibbs sampler for integrated multistage model. See vignette for details.
+#'
 #' @param dat_in Name of the input data.
 #' @param nreps Total number of iterations (includes burn-ins).
 #' @param nburn Number of warm-up runs.
