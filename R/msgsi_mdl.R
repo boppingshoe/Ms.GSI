@@ -326,10 +326,10 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
       # tier 2 stock-specific harvest estimate
       n_harv2 <- sum(sstc[which(grps %in% sub_grp)])
       iden_harv2 <-
-        sample(K2, max(0, n_harv2 - length(iden %in% which(grps %in% sub_grp))),
+        sample(K2, max(0, n_harv2 - sum(iden %in% which(grps %in% sub_grp))),
                replace = TRUE, prob = p2) %>%
         factor(levels = seq(K2))
-      sstc2 <- table(c(iden2, iden_harv2)) # t2 stock-specific total catch
+      sstc2 <- table(c(iden2[iden %in% which(grps %in% sub_grp)], iden_harv2)) # t2 stock-specific total catch
 
       p2 <- rdirich(table(iden2[iden %in% which(grps %in% sub_grp)]) + p2_prior)
 
