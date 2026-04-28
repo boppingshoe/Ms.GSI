@@ -1,3 +1,5 @@
+# Ms.GSI 0.2.0
+
 # Ms.GSI 0.1.1
 
 * Calculation of p0 = 0.5 / total harvest. Changed from stock-specific harvest.
