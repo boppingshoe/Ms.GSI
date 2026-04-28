@@ -19,7 +19,7 @@ and grpvec (group numbers).}
 Trace plot in ggplot
 }
 \description{
-Plot MCMC trace
+Make trace plot for visualizing the mixing of MCMC chains. Group information (as in \code{groups}, \code{p2_groups}, or \code{comb_groups}) should be provided for the trace history that you want to plot or the trace plots will be shown as collections. See vignette for details.
 }
 \examples{
 # set up input data and run multistage model

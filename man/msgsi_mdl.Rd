@@ -55,7 +55,7 @@ tier 1 (summ_t1, trace_t1), tier 2 (summ_t2, trace_t2) and two tiers
 combined (summ_comb, trace_comb), a tibble of combined collections (comb_groups), records of stock-specific total catch (sstc_trace_t1, sstc_trace_t2), records of individual assignment for each individual (idens_t1, idens_t2), and model run specifications (specs).
 }
 \description{
-Run multistage GSI model
+Run Gibbs sampler for integrated multistage model. See vignette for details.
 }
 \examples{
 # setup input data

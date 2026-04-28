@@ -52,7 +52,7 @@ you don't want to save a copy.}
 A list objects as the input data for msgsi_mdl()
 }
 \description{
-Preparing multistage GSI input data
+Convert data files into input data set for model run. See vignette for details.
 }
 \examples{
 msgsi_dat <-

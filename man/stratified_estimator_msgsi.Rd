@@ -25,12 +25,18 @@ stratified_estimator_msgsi(
 \item{new_pop_info}{Population information for the new grouping. A tibble with columns \code{repunit} and \code{new_repunit}. \code{repunit} is the names of the original reporting groups. Can include a column for \code{collection} if reorganizing using collections.}
 
 \item{new_pop_by}{Option to reorganize the reporting groups by "repunit" or "collection". Default is "repunit".}
+
+\item{naive}{TRUE if you want the summary done by the old way (stock-specific harvets = harvest * stock proportion), or you are using fishing effort instead of catch number.}
+
+\item{catchvec}{If \code{naive = TRUE}, manually input harvest or fishing effort means with the same order as \code{mixvec}.}
+
+\item{cv}{If \code{naive = TRUE}, manually input harvest or fishing effort cv's with the same order as \code{mixvec}.}
 }
 \value{
 A tibble of proportions and harvest numbers by reporting group for combined mixtures/strata.
 }
 \description{
-Stratified estimator for Ms.GSI
+Combine the stock group estimates of multiple mixtures (i.e., strata) weighted by harvest numbers or fishing efforts. Summary can be done by extracting the stock-specific total catch/harvest output from the model runs or by multiplying harvest (provided as input) by stock proportions. Reporting groups can stay in the same format or be reorganized by combining old reporting groups or reorganizing collections. See vignette for details.
 }
 \examples{
 \dontrun{
