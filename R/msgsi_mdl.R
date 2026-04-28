@@ -324,9 +324,8 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
       })) %>% factor(levels = seq(K2))
 
       # tier 2 stock-specific harvest estimate
-      n_harv2 <- sum(sstc[which(grps %in% sub_grp)])
       iden_harv2 <-
-        sample(K2, max(0, n_harv2 - sum(iden %in% which(grps %in% sub_grp))),
+        sample(K2, max(0, sum(iden_harv %in% which(grps %in% sub_grp))),
                replace = TRUE, prob = p2) %>%
         factor(levels = seq(K2))
       sstc2 <- table(c(iden2[iden %in% which(grps %in% sub_grp)], iden_harv2)) # t2 stock-specific total catch
@@ -337,7 +336,6 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
       if (rep > nadapt) { # after adaptation stage
         if ((rep - nadapt) > n_burn & (rep - nadapt - n_burn) %% thin == 0) {
 
-          # it <- (rep - nadapt - n_burn) / thin
           it <- rep - nadapt
           # trace output in collections
           p_out[[it]] <- stats::setNames(c(p, it, ch),
