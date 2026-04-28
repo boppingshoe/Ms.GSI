@@ -1,6 +1,8 @@
 
 #' Plot MCMC trace
 #'
+#' Make trace plot for visualizing the mixing of MCMC chains. Group information (as in `groups`, `p2_groups`, or `comb_groups`) should be provided for the trace history that you want to plot or the trace plots will be shown as collections. See vignette for details.
+#'
 #' @param mdl_out Model output object name.
 #' @param trace_obj Trace from the model output.
 #' @param pop_info Population information. A tibble with columns

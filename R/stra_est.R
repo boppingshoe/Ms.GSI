@@ -157,6 +157,6 @@ stratified_estimator_msgsi <- function(mdl_out = NULL, path = NULL, mixvec, new_
 }
 
 
-utils::globalVariables(c("new_repunit", "mix", "harvest", "sstc"))
+utils::globalVariables(c("new_repunit", "mix", "harvest", "sstc", "harv_p"))
 
 
