@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
+```{r setup, include=FALSE}
 library(Ms.GSI)
 # devtools::load_all()
 
@@ -177,7 +177,7 @@ msgsi_out$sstc_trace_t2
 
 ```
 
-Stock-specific total catch and proportions for the reporting groups of the combined baselines can be summarized using `stratified_estimator_msgsi()` function (more on the functionality of `stratified_estimator_msgsi()` later...). Here the stock proportions and their associated uncertainty (sd, ci05, and ci95) are calculated based on the catch numbers.
+Stock-specific total catch and proportions of the reporting groups for the combined baselines can be summarized using `stratified_estimator_msgsi()` function (more on the functionality of `stratified_estimator_msgsi()` later...). Here the stock proportions and their associated uncertainty (sd, ci05, and ci95) are calculated based on the trace history of the catch.
 
 ```{r}
 
