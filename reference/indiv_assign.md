@@ -1,6 +1,7 @@
 # Individual assignment summary for Ms.GSI
 
-Individual assignment summary for Ms.GSI
+Summarize the reporting group assignment probabilities for each
+individual in the mixture. See vignette for details.
 
 ## Usage
 
@@ -36,13 +37,13 @@ msgsi_dat <-
   baseline1_data = base_templin, baseline2_data = base_yukon,
   pop1_info = templin_pops211, pop2_info = yukon_pops50, sub_group = 3:5)
 #> Compiling input data, may take a minute or two...
-#> Time difference of 10.28701 secs
+#> Time difference of 10.01741 secs
 
 # run model
 msgsi_out <- msgsi_mdl(msgsi_dat, nreps = 25, nburn = 15, thin = 1, nchains = 1)
 #> Running model... and good things come to Femme Queen Vogue!
-#> Time difference of 1.394708 secs
-#> April-22-2026 19:21
+#> Time difference of 1.428498 secs
+#> April-28-2026 18:03
 
 # individual assignment summary
 ind_iden <- indiv_assign(msgsi_out, msgsi_dat)

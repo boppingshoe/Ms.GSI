@@ -1,6 +1,9 @@
 # Sample total harvest numbers from a lognormal distribution
 
-Sample total harvest numbers from a lognormal distribution
+Generate harvest number using a lognormal distribution. This function is
+used in
+[`prep_msgsi_data()`](https://boppingshoe.github.io/Ms.GSI/reference/prep_msgsi_data.md)
+to generate a vector of harvest numbers.
 
 ## Usage
 

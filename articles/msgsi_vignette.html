@@ -64,9 +64,6 @@
 
     
     
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/boppingshoe/Ms.GSI" class="external-link">Ms.GSI</a></span><span class="op">)</span></span>
-<span><span class="co"># devtools::load_all()</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
@@ -149,7 +146,7 @@ format or 2) package <em>rubias</em> format. The example data sets are
 in <em>rubias</em> format and naming convention, but procedures for GCL
 format are the same<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;Note for the GCL folks: you don’t need to transform GCL
 data sets to &lt;em&gt;rubias&lt;/em&gt; format. &lt;em&gt;Ms.GSI&lt;/em&gt; got you covered!&lt;/p&gt;"><sup>1</sup></a>.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/as_tibble.html" class="external-link">as_tibble</a></span><span class="op">(</span><span class="va">mix</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 150 × 360</span></span></span>
@@ -193,7 +190,7 @@ example provided in <em>Ms.GSI</em>. There are originally 45 loci in the
 Templin baseline, but we reduced the marker set to 28 loci due to
 limitation on the data size (and other technical reasons). However, for
 demonstration purpose, this data set will suffice.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/as_tibble.html" class="external-link">as_tibble</a></span><span class="op">(</span><span class="va">base_templin</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 29,363 × 60</span></span></span>
@@ -223,7 +220,7 @@ demonstration purpose, this data set will suffice.</p>
 <p>The regional baseline (Yukon) is in the same format. There are
 originally 380 loci in the Yukon River Chinook baseline, but we reduced
 the numbers to 177 in this demonstration.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/as_tibble.html" class="external-link">as_tibble</a></span><span class="op">(</span><span class="va">base_yukon</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5,435 × 358</span></span></span>
@@ -258,7 +255,7 @@ the reporting group each population belongs to. Column
 <code>grpvec</code> specifies the identification number for each
 reporting group. Below shows the first ten rows of population
 information for the Templin (broad-scale) baseline.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/as_tibble.html" class="external-link">as_tibble</a></span><span class="op">(</span><span class="va">templin_pops211</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 211 × 3</span></span></span>
@@ -288,7 +285,7 @@ don’t add an <code>origin</code> column in the population table for
 regional baseline.</p>
 <p>Population information table for the Yukon (regional) baseline is in
 the same format, but not necessarily in the same order.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/as_tibble.html" class="external-link">as_tibble</a></span><span class="op">(</span><span class="va">yukon_pops50</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 50 × 3</span></span></span>
@@ -327,7 +324,7 @@ names (in string vector) for each baseline by inputting them in
 <code>loci1</code> and <code>loci2</code>. In this example we don’t
 manually provide lists of loci because we trust that mixture and
 baselines all have the correct loci.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">msgsi_dat</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="../reference/prep_msgsi_data.html">prep_msgsi_data</a></span><span class="op">(</span>mixture_data <span class="op">=</span> <span class="va">mix</span>,</span>
@@ -335,12 +332,12 @@ baselines all have the correct loci.</p>
 <span>  pop1_info <span class="op">=</span> <span class="va">templin_pops211</span>, pop2_info <span class="op">=</span> <span class="va">yukon_pops50</span>, sub_group <span class="op">=</span> <span class="fl">3</span><span class="op">:</span><span class="fl">5</span>,</span>
 <span>  harvest_mean <span class="op">=</span> <span class="fl">500</span>, harvest_cv <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Compiling input data, may take a minute or two...</span></span>
-<span><span class="co">#&gt; Time difference of 10.10383 secs</span></span></code></pre></div>
+<span><span class="co">#&gt; Time difference of 9.847919 secs</span></span></code></pre></div>
 <p><code><a href="../reference/prep_msgsi_data.html">prep_msgsi_data()</a></code> formats the data files and put them in
 a list. It took few seconds to format the input data in this case.
 Bigger data sets may take longer. Here are the first few rows/items in
 the input data list:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">msgsi_dat</span>, <span class="va">head</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $x</span></span>
@@ -521,12 +518,12 @@ reality, you should <strong>definitely</strong> run multiple chains with
 more iterations. There are also options to keep the burn-ins and set
 random seed for reproducible results. We don’t show them in this example
 though (but you can always <code><a href="../reference/msgsi_mdl.html">?msgsi_mdl</a></code>).</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">msgsi_out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/msgsi_mdl.html">msgsi_mdl</a></span><span class="op">(</span><span class="va">msgsi_dat</span>, nreps <span class="op">=</span> <span class="fl">150</span>, nburn <span class="op">=</span> <span class="fl">50</span>, thin <span class="op">=</span> <span class="fl">1</span>, nchains <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Running model... and good things come to Femme Queen Vogue!</span></span>
-<span><span class="co">#&gt; Time difference of 2.193119 secs</span></span>
-<span><span class="co">#&gt; April-22-2026 19:22</span></span></code></pre></div>
+<span><span class="co">#&gt; Time difference of 2.346424 secs</span></span>
+<span><span class="co">#&gt; April-28-2026 18:04</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="summarizing-results">Summarizing results<a class="anchor" aria-label="anchor" href="#summarizing-results"></a>
@@ -543,24 +540,24 @@ group proportions and associated convergence diagnostics. If you want to
 see summaries for stage one and two individually, <code>summ_t1</code>
 and <code>summ_t2</code> will show you that. Most people probably want
 to see the combined summary, <code>summ_comb</code>.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">msgsi_out</span><span class="op">$</span><span class="va">summ_comb</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 12 × 10</span></span></span>
 <span><span class="co">#&gt;    group          mean  median      sd    ci.05   ci.95    p0 GR     n_eff    z0</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> Russia      5.14<span style="color: #949494;">e</span><span style="color: #BB0000;">-2</span> 4.94<span style="color: #949494;">e</span><span style="color: #BB0000;">-2</span> 0.020<span style="text-decoration: underline;">1</span>  2.56<span style="color: #949494;">e</span><span style="color: #BB0000;">- 2</span> 0.085<span style="text-decoration: underline;">6</span>   0    <span style="color: #BB0000;">NA</span>     51.5   0   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> Coastal We… 3.79<span style="color: #949494;">e</span><span style="color: #BB0000;">-2</span> 4.68<span style="color: #949494;">e</span><span style="color: #BB0000;">-4</span> 0.058<span style="text-decoration: underline;">6</span>  1.78<span style="color: #949494;">e</span><span style="color: #BB0000;">-14</span> 0.150    0.53 <span style="color: #BB0000;">NA</span>      4.48  0.55</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> North Alas… 1.78<span style="color: #949494;">e</span><span style="color: #BB0000;">-2</span> 7.21<span style="color: #949494;">e</span><span style="color: #BB0000;">-3</span> 0.022<span style="text-decoration: underline;">3</span>  2.40<span style="color: #949494;">e</span><span style="color: #BB0000;">-14</span> 0.058<span style="text-decoration: underline;">8</span>   0.37 <span style="color: #BB0000;">NA</span>      6.41  0.39</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> Northwest … 3.16<span style="color: #949494;">e</span><span style="color: #BB0000;">-1</span> 3.12<span style="color: #949494;">e</span><span style="color: #BB0000;">-1</span> 0.059<span style="text-decoration: underline;">5</span>  2.17<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span> 0.410    0    <span style="color: #BB0000;">NA</span>     25.7   0   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> Copper      3.59<span style="color: #949494;">e</span><span style="color: #BB0000;">-4</span> 4.91<span style="color: #949494;">e</span><span style="color: #BB0000;">-7</span> 0.001<span style="text-decoration: underline;">06</span> 7.96<span style="color: #949494;">e</span><span style="color: #BB0000;">-18</span> 0.002<span style="text-decoration: underline;">24</span>  0.89 <span style="color: #BB0000;">NA</span>    100     1   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> Northeast … 5.93<span style="color: #949494;">e</span><span style="color: #BB0000;">-4</span> 1.76<span style="color: #949494;">e</span><span style="color: #BB0000;">-6</span> 0.002<span style="text-decoration: underline;">48</span> 2.72<span style="color: #949494;">e</span><span style="color: #BB0000;">-19</span> 0.001<span style="text-decoration: underline;">57</span>  0.91 <span style="color: #BB0000;">NA</span>    100     0.98</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> Coastal So… 2.38<span style="color: #949494;">e</span><span style="color: #BB0000;">-3</span> 6.45<span style="color: #949494;">e</span><span style="color: #BB0000;">-6</span> 0.005<span style="text-decoration: underline;">01</span> 1.11<span style="color: #949494;">e</span><span style="color: #BB0000;">-15</span> 0.012<span style="text-decoration: underline;">5</span>   0.67 <span style="color: #BB0000;">NA</span>     29.0   0.79</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> British Co… 3.99<span style="color: #949494;">e</span><span style="color: #BB0000;">-4</span> 8.94<span style="color: #949494;">e</span><span style="color: #BB0000;">-7</span> 0.001<span style="text-decoration: underline;">02</span> 1.57<span style="color: #949494;">e</span><span style="color: #BB0000;">-15</span> 0.002<span style="text-decoration: underline;">34</span>  0.88 <span style="color: #BB0000;">NA</span>    100     1   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> WA/OR/CA    4.82<span style="color: #949494;">e</span><span style="color: #BB0000;">-4</span> 4.20<span style="color: #949494;">e</span><span style="color: #BB0000;">-6</span> 0.001<span style="text-decoration: underline;">13</span> 1.13<span style="color: #949494;">e</span><span style="color: #BB0000;">-17</span> 0.002<span style="text-decoration: underline;">64</span>  0.83 <span style="color: #BB0000;">NA</span>    100     1   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> Lower Yukon 3.13<span style="color: #949494;">e</span><span style="color: #BB0000;">-1</span> 3.13<span style="color: #949494;">e</span><span style="color: #BB0000;">-1</span> 0.054<span style="text-decoration: underline;">3</span>  2.20<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span> 0.397    0    <span style="color: #BB0000;">NA</span>     38.6   0   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> Middle Yuk… 7.97<span style="color: #949494;">e</span><span style="color: #BB0000;">-2</span> 7.82<span style="color: #949494;">e</span><span style="color: #BB0000;">-2</span> 0.024<span style="text-decoration: underline;">2</span>  4.37<span style="color: #949494;">e</span><span style="color: #BB0000;">- 2</span> 0.120    0    <span style="color: #BB0000;">NA</span>    100     0   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> Upper Yukon 1.79<span style="color: #949494;">e</span><span style="color: #BB0000;">-1</span> 1.82<span style="color: #949494;">e</span><span style="color: #BB0000;">-1</span> 0.025<span style="text-decoration: underline;">4</span>  1.38<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span> 0.219    0    <span style="color: #BB0000;">NA</span>    324.    0</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> Russia      5.28<span style="color: #949494;">e</span><span style="color: #BB0000;">-2</span> 5.15<span style="color: #949494;">e</span><span style="color: #BB0000;">-2</span> 0.020<span style="text-decoration: underline;">1</span>  2.40<span style="color: #949494;">e</span><span style="color: #BB0000;">- 2</span> 0.088<span style="text-decoration: underline;">2</span>   0    <span style="color: #BB0000;">NA</span>     54.4   0   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> Coastal We… 7.89<span style="color: #949494;">e</span><span style="color: #BB0000;">-2</span> 7.89<span style="color: #949494;">e</span><span style="color: #BB0000;">-2</span> 0.072<span style="text-decoration: underline;">0</span>  5.68<span style="color: #949494;">e</span><span style="color: #BB0000;">-11</span> 0.217    0.23 <span style="color: #BB0000;">NA</span>      6.31  0.27</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> North Alas… 3.00<span style="color: #949494;">e</span><span style="color: #BB0000;">-2</span> 2.38<span style="color: #949494;">e</span><span style="color: #BB0000;">-2</span> 0.030<span style="text-decoration: underline;">7</span>  2.15<span style="color: #949494;">e</span><span style="color: #BB0000;">-12</span> 0.095<span style="text-decoration: underline;">2</span>   0.28 <span style="color: #BB0000;">NA</span>      9.12  0.26</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> Northwest … 2.81<span style="color: #949494;">e</span><span style="color: #BB0000;">-1</span> 2.77<span style="color: #949494;">e</span><span style="color: #BB0000;">-1</span> 0.055<span style="text-decoration: underline;">3</span>  2.01<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span> 0.367    0    <span style="color: #BB0000;">NA</span>     26.9   0   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> Copper      5.86<span style="color: #949494;">e</span><span style="color: #BB0000;">-4</span> 2.89<span style="color: #949494;">e</span><span style="color: #BB0000;">-6</span> 0.001<span style="text-decoration: underline;">53</span> 9.26<span style="color: #949494;">e</span><span style="color: #BB0000;">-20</span> 0.004<span style="text-decoration: underline;">75</span>  0.86 <span style="color: #BB0000;">NA</span>    100     0.99</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> Northeast … 2.75<span style="color: #949494;">e</span><span style="color: #BB0000;">-3</span> 2.24<span style="color: #949494;">e</span><span style="color: #BB0000;">-5</span> 0.006<span style="text-decoration: underline;">43</span> 4.71<span style="color: #949494;">e</span><span style="color: #BB0000;">-18</span> 0.015<span style="text-decoration: underline;">0</span>   0.72 <span style="color: #BB0000;">NA</span>     15.1   0.84</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> Coastal So… 7.18<span style="color: #949494;">e</span><span style="color: #BB0000;">-4</span> 2.04<span style="color: #949494;">e</span><span style="color: #BB0000;">-7</span> 0.001<span style="text-decoration: underline;">74</span> 5.07<span style="color: #949494;">e</span><span style="color: #BB0000;">-18</span> 0.004<span style="text-decoration: underline;">53</span>  0.8  <span style="color: #BB0000;">NA</span>    100     0.96</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> British Co… 1.20<span style="color: #949494;">e</span><span style="color: #BB0000;">-3</span> 2.11<span style="color: #949494;">e</span><span style="color: #BB0000;">-6</span> 0.003<span style="text-decoration: underline;">44</span> 4.02<span style="color: #949494;">e</span><span style="color: #BB0000;">-21</span> 0.007<span style="text-decoration: underline;">14</span>  0.82 <span style="color: #BB0000;">NA</span>     41.9   0.93</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> WA/OR/CA    4.15<span style="color: #949494;">e</span><span style="color: #BB0000;">-4</span> 7.78<span style="color: #949494;">e</span><span style="color: #BB0000;">-7</span> 0.001<span style="text-decoration: underline;">42</span> 5.66<span style="color: #949494;">e</span><span style="color: #BB0000;">-15</span> 0.002<span style="text-decoration: underline;">00</span>  0.88 <span style="color: #BB0000;">NA</span>    100     1   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> Lower Yukon 2.87<span style="color: #949494;">e</span><span style="color: #BB0000;">-1</span> 2.96<span style="color: #949494;">e</span><span style="color: #BB0000;">-1</span> 0.090<span style="text-decoration: underline;">5</span>  1.25<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span> 0.415    0    <span style="color: #BB0000;">NA</span>      7.05  0   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> Middle Yuk… 7.57<span style="color: #949494;">e</span><span style="color: #BB0000;">-2</span> 7.41<span style="color: #949494;">e</span><span style="color: #BB0000;">-2</span> 0.023<span style="text-decoration: underline;">0</span>  4.52<span style="color: #949494;">e</span><span style="color: #BB0000;">- 2</span> 0.118    0    <span style="color: #BB0000;">NA</span>    100     0   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> Upper Yukon 1.89<span style="color: #949494;">e</span><span style="color: #BB0000;">-1</span> 1.86<span style="color: #949494;">e</span><span style="color: #BB0000;">-1</span> 0.033<span style="text-decoration: underline;">7</span>  1.42<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span> 0.252    0    <span style="color: #BB0000;">NA</span>    100     0</span></span></code></pre></div>
 <p>Most column names are self explanatory, but others might need some
 additional descriptions. <code>ci.05</code> and <code>ci.95</code> are
 the lower and upper bounds of 90% credible interval. <code>p0</code> is
@@ -591,22 +588,22 @@ iteration and chain.</p>
 functions making trace plots (<code><a href="../reference/tr_plot.html">tr_plot()</a></code>) and stratified
 estimator (<code><a href="../reference/stratified_estimator_msgsi.html">stratified_estimator_msgsi()</a></code>). Grouping for
 stage one and two can also be found in the input data.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">msgsi_out</span><span class="op">$</span><span class="va">trace_comb</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 100 × 238</span></span></span>
 <span><span class="co">#&gt;    CHBIG92.KIBIG93.KBIGB04.KBIGB95 CHCRY92.KICRY94.KCRYA05 CHDMT92.KDEER94</span></span>
 <span><span class="co">#&gt;                              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>                       2.15<span style="color: #949494;">e</span><span style="color: #BB0000;">- 16</span>               1.22<span style="color: #949494;">e</span><span style="color: #BB0000;">-191</span>       2.60<span style="color: #949494;">e</span><span style="color: #BB0000;">- 96</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>                       2.96<span style="color: #949494;">e</span><span style="color: #BB0000;">-112</span>               2.38<span style="color: #949494;">e</span><span style="color: #BB0000;">-  3</span>       2.23<span style="color: #949494;">e</span><span style="color: #BB0000;">-308</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>                       7.11<span style="color: #949494;">e</span><span style="color: #BB0000;">- 21</span>               3.75<span style="color: #949494;">e</span><span style="color: #BB0000;">-  3</span>       2.23<span style="color: #949494;">e</span><span style="color: #BB0000;">-308</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>                       2.48<span style="color: #949494;">e</span><span style="color: #BB0000;">- 52</span>               1.12<span style="color: #949494;">e</span><span style="color: #BB0000;">-  3</span>       5.88<span style="color: #949494;">e</span><span style="color: #BB0000;">- 31</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>                       2.08<span style="color: #949494;">e</span><span style="color: #BB0000;">- 22</span>               3.40<span style="color: #949494;">e</span><span style="color: #BB0000;">-  3</span>       8.95<span style="color: #949494;">e</span><span style="color: #BB0000;">- 19</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>                       1.07<span style="color: #949494;">e</span><span style="color: #BB0000;">- 11</span>               1.01<span style="color: #949494;">e</span><span style="color: #BB0000;">-  2</span>       1.06<span style="color: #949494;">e</span><span style="color: #BB0000;">- 50</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>                       2.97<span style="color: #949494;">e</span><span style="color: #BB0000;">-  9</span>               1.17<span style="color: #949494;">e</span><span style="color: #BB0000;">-  3</span>       8.02<span style="color: #949494;">e</span><span style="color: #BB0000;">-124</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>                       1.30<span style="color: #949494;">e</span><span style="color: #BB0000;">- 22</span>               2.83<span style="color: #949494;">e</span><span style="color: #BB0000;">- 37</span>       5.79<span style="color: #949494;">e</span><span style="color: #BB0000;">- 41</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>                       1.08<span style="color: #949494;">e</span><span style="color: #BB0000;">- 41</span>               1.78<span style="color: #949494;">e</span><span style="color: #BB0000;">-169</span>       5.70<span style="color: #949494;">e</span><span style="color: #BB0000;">-295</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>                       7.37<span style="color: #949494;">e</span><span style="color: #BB0000;">- 34</span>               2.23<span style="color: #949494;">e</span><span style="color: #BB0000;">-308</span>       1.64<span style="color: #949494;">e</span><span style="color: #BB0000;">- 64</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>                        6.54<span style="color: #949494;">e</span><span style="color: #BB0000;">-12</span>               2.92<span style="color: #949494;">e</span><span style="color: #BB0000;">- 27</span>       5.34<span style="color: #949494;">e</span><span style="color: #BB0000;">-298</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>                        1.17<span style="color: #949494;">e</span><span style="color: #BB0000;">-55</span>               7.27<span style="color: #949494;">e</span><span style="color: #BB0000;">- 16</span>       3.43<span style="color: #949494;">e</span><span style="color: #BB0000;">- 51</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>                        2.08<span style="color: #949494;">e</span><span style="color: #BB0000;">- 9</span>               1.04<span style="color: #949494;">e</span><span style="color: #BB0000;">-158</span>       1.24<span style="color: #949494;">e</span><span style="color: #BB0000;">-232</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>                        5.32<span style="color: #949494;">e</span><span style="color: #BB0000;">-10</span>               2.31<span style="color: #949494;">e</span><span style="color: #BB0000;">-232</span>       2.79<span style="color: #949494;">e</span><span style="color: #BB0000;">- 12</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>                        2.59<span style="color: #949494;">e</span><span style="color: #BB0000;">-26</span>               3.46<span style="color: #949494;">e</span><span style="color: #BB0000;">- 96</span>       2.08<span style="color: #949494;">e</span><span style="color: #BB0000;">- 78</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>                        2.22<span style="color: #949494;">e</span><span style="color: #BB0000;">-38</span>               1.11<span style="color: #949494;">e</span><span style="color: #BB0000;">- 65</span>       2.23<span style="color: #949494;">e</span><span style="color: #BB0000;">-308</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>                        1.04<span style="color: #949494;">e</span><span style="color: #BB0000;">- 8</span>               3.59<span style="color: #949494;">e</span><span style="color: #BB0000;">-214</span>       1.18<span style="color: #949494;">e</span><span style="color: #BB0000;">- 63</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>                        1.00<span style="color: #949494;">e</span><span style="color: #BB0000;">-26</span>               7.47<span style="color: #949494;">e</span><span style="color: #BB0000;">- 88</span>       5.57<span style="color: #949494;">e</span><span style="color: #BB0000;">- 91</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>                        3.33<span style="color: #949494;">e</span><span style="color: #BB0000;">-11</span>               3.36<span style="color: #949494;">e</span><span style="color: #BB0000;">-242</span>       8.72<span style="color: #949494;">e</span><span style="color: #BB0000;">- 41</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>                        1.85<span style="color: #949494;">e</span><span style="color: #BB0000;">- 6</span>               2.23<span style="color: #949494;">e</span><span style="color: #BB0000;">-308</span>       1.49<span style="color: #949494;">e</span><span style="color: #BB0000;">- 41</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 90 more rows</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 235 more variables: CHKAN92.KIKAN93.KKANE05 &lt;dbl&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   CHKOG92.KIKOG93.KKOGR05 &lt;dbl&gt;, CHNUU92.KINUS93 &lt;dbl&gt;,</span></span></span>
@@ -622,22 +619,22 @@ stage one and two can also be found in the input data.</p>
 reporting group (i.e., stock-specific total catch). Each column
 represents a reporting group in the baseline, and each row records the
 harvest count during each iteration in each chain.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">msgsi_out</span><span class="op">$</span><span class="va">sstc_trace_t2</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 100 × 52</span></span></span>
 <span><span class="co">#&gt;    CHSID92j K100MILECR16.K100MILECR15 KANDR02.KANDR03 KANVI03.KANVI07 KBEAV97</span></span>
 <span><span class="co">#&gt;       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>        0                         0              35              71       3</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>        0                         0              40              38       3</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>        0                         0              28              29       3</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>        0                         0              23              32       1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>        0                         0              30              33       5</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>        0                         0              28              48       0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>        0                         0              31              34       0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>        0                         0              19              36       0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>        0                         0              37              31       0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>        0                         0              51              18       0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>        0                         0               0              15       0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>        0                         0               0              19       0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>        0                         0               0               8       0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>        0                         0               0               8       0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>        0                         0               0              19       0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>        0                         0               0              12       0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>        0                         0               0              21       0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>        0                         0               0               6       0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>        0                         0               0              18       0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>        0                         0               0              12       0</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 90 more rows</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 47 more variables: KBIGS87.KBIGS07 &lt;dbl&gt;, KBLIN03.KBLIN08 &lt;dbl&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   KCHAN04 &lt;dbl&gt;, KCHAT01.KCHAT07 &lt;dbl&gt;, KCHAU01.KCHAU03 &lt;dbl&gt;,</span></span></span>
@@ -645,27 +642,31 @@ harvest count during each iteration in each chain.</p>
 <span><span class="co">#&gt; <span style="color: #949494;">#   KGLEN03.KGLEN04.KGLEN05 &lt;dbl&gt;, KGOODP06.KGOODP07.KGOODP11.KGOODP12 &lt;dbl&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   KHENS01 &lt;dbl&gt;, KHENS07.KHENS15 &lt;dbl&gt;, KHOOL16.KHOOL17 &lt;dbl&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   KKANDI07.KKANDI08.KKANDI09.KKANDI10 &lt;dbl&gt;, KKANT05 &lt;dbl&gt;, …</span></span></span></code></pre></div>
-<p><em>Ms.GSI</em> has a function <code><a href="../reference/msgsi_harv_summ.html">msgsi_harv_summ()</a></code> that
-summarize the stock-specific total catch for the reporting groups of the
-combined baselines.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<p>Stock-specific total catch and proportions of the reporting groups
+for the combined baselines can be summarized using
+<code><a href="../reference/stratified_estimator_msgsi.html">stratified_estimator_msgsi()</a></code> function (more on the
+functionality of <code><a href="../reference/stratified_estimator_msgsi.html">stratified_estimator_msgsi()</a></code> later…). Here
+the stock proportions and their associated uncertainty (sd, ci05, and
+ci95) are calculated based on the trace history of the catch.</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
-<span><span class="fu"><a href="../reference/msgsi_harv_summ.html">msgsi_harv_summ</a></span><span class="op">(</span>mdl_out <span class="op">=</span> <span class="va">msgsi_out</span>, mdl_dat <span class="op">=</span> <span class="va">msgsi_dat</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 12 × 6</span></span></span>
-<span><span class="co">#&gt;    repunit                  mean_harv median_harv sd_harv ci05_harv ci95_harv</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> Northeast Gulf of Alaska      0.28         0     1.24        0        1   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> Coastal Southeast Alaska      0.98         0     2.13        0        6   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> Coastal West Alaska          19.4          0    29.4         0       81.1 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> WA/OR/CA                      0.17         0     0.533       0        1.05</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> Northwest Gulf of Alaska    159.         157    27.9       114      203.  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> British Columbia              0.16         0     0.615       0        1   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> Russia                       25.1         25     8.34       14       40.1 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> North Alaska Peninsula        9.13         3.5  11.2         0       31   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> Copper                        0.13         0     0.485       0        1   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> Upper Yukon                  69.2         70    10.4        51.0     88   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> Lower Yukon                 180.         178.   19.3       149.     213.  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> Middle Yukon                 29.9         29     7.31       19       42.1</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/stratified_estimator_msgsi.html">stratified_estimator_msgsi</a></span><span class="op">(</span><span class="va">msgsi_out</span>, mixvec <span class="op">=</span> <span class="st">"Bering example"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 12 × 12</span></span></span>
+<span><span class="co">#&gt;    repunit     mean_sstc sd_sstc median_sstc ci05_sstc ci95_sstc    mean      sd</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> Northeast …      1.35   3.47          0         0         9   2.64<span style="color: #949494;">e</span><span style="color: #BB0000;">-3</span> 0.006<span style="text-decoration: underline;">78</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> Coastal So…      0.32   0.973         0         0         3   6.28<span style="color: #949494;">e</span><span style="color: #BB0000;">-4</span> 0.001<span style="text-decoration: underline;">92</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> Coastal We…     40.5   36.1          38         0       101.  8.10<span style="color: #949494;">e</span><span style="color: #BB0000;">-2</span> 0.071<span style="text-decoration: underline;">6</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> WA/OR/CA         0.13   0.630         0         0         1   2.58<span style="color: #949494;">e</span><span style="color: #BB0000;">-4</span> 0.001<span style="text-decoration: underline;">26</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> Northwest …    140.    25.6         139       101       175.  2.79<span style="color: #949494;">e</span><span style="color: #BB0000;">-1</span> 0.047<span style="text-decoration: underline;">6</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> British Co…      0.58   1.68          0         0         5   1.17<span style="color: #949494;">e</span><span style="color: #BB0000;">-3</span> 0.003<span style="text-decoration: underline;">35</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> Russia          26.4    8.88         26        12        40.1 5.28<span style="color: #949494;">e</span><span style="color: #BB0000;">-2</span> 0.017<span style="text-decoration: underline;">4</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> North Alas…     14.7   14.1          12         0        42.0 2.95<span style="color: #949494;">e</span><span style="color: #BB0000;">-2</span> 0.028<span style="text-decoration: underline;">1</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> Copper           0.29   1.01          0         0         2   5.91<span style="color: #949494;">e</span><span style="color: #BB0000;">-4</span> 0.002<span style="text-decoration: underline;">04</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> Upper Yukon     94.6   14.7          94        73       121.  1.89<span style="color: #949494;">e</span><span style="color: #BB0000;">-1</span> 0.028<span style="text-decoration: underline;">2</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> Lower Yukon    145.    46.6         151        66.8     209.  2.89<span style="color: #949494;">e</span><span style="color: #BB0000;">-1</span> 0.091<span style="text-decoration: underline;">0</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> Middle Yuk…     37.1   10.5          36.5      22        55.0 7.40<span style="color: #949494;">e</span><span style="color: #BB0000;">-2</span> 0.020<span style="text-decoration: underline;">2</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 4 more variables: median &lt;dbl&gt;, ci05 &lt;dbl&gt;, ci95 &lt;dbl&gt;, `P=0` &lt;dbl&gt;</span></span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="individual-assignments">Individual assignments<a class="anchor" aria-label="anchor" href="#individual-assignments"></a>
@@ -677,22 +678,22 @@ during each iteration in each chain. These numbers are the population
 identifiers in the same order as your population information files (and
 baseline files). Individuals are ordered in the same as the input data
 (i.e., mixture data).</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">msgsi_out</span><span class="op">$</span><span class="va">idens_t1</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 100 × 152</span></span></span>
 <span><span class="co">#&gt;    fish_1 fish_2 fish_3 fish_4 fish_5 fish_6 fish_7 fish_8 fish_9 fish_10</span></span>
 <span><span class="co">#&gt;     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>    116    116    142    116     11    182     11    182     11     116</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>    116     11    116    116    116    182     11     11     11      11</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>    116     11    142    116    116     11     11     93    182     116</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>    116     11     11    116     93     11    125    116     11      36</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>    116     11     11     11    116    182     11     11    184     125</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>    116     11     11    116    116     93     11     11     11     116</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>     11     11     11     11     11     69     11     11    142     182</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>     11     11     11    182     11    182     25     25    116     142</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>     11     11    182     11     11     93     11    116     11      35</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>     11    116    116    116     11     11     11    116     11     142</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>     47     11    114     11     11     11     28     47     11      21</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>     11     47    114     85     28     85     47     85     21     114</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>     28     11    180     85     47     11     85    114     85     154</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>     11     85     11     85     47     28    180     85     85     154</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>     11     85     47     85     85     11     47    180     47      28</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>     11     47    180     11     28     11    114    114     85      47</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>     28     11    114     85     33     85    114     47     85      28</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>     85    114     47     47     85     11     47    154     33      35</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>     11     11     47     11     47     33     85    114     47      28</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>     85     11    114     85     47     47    114     11     47      47</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 90 more rows</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 142 more variables: fish_11 &lt;dbl&gt;, fish_12 &lt;dbl&gt;, fish_13 &lt;dbl&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   fish_14 &lt;dbl&gt;, fish_15 &lt;dbl&gt;, fish_16 &lt;dbl&gt;, fish_17 &lt;dbl&gt;, fish_18 &lt;dbl&gt;,</span></span></span>
@@ -704,22 +705,22 @@ baseline files). Individuals are ordered in the same as the input data
 most users. So, <em>Ms.GSI</em> has a function
 <code><a href="../reference/indiv_assign.html">indiv_assign()</a></code> that summarize the reporting group
 assignment probabilities for each individual in the mixture.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="../reference/indiv_assign.html">indiv_assign</a></span><span class="op">(</span>mdl_out <span class="op">=</span> <span class="va">msgsi_out</span>, mdl_dat <span class="op">=</span> <span class="va">msgsi_dat</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 150 × 13</span></span></span>
 <span><span class="co">#&gt;    ID      Russia `Coastal West Alaska` `North Alaska Peninsula`</span></span>
 <span><span class="co">#&gt;  <span style="color: #BCBCBC;">*</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> fish_1    0                     0.16                     0   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> fish_2    0                     0.06                     0.03</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> fish_3    0.01                  0.06                     0.08</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> fish_4    0                     0.13                     0.01</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> fish_5    0                     0.14                     0   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> fish_6    0                     0.03                     0   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> fish_7    0.14                  0.01                     0.02</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> fish_8    0.16                  0.09                     0   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> fish_9    0                     0.07                     0   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> fish_10   0.12                  0.05                     0.04</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> fish_1    0                     0.25                     0   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> fish_2    0                     0.09                     0.03</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> fish_3    0.02                  0.01                     0.27</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> fish_4    0                     0.28                     0   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> fish_5    0                     0.18                     0   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> fish_6    0                     0.24                     0   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> fish_7    0.05                  0.06                     0.08</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> fish_8    0.19                  0.13                     0.06</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> fish_9    0.01                  0.25                     0   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> fish_10   0.04                  0.12                     0.02</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 140 more rows</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 9 more variables: `Northwest Gulf of Alaska` &lt;dbl&gt;, Copper &lt;dbl&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   `Northeast Gulf of Alaska` &lt;dbl&gt;, `Coastal Southeast Alaska` &lt;dbl&gt;,</span></span></span>
@@ -738,7 +739,7 @@ the mixing of MCMC chains. Don’t forget to include the group information
 (as in <code>groups</code>, <code>p2_groups</code>, or
 <code>comb_groups</code>) for the trace history that you want to
 plot.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="../reference/tr_plot.html">tr_plot</a></span><span class="op">(</span>mdl_out <span class="op">=</span> <span class="va">msgsi_out</span>, trace_obj <span class="op">=</span> <span class="st">"trace_comb"</span>, pop_info <span class="op">=</span> <span class="va">msgsi_out</span><span class="op">$</span><span class="va">comb_groups</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
@@ -762,7 +763,7 @@ combine them in the same format of reporting groups or in forms of new
 reporting groups by combining old reporting groups or reorganizing
 collections. For example, we use the example model output with a new
 grouping:</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">new_groups</span> <span class="op">&lt;-</span> <span class="va">msgsi_out</span><span class="op">$</span><span class="va">summ_comb</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">group</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>new_repunit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"Broad"</span>, <span class="fl">9</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"Regional"</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -790,11 +791,11 @@ grouping:</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 12</span></span></span>
 <span><span class="co">#&gt;   repunit  mean_sstc sd_sstc median_sstc ci05_sstc ci95_sstc  mean     sd median</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Broad         215.    31.0        214.      173.      261. 0.434 0.055<span style="text-decoration: underline;">4</span>  0.434</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Regional      279.    28.5        278       235.      324. 0.566 0.055<span style="text-decoration: underline;">4</span>  0.566</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Broad         224.    49.5         215      164.      324. 0.448 0.095<span style="text-decoration: underline;">3</span>  0.431</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Regional      277.    51.2         278      189.      353. 0.552 0.095<span style="text-decoration: underline;">3</span>  0.569</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 3 more variables: ci05 &lt;dbl&gt;, ci95 &lt;dbl&gt;, `P=0` &lt;dbl&gt;</span></span></span></code></pre></div>
 <p>The same can be done by specifying collections:</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">new_groups_collection</span> <span class="op">&lt;-</span> <span class="va">msgsi_out</span><span class="op">$</span><span class="va">comb_groups</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">new_groups</span>, by <span class="op">=</span> <span class="st">"repunit"</span><span class="op">)</span></span>
 <span></span>
@@ -819,20 +820,20 @@ grouping:</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 12</span></span></span>
 <span><span class="co">#&gt;   repunit  mean_sstc sd_sstc median_sstc ci05_sstc ci95_sstc  mean     sd median</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Broad         215.    31.0        214.      173.      261. 0.434 0.055<span style="text-decoration: underline;">4</span>  0.434</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Regional      279.    28.5        278       235.      324. 0.566 0.055<span style="text-decoration: underline;">4</span>  0.566</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Broad         224.    49.5         215      164.      324. 0.448 0.095<span style="text-decoration: underline;">3</span>  0.431</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Regional      277.    51.2         278      189.      353. 0.552 0.095<span style="text-decoration: underline;">3</span>  0.569</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 3 more variables: ci05 &lt;dbl&gt;, ci95 &lt;dbl&gt;, `P=0` &lt;dbl&gt;</span></span></span></code></pre></div>
 <p>And for those prefer doing things the old way (by multiplying fishing
 effort by the stock proportions):</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/stratified_estimator_msgsi.html">stratified_estimator_msgsi</a></span><span class="op">(</span>mdl_out <span class="op">=</span> <span class="va">msgsi_out</span>, mixvec <span class="op">=</span> <span class="st">"Bering example"</span>,</span>
 <span>                           new_pop_info <span class="op">=</span> <span class="va">new_groups</span>, new_pop_by <span class="op">=</span> <span class="st">"repunit"</span>,</span>
 <span>                           naive <span class="op">=</span> <span class="cn">TRUE</span>, catchvec <span class="op">=</span> <span class="fl">500</span>, cv <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 12</span></span></span>
 <span><span class="co">#&gt;   repunit  mean_harv sd_harv median_harv ci05_harv ci95_harv  mean     sd median</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Broad         213.    31.7        213.      166.      267. 0.428 0.060<span style="text-decoration: underline;">1</span>  0.423</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Regional      286.    34.1        281.      234.      345. 0.572 0.060<span style="text-decoration: underline;">1</span>  0.577</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Broad         224.    50.5        211.      161.      325. 0.448 0.094<span style="text-decoration: underline;">8</span>  0.424</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Regional      275.    48.4        279.      194.      346. 0.552 0.094<span style="text-decoration: underline;">8</span>  0.576</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 3 more variables: ci05 &lt;dbl&gt;, ci95 &lt;dbl&gt;, `P=0` &lt;dbl&gt;</span></span></span></code></pre></div>
 </div>
 </div>

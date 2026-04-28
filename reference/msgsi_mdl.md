@@ -1,6 +1,7 @@
 # Run multistage GSI model
 
-Run multistage GSI model
+Run Gibbs sampler for integrated multistage model. See vignette for
+details.
 
 ## Usage
 
@@ -100,11 +101,11 @@ msgsi_dat <-
   pop1_info = templin_pops211, pop2_info = yukon_pops50, sub_group = 3:5,
   harvest_mean = 500, harvest_cv = 0.05)
 #> Compiling input data, may take a minute or two...
-#> Time difference of 9.477145 secs
+#> Time difference of 9.71388 secs
 
 # run multistage model
 msgsi_out <- msgsi_mdl(msgsi_dat, nreps = 25, nburn = 15, thin = 1, nchains = 1)
-#> Running model... and gradtitude turns what we have into Weather Girl!
-#> Time difference of 1.380632 secs
-#> April-22-2026 19:22
+#> Running model... and surround yourself with only Stone Cold Face!
+#> Time difference of 1.376575 secs
+#> April-28-2026 18:04
 ```

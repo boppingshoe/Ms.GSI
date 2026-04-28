@@ -1,10 +1,5 @@
 # Ms.GSI in the multistage of genetic stock identification madness
 
-``` r
-library(Ms.GSI)
-# devtools::load_all()
-```
-
 ## Overview
 
 This document contains the background information for a integrated
@@ -285,7 +280,7 @@ msgsi_dat <-
   pop1_info = templin_pops211, pop2_info = yukon_pops50, sub_group = 3:5,
   harvest_mean = 500, harvest_cv = 0.05)
 #> Compiling input data, may take a minute or two...
-#> Time difference of 10.10383 secs
+#> Time difference of 9.847919 secs
 ```
 
 [`prep_msgsi_data()`](https://boppingshoe.github.io/Ms.GSI/reference/prep_msgsi_data.md)
@@ -477,8 +472,8 @@ seed for reproducible results. We don’t show them in this example though
 
 msgsi_out <- msgsi_mdl(msgsi_dat, nreps = 150, nburn = 50, thin = 1, nchains = 1)
 #> Running model... and good things come to Femme Queen Vogue!
-#> Time difference of 2.193119 secs
-#> April-22-2026 19:22
+#> Time difference of 2.346424 secs
+#> April-28-2026 18:04
 ```
 
 ### Summarizing results
@@ -499,18 +494,18 @@ msgsi_out$summ_comb
 #> # A tibble: 12 × 10
 #>    group          mean  median      sd    ci.05   ci.95    p0 GR     n_eff    z0
 #>    <chr>         <dbl>   <dbl>   <dbl>    <dbl>   <dbl> <dbl> <lgl>  <dbl> <dbl>
-#>  1 Russia      5.14e-2 4.94e-2 0.0201  2.56e- 2 0.0856   0    NA     51.5   0   
-#>  2 Coastal We… 3.79e-2 4.68e-4 0.0586  1.78e-14 0.150    0.53 NA      4.48  0.55
-#>  3 North Alas… 1.78e-2 7.21e-3 0.0223  2.40e-14 0.0588   0.37 NA      6.41  0.39
-#>  4 Northwest … 3.16e-1 3.12e-1 0.0595  2.17e- 1 0.410    0    NA     25.7   0   
-#>  5 Copper      3.59e-4 4.91e-7 0.00106 7.96e-18 0.00224  0.89 NA    100     1   
-#>  6 Northeast … 5.93e-4 1.76e-6 0.00248 2.72e-19 0.00157  0.91 NA    100     0.98
-#>  7 Coastal So… 2.38e-3 6.45e-6 0.00501 1.11e-15 0.0125   0.67 NA     29.0   0.79
-#>  8 British Co… 3.99e-4 8.94e-7 0.00102 1.57e-15 0.00234  0.88 NA    100     1   
-#>  9 WA/OR/CA    4.82e-4 4.20e-6 0.00113 1.13e-17 0.00264  0.83 NA    100     1   
-#> 10 Lower Yukon 3.13e-1 3.13e-1 0.0543  2.20e- 1 0.397    0    NA     38.6   0   
-#> 11 Middle Yuk… 7.97e-2 7.82e-2 0.0242  4.37e- 2 0.120    0    NA    100     0   
-#> 12 Upper Yukon 1.79e-1 1.82e-1 0.0254  1.38e- 1 0.219    0    NA    324.    0
+#>  1 Russia      5.28e-2 5.15e-2 0.0201  2.40e- 2 0.0882   0    NA     54.4   0   
+#>  2 Coastal We… 7.89e-2 7.89e-2 0.0720  5.68e-11 0.217    0.23 NA      6.31  0.27
+#>  3 North Alas… 3.00e-2 2.38e-2 0.0307  2.15e-12 0.0952   0.28 NA      9.12  0.26
+#>  4 Northwest … 2.81e-1 2.77e-1 0.0553  2.01e- 1 0.367    0    NA     26.9   0   
+#>  5 Copper      5.86e-4 2.89e-6 0.00153 9.26e-20 0.00475  0.86 NA    100     0.99
+#>  6 Northeast … 2.75e-3 2.24e-5 0.00643 4.71e-18 0.0150   0.72 NA     15.1   0.84
+#>  7 Coastal So… 7.18e-4 2.04e-7 0.00174 5.07e-18 0.00453  0.8  NA    100     0.96
+#>  8 British Co… 1.20e-3 2.11e-6 0.00344 4.02e-21 0.00714  0.82 NA     41.9   0.93
+#>  9 WA/OR/CA    4.15e-4 7.78e-7 0.00142 5.66e-15 0.00200  0.88 NA    100     1   
+#> 10 Lower Yukon 2.87e-1 2.96e-1 0.0905  1.25e- 1 0.415    0    NA      7.05  0   
+#> 11 Middle Yuk… 7.57e-2 7.41e-2 0.0230  4.52e- 2 0.118    0    NA    100     0   
+#> 12 Upper Yukon 1.89e-1 1.86e-1 0.0337  1.42e- 1 0.252    0    NA    100     0
 ```
 
 Most column names are self explanatory, but others might need some
@@ -550,16 +545,16 @@ msgsi_out$trace_comb
 #> # A tibble: 100 × 238
 #>    CHBIG92.KIBIG93.KBIGB04.KBIGB95 CHCRY92.KICRY94.KCRYA05 CHDMT92.KDEER94
 #>                              <dbl>                   <dbl>           <dbl>
-#>  1                       2.15e- 16               1.22e-191       2.60e- 96
-#>  2                       2.96e-112               2.38e-  3       2.23e-308
-#>  3                       7.11e- 21               3.75e-  3       2.23e-308
-#>  4                       2.48e- 52               1.12e-  3       5.88e- 31
-#>  5                       2.08e- 22               3.40e-  3       8.95e- 19
-#>  6                       1.07e- 11               1.01e-  2       1.06e- 50
-#>  7                       2.97e-  9               1.17e-  3       8.02e-124
-#>  8                       1.30e- 22               2.83e- 37       5.79e- 41
-#>  9                       1.08e- 41               1.78e-169       5.70e-295
-#> 10                       7.37e- 34               2.23e-308       1.64e- 64
+#>  1                        6.54e-12               2.92e- 27       5.34e-298
+#>  2                        1.17e-55               7.27e- 16       3.43e- 51
+#>  3                        2.08e- 9               1.04e-158       1.24e-232
+#>  4                        5.32e-10               2.31e-232       2.79e- 12
+#>  5                        2.59e-26               3.46e- 96       2.08e- 78
+#>  6                        2.22e-38               1.11e- 65       2.23e-308
+#>  7                        1.04e- 8               3.59e-214       1.18e- 63
+#>  8                        1.00e-26               7.47e- 88       5.57e- 91
+#>  9                        3.33e-11               3.36e-242       8.72e- 41
+#> 10                        1.85e- 6               2.23e-308       1.49e- 41
 #> # ℹ 90 more rows
 #> # ℹ 235 more variables: CHKAN92.KIKAN93.KKANE05 <dbl>,
 #> #   CHKOG92.KIKOG93.KKOGR05 <dbl>, CHNUU92.KINUS93 <dbl>,
@@ -582,16 +577,16 @@ msgsi_out$sstc_trace_t2
 #> # A tibble: 100 × 52
 #>    CHSID92j K100MILECR16.K100MILECR15 KANDR02.KANDR03 KANVI03.KANVI07 KBEAV97
 #>       <dbl>                     <dbl>           <dbl>           <dbl>   <dbl>
-#>  1        0                         0              35              71       3
-#>  2        0                         0              40              38       3
-#>  3        0                         0              28              29       3
-#>  4        0                         0              23              32       1
-#>  5        0                         0              30              33       5
-#>  6        0                         0              28              48       0
-#>  7        0                         0              31              34       0
-#>  8        0                         0              19              36       0
-#>  9        0                         0              37              31       0
-#> 10        0                         0              51              18       0
+#>  1        0                         0               0              15       0
+#>  2        0                         0               0              19       0
+#>  3        0                         0               0               8       0
+#>  4        0                         0               0               8       0
+#>  5        0                         0               0              19       0
+#>  6        0                         0               0              12       0
+#>  7        0                         0               0              21       0
+#>  8        0                         0               0               6       0
+#>  9        0                         0               0              18       0
+#> 10        0                         0               0              12       0
 #> # ℹ 90 more rows
 #> # ℹ 47 more variables: KBIGS87.KBIGS07 <dbl>, KBLIN03.KBLIN08 <dbl>,
 #> #   KCHAN04 <dbl>, KCHAT01.KCHAT07 <dbl>, KCHAU01.KCHAU03 <dbl>,
@@ -601,29 +596,34 @@ msgsi_out$sstc_trace_t2
 #> #   KKANDI07.KKANDI08.KKANDI09.KKANDI10 <dbl>, KKANT05 <dbl>, …
 ```
 
-*Ms.GSI* has a function
-[`msgsi_harv_summ()`](https://boppingshoe.github.io/Ms.GSI/reference/msgsi_harv_summ.md)
-that summarize the stock-specific total catch for the reporting groups
-of the combined baselines.
+Stock-specific total catch and proportions of the reporting groups for
+the combined baselines can be summarized using
+[`stratified_estimator_msgsi()`](https://boppingshoe.github.io/Ms.GSI/reference/stratified_estimator_msgsi.md)
+function (more on the functionality of
+[`stratified_estimator_msgsi()`](https://boppingshoe.github.io/Ms.GSI/reference/stratified_estimator_msgsi.md)
+later…). Here the stock proportions and their associated uncertainty
+(sd, ci05, and ci95) are calculated based on the trace history of the
+catch.
 
 ``` r
 
-msgsi_harv_summ(mdl_out = msgsi_out, mdl_dat = msgsi_dat)
-#> # A tibble: 12 × 6
-#>    repunit                  mean_harv median_harv sd_harv ci05_harv ci95_harv
-#>    <chr>                        <dbl>       <dbl>   <dbl>     <dbl>     <dbl>
-#>  1 Northeast Gulf of Alaska      0.28         0     1.24        0        1   
-#>  2 Coastal Southeast Alaska      0.98         0     2.13        0        6   
-#>  3 Coastal West Alaska          19.4          0    29.4         0       81.1 
-#>  4 WA/OR/CA                      0.17         0     0.533       0        1.05
-#>  5 Northwest Gulf of Alaska    159.         157    27.9       114      203.  
-#>  6 British Columbia              0.16         0     0.615       0        1   
-#>  7 Russia                       25.1         25     8.34       14       40.1 
-#>  8 North Alaska Peninsula        9.13         3.5  11.2         0       31   
-#>  9 Copper                        0.13         0     0.485       0        1   
-#> 10 Upper Yukon                  69.2         70    10.4        51.0     88   
-#> 11 Lower Yukon                 180.         178.   19.3       149.     213.  
-#> 12 Middle Yukon                 29.9         29     7.31       19       42.1
+stratified_estimator_msgsi(msgsi_out, mixvec = "Bering example")
+#> # A tibble: 12 × 12
+#>    repunit     mean_sstc sd_sstc median_sstc ci05_sstc ci95_sstc    mean      sd
+#>    <chr>           <dbl>   <dbl>       <dbl>     <dbl>     <dbl>   <dbl>   <dbl>
+#>  1 Northeast …      1.35   3.47          0         0         9   2.64e-3 0.00678
+#>  2 Coastal So…      0.32   0.973         0         0         3   6.28e-4 0.00192
+#>  3 Coastal We…     40.5   36.1          38         0       101.  8.10e-2 0.0716 
+#>  4 WA/OR/CA         0.13   0.630         0         0         1   2.58e-4 0.00126
+#>  5 Northwest …    140.    25.6         139       101       175.  2.79e-1 0.0476 
+#>  6 British Co…      0.58   1.68          0         0         5   1.17e-3 0.00335
+#>  7 Russia          26.4    8.88         26        12        40.1 5.28e-2 0.0174 
+#>  8 North Alas…     14.7   14.1          12         0        42.0 2.95e-2 0.0281 
+#>  9 Copper           0.29   1.01          0         0         2   5.91e-4 0.00204
+#> 10 Upper Yukon     94.6   14.7          94        73       121.  1.89e-1 0.0282 
+#> 11 Lower Yukon    145.    46.6         151        66.8     209.  2.89e-1 0.0910 
+#> 12 Middle Yuk…     37.1   10.5          36.5      22        55.0 7.40e-2 0.0202 
+#> # ℹ 4 more variables: median <dbl>, ci05 <dbl>, ci95 <dbl>, `P=0` <dbl>
 ```
 
 #### Individual assignments
@@ -642,16 +642,16 @@ msgsi_out$idens_t1
 #> # A tibble: 100 × 152
 #>    fish_1 fish_2 fish_3 fish_4 fish_5 fish_6 fish_7 fish_8 fish_9 fish_10
 #>     <dbl>  <dbl>  <dbl>  <dbl>  <dbl>  <dbl>  <dbl>  <dbl>  <dbl>   <dbl>
-#>  1    116    116    142    116     11    182     11    182     11     116
-#>  2    116     11    116    116    116    182     11     11     11      11
-#>  3    116     11    142    116    116     11     11     93    182     116
-#>  4    116     11     11    116     93     11    125    116     11      36
-#>  5    116     11     11     11    116    182     11     11    184     125
-#>  6    116     11     11    116    116     93     11     11     11     116
-#>  7     11     11     11     11     11     69     11     11    142     182
-#>  8     11     11     11    182     11    182     25     25    116     142
-#>  9     11     11    182     11     11     93     11    116     11      35
-#> 10     11    116    116    116     11     11     11    116     11     142
+#>  1     47     11    114     11     11     11     28     47     11      21
+#>  2     11     47    114     85     28     85     47     85     21     114
+#>  3     28     11    180     85     47     11     85    114     85     154
+#>  4     11     85     11     85     47     28    180     85     85     154
+#>  5     11     85     47     85     85     11     47    180     47      28
+#>  6     11     47    180     11     28     11    114    114     85      47
+#>  7     28     11    114     85     33     85    114     47     85      28
+#>  8     85    114     47     47     85     11     47    154     33      35
+#>  9     11     11     47     11     47     33     85    114     47      28
+#> 10     85     11    114     85     47     47    114     11     47      47
 #> # ℹ 90 more rows
 #> # ℹ 142 more variables: fish_11 <dbl>, fish_12 <dbl>, fish_13 <dbl>,
 #> #   fish_14 <dbl>, fish_15 <dbl>, fish_16 <dbl>, fish_17 <dbl>, fish_18 <dbl>,
@@ -673,16 +673,16 @@ indiv_assign(mdl_out = msgsi_out, mdl_dat = msgsi_dat)
 #> # A tibble: 150 × 13
 #>    ID      Russia `Coastal West Alaska` `North Alaska Peninsula`
 #>  * <chr>    <dbl>                 <dbl>                    <dbl>
-#>  1 fish_1    0                     0.16                     0   
-#>  2 fish_2    0                     0.06                     0.03
-#>  3 fish_3    0.01                  0.06                     0.08
-#>  4 fish_4    0                     0.13                     0.01
-#>  5 fish_5    0                     0.14                     0   
-#>  6 fish_6    0                     0.03                     0   
-#>  7 fish_7    0.14                  0.01                     0.02
-#>  8 fish_8    0.16                  0.09                     0   
-#>  9 fish_9    0                     0.07                     0   
-#> 10 fish_10   0.12                  0.05                     0.04
+#>  1 fish_1    0                     0.25                     0   
+#>  2 fish_2    0                     0.09                     0.03
+#>  3 fish_3    0.02                  0.01                     0.27
+#>  4 fish_4    0                     0.28                     0   
+#>  5 fish_5    0                     0.18                     0   
+#>  6 fish_6    0                     0.24                     0   
+#>  7 fish_7    0.05                  0.06                     0.08
+#>  8 fish_8    0.19                  0.13                     0.06
+#>  9 fish_9    0.01                  0.25                     0   
+#> 10 fish_10   0.04                  0.12                     0.02
 #> # ℹ 140 more rows
 #> # ℹ 9 more variables: `Northwest Gulf of Alaska` <dbl>, Copper <dbl>,
 #> #   `Northeast Gulf of Alaska` <dbl>, `Coastal Southeast Alaska` <dbl>,
@@ -756,8 +756,8 @@ stratified_estimator_msgsi(mdl_out = msgsi_out, mixvec = "Bering example",
 #> # A tibble: 2 × 12
 #>   repunit  mean_sstc sd_sstc median_sstc ci05_sstc ci95_sstc  mean     sd median
 #>   <chr>        <dbl>   <dbl>       <dbl>     <dbl>     <dbl> <dbl>  <dbl>  <dbl>
-#> 1 Broad         215.    31.0        214.      173.      261. 0.434 0.0554  0.434
-#> 2 Regional      279.    28.5        278       235.      324. 0.566 0.0554  0.566
+#> 1 Broad         224.    49.5         215      164.      324. 0.448 0.0953  0.431
+#> 2 Regional      277.    51.2         278      189.      353. 0.552 0.0953  0.569
 #> # ℹ 3 more variables: ci05 <dbl>, ci95 <dbl>, `P=0` <dbl>
 ```
 
@@ -788,8 +788,8 @@ stratified_estimator_msgsi(mdl_out = msgsi_out, mixvec = "Bering example",
 #> # A tibble: 2 × 12
 #>   repunit  mean_sstc sd_sstc median_sstc ci05_sstc ci95_sstc  mean     sd median
 #>   <chr>        <dbl>   <dbl>       <dbl>     <dbl>     <dbl> <dbl>  <dbl>  <dbl>
-#> 1 Broad         215.    31.0        214.      173.      261. 0.434 0.0554  0.434
-#> 2 Regional      279.    28.5        278       235.      324. 0.566 0.0554  0.566
+#> 1 Broad         224.    49.5         215      164.      324. 0.448 0.0953  0.431
+#> 2 Regional      277.    51.2         278      189.      353. 0.552 0.0953  0.569
 #> # ℹ 3 more variables: ci05 <dbl>, ci95 <dbl>, `P=0` <dbl>
 ```
 
@@ -803,8 +803,8 @@ stratified_estimator_msgsi(mdl_out = msgsi_out, mixvec = "Bering example",
 #> # A tibble: 2 × 12
 #>   repunit  mean_harv sd_harv median_harv ci05_harv ci95_harv  mean     sd median
 #>   <chr>        <dbl>   <dbl>       <dbl>     <dbl>     <dbl> <dbl>  <dbl>  <dbl>
-#> 1 Broad         213.    31.7        213.      166.      267. 0.428 0.0601  0.423
-#> 2 Regional      286.    34.1        281.      234.      345. 0.572 0.0601  0.577
+#> 1 Broad         224.    50.5        211.      161.      325. 0.448 0.0948  0.424
+#> 2 Regional      275.    48.4        279.      194.      346. 0.552 0.0948  0.576
 #> # ℹ 3 more variables: ci05 <dbl>, ci95 <dbl>, `P=0` <dbl>
 ```
 

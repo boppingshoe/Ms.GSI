@@ -1,6 +1,7 @@
 # Preparing multistage GSI input data
 
-Preparing multistage GSI input data
+Convert data files into input data set for model run. See vignette for
+details.
 
 ## Usage
 
@@ -94,5 +95,5 @@ msgsi_dat <-
   pop1_info = templin_pops211, pop2_info = yukon_pops50, sub_group = 3:5,
   harvest_mean = 500, harvest_cv = 0.05)
 #> Compiling input data, may take a minute or two...
-#> Time difference of 9.626893 secs
+#> Time difference of 9.513693 secs
 ```

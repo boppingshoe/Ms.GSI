@@ -1,6 +1,12 @@
 # Stratified estimator for Ms.GSI
 
-Stratified estimator for Ms.GSI
+Combine the stock group estimates of multiple mixtures (i.e., strata)
+weighted by harvest numbers or fishing efforts. Summary can be done by
+extracting the stock-specific total catch/harvest output from the model
+runs or by multiplying harvest (provided as input) by stock proportions.
+Reporting groups can stay in the same format or be reorganized by
+combining old reporting groups or reorganizing collections. See vignette
+for details.
 
 ## Usage
 
@@ -44,6 +50,22 @@ stratified_estimator_msgsi(
 
   Option to reorganize the reporting groups by "repunit" or
   "collection". Default is "repunit".
+
+- naive:
+
+  TRUE if you want the summary done by the old way (stock-specific
+  harvets = harvest \* stock proportion), or you are using fishing
+  effort instead of catch number.
+
+- catchvec:
+
+  If `naive = TRUE`, manually input harvest or fishing effort means with
+  the same order as `mixvec`.
+
+- cv:
+
+  If `naive = TRUE`, manually input harvest or fishing effort cv's with
+  the same order as `mixvec`.
 
 ## Value
 
