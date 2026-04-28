@@ -2,7 +2,6 @@
 
 export(harv_func)
 export(indiv_assign)
-export(msgsi_harv_summ)
 export(msgsi_mdl)
 export(prep_msgsi_data)
 export(stratified_estimator_msgsi)

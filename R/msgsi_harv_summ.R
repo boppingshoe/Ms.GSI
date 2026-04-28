@@ -40,7 +40,7 @@ harv_func <- function(x, n = 5000, seed = NULL) {
 #' # summarize individual assignments
 #' harv_summ <- msgsi_harv_summ(msgsi_out, msgsi_dat)
 #'
-#' @export
+#' @noRd
 msgsi_harv_summ <- function(mdl_out, mdl_dat) {
   nburn <- as.numeric(mdl_out$specs["nburn"])
 
