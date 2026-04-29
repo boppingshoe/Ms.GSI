@@ -332,7 +332,7 @@ baselines all have the correct loci.</p>
 <span>  pop1_info <span class="op">=</span> <span class="va">templin_pops211</span>, pop2_info <span class="op">=</span> <span class="va">yukon_pops50</span>, sub_group <span class="op">=</span> <span class="fl">3</span><span class="op">:</span><span class="fl">5</span>,</span>
 <span>  harvest_mean <span class="op">=</span> <span class="fl">500</span>, harvest_cv <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Compiling input data, may take a minute or two...</span></span>
-<span><span class="co">#&gt; Time difference of 10.46361 secs</span></span></code></pre></div>
+<span><span class="co">#&gt; Time difference of 10.07798 secs</span></span></code></pre></div>
 <p><code><a href="../reference/prep_msgsi_data.html">prep_msgsi_data()</a></code> formats the data files and put them in
 a list. It took few seconds to format the input data in this case.
 Bigger data sets may take longer. Here are the first few rows/items in
@@ -522,8 +522,8 @@ though (but you can always <code><a href="../reference/msgsi_mdl.html">?msgsi_md
 <code class="sourceCode R"><span></span>
 <span><span class="va">msgsi_out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/msgsi_mdl.html">msgsi_mdl</a></span><span class="op">(</span><span class="va">msgsi_dat</span>, nreps <span class="op">=</span> <span class="fl">150</span>, nburn <span class="op">=</span> <span class="fl">50</span>, thin <span class="op">=</span> <span class="fl">1</span>, nchains <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Running model... and good things come to Femme Queen Vogue!</span></span>
-<span><span class="co">#&gt; Time difference of 2.457608 secs</span></span>
-<span><span class="co">#&gt; April-28-2026 18:28</span></span></code></pre></div>
+<span><span class="co">#&gt; Time difference of 2.456985 secs</span></span>
+<span><span class="co">#&gt; April-29-2026 18:42</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="summarizing-results">Summarizing results<a class="anchor" aria-label="anchor" href="#summarizing-results"></a>
@@ -651,7 +651,7 @@ ci95) are calculated based on the trace history of the catch.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="../reference/stratified_estimator_msgsi.html">stratified_estimator_msgsi</a></span><span class="op">(</span><span class="va">msgsi_out</span>, mixvec <span class="op">=</span> <span class="st">"Bering example"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 12 × 12</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 12 × 13</span></span></span>
 <span><span class="co">#&gt;    repunit     mean_sstc sd_sstc median_sstc ci05_sstc ci95_sstc    mean      sd</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> Northeast …      1.35   3.47          0         0         9   2.64<span style="color: #949494;">e</span><span style="color: #BB0000;">-3</span> 0.006<span style="text-decoration: underline;">78</span></span></span>
@@ -666,7 +666,8 @@ ci95) are calculated based on the trace history of the catch.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> Upper Yukon     94.6   14.7          94        73       121.  1.89<span style="color: #949494;">e</span><span style="color: #BB0000;">-1</span> 0.028<span style="text-decoration: underline;">2</span> </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> Lower Yukon    145.    46.6         151        66.8     209.  2.89<span style="color: #949494;">e</span><span style="color: #BB0000;">-1</span> 0.091<span style="text-decoration: underline;">0</span> </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> Middle Yuk…     37.1   10.5          36.5      22        55.0 7.40<span style="color: #949494;">e</span><span style="color: #BB0000;">-2</span> 0.020<span style="text-decoration: underline;">2</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 4 more variables: median &lt;dbl&gt;, ci05 &lt;dbl&gt;, ci95 &lt;dbl&gt;, `P=0` &lt;dbl&gt;</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 5 more variables: median &lt;dbl&gt;, ci05 &lt;dbl&gt;, ci95 &lt;dbl&gt;, `P=0` &lt;dbl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   `Z=0` &lt;dbl&gt;</span></span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="individual-assignments">Individual assignments<a class="anchor" aria-label="anchor" href="#individual-assignments"></a>
@@ -788,12 +789,12 @@ grouping:</p>
 <span></span>
 <span><span class="fu"><a href="../reference/stratified_estimator_msgsi.html">stratified_estimator_msgsi</a></span><span class="op">(</span>mdl_out <span class="op">=</span> <span class="va">msgsi_out</span>, mixvec <span class="op">=</span> <span class="st">"Bering example"</span>,</span>
 <span>                           new_pop_info <span class="op">=</span> <span class="va">new_groups</span>, new_pop_by <span class="op">=</span> <span class="st">"repunit"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 12</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 13</span></span></span>
 <span><span class="co">#&gt;   repunit  mean_sstc sd_sstc median_sstc ci05_sstc ci95_sstc  mean     sd median</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Broad         224.    49.5         215      164.      324. 0.448 0.095<span style="text-decoration: underline;">3</span>  0.431</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Regional      277.    51.2         278      189.      353. 0.552 0.095<span style="text-decoration: underline;">3</span>  0.569</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 3 more variables: ci05 &lt;dbl&gt;, ci95 &lt;dbl&gt;, `P=0` &lt;dbl&gt;</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 4 more variables: ci05 &lt;dbl&gt;, ci95 &lt;dbl&gt;, `P=0` &lt;dbl&gt;, `Z=0` &lt;dbl&gt;</span></span></span></code></pre></div>
 <p>The same can be done by specifying collections:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">new_groups_collection</span> <span class="op">&lt;-</span> <span class="va">msgsi_out</span><span class="op">$</span><span class="va">comb_groups</span> <span class="op">|&gt;</span></span>
@@ -817,12 +818,12 @@ grouping:</p>
 <span></span>
 <span><span class="fu"><a href="../reference/stratified_estimator_msgsi.html">stratified_estimator_msgsi</a></span><span class="op">(</span>mdl_out <span class="op">=</span> <span class="va">msgsi_out</span>, mixvec <span class="op">=</span> <span class="st">"Bering example"</span>,</span>
 <span>                           new_pop_info <span class="op">=</span> <span class="va">new_groups_collection</span>, new_pop_by <span class="op">=</span> <span class="st">"collection"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 12</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 13</span></span></span>
 <span><span class="co">#&gt;   repunit  mean_sstc sd_sstc median_sstc ci05_sstc ci95_sstc  mean     sd median</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Broad         224.    49.5         215      164.      324. 0.448 0.095<span style="text-decoration: underline;">3</span>  0.431</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Regional      277.    51.2         278      189.      353. 0.552 0.095<span style="text-decoration: underline;">3</span>  0.569</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 3 more variables: ci05 &lt;dbl&gt;, ci95 &lt;dbl&gt;, `P=0` &lt;dbl&gt;</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 4 more variables: ci05 &lt;dbl&gt;, ci95 &lt;dbl&gt;, `P=0` &lt;dbl&gt;, `Z=0` &lt;dbl&gt;</span></span></span></code></pre></div>
 <p>And for those prefer doing things the old way (by multiplying fishing
 effort by the stock proportions):</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">

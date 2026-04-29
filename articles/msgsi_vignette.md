@@ -280,7 +280,7 @@ msgsi_dat <-
   pop1_info = templin_pops211, pop2_info = yukon_pops50, sub_group = 3:5,
   harvest_mean = 500, harvest_cv = 0.05)
 #> Compiling input data, may take a minute or two...
-#> Time difference of 10.46361 secs
+#> Time difference of 10.07798 secs
 ```
 
 [`prep_msgsi_data()`](https://boppingshoe.github.io/Ms.GSI/reference/prep_msgsi_data.md)
@@ -472,8 +472,8 @@ seed for reproducible results. We don’t show them in this example though
 
 msgsi_out <- msgsi_mdl(msgsi_dat, nreps = 150, nburn = 50, thin = 1, nchains = 1)
 #> Running model... and good things come to Femme Queen Vogue!
-#> Time difference of 2.457608 secs
-#> April-28-2026 18:28
+#> Time difference of 2.456985 secs
+#> April-29-2026 18:42
 ```
 
 ### Summarizing results
@@ -608,7 +608,7 @@ catch.
 ``` r
 
 stratified_estimator_msgsi(msgsi_out, mixvec = "Bering example")
-#> # A tibble: 12 × 12
+#> # A tibble: 12 × 13
 #>    repunit     mean_sstc sd_sstc median_sstc ci05_sstc ci95_sstc    mean      sd
 #>    <chr>           <dbl>   <dbl>       <dbl>     <dbl>     <dbl>   <dbl>   <dbl>
 #>  1 Northeast …      1.35   3.47          0         0         9   2.64e-3 0.00678
@@ -623,7 +623,8 @@ stratified_estimator_msgsi(msgsi_out, mixvec = "Bering example")
 #> 10 Upper Yukon     94.6   14.7          94        73       121.  1.89e-1 0.0282 
 #> 11 Lower Yukon    145.    46.6         151        66.8     209.  2.89e-1 0.0910 
 #> 12 Middle Yuk…     37.1   10.5          36.5      22        55.0 7.40e-2 0.0202 
-#> # ℹ 4 more variables: median <dbl>, ci05 <dbl>, ci95 <dbl>, `P=0` <dbl>
+#> # ℹ 5 more variables: median <dbl>, ci05 <dbl>, ci95 <dbl>, `P=0` <dbl>,
+#> #   `Z=0` <dbl>
 ```
 
 #### Individual assignments
@@ -753,12 +754,12 @@ new_groups
 
 stratified_estimator_msgsi(mdl_out = msgsi_out, mixvec = "Bering example",
                            new_pop_info = new_groups, new_pop_by = "repunit")
-#> # A tibble: 2 × 12
+#> # A tibble: 2 × 13
 #>   repunit  mean_sstc sd_sstc median_sstc ci05_sstc ci95_sstc  mean     sd median
 #>   <chr>        <dbl>   <dbl>       <dbl>     <dbl>     <dbl> <dbl>  <dbl>  <dbl>
 #> 1 Broad         224.    49.5         215      164.      324. 0.448 0.0953  0.431
 #> 2 Regional      277.    51.2         278      189.      353. 0.552 0.0953  0.569
-#> # ℹ 3 more variables: ci05 <dbl>, ci95 <dbl>, `P=0` <dbl>
+#> # ℹ 4 more variables: ci05 <dbl>, ci95 <dbl>, `P=0` <dbl>, `Z=0` <dbl>
 ```
 
 The same can be done by specifying collections:
@@ -785,12 +786,12 @@ new_groups_collection
 
 stratified_estimator_msgsi(mdl_out = msgsi_out, mixvec = "Bering example",
                            new_pop_info = new_groups_collection, new_pop_by = "collection")
-#> # A tibble: 2 × 12
+#> # A tibble: 2 × 13
 #>   repunit  mean_sstc sd_sstc median_sstc ci05_sstc ci95_sstc  mean     sd median
 #>   <chr>        <dbl>   <dbl>       <dbl>     <dbl>     <dbl> <dbl>  <dbl>  <dbl>
 #> 1 Broad         224.    49.5         215      164.      324. 0.448 0.0953  0.431
 #> 2 Regional      277.    51.2         278      189.      353. 0.552 0.0953  0.569
-#> # ℹ 3 more variables: ci05 <dbl>, ci95 <dbl>, `P=0` <dbl>
+#> # ℹ 4 more variables: ci05 <dbl>, ci95 <dbl>, `P=0` <dbl>, `Z=0` <dbl>
 ```
 
 And for those prefer doing things the old way (by multiplying fishing

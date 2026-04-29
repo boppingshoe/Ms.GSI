@@ -39,12 +39,12 @@ msgsi_dat <-
   baseline1_data = base_templin, baseline2_data = base_yukon,
   pop1_info = templin_pops211, pop2_info = yukon_pops50, sub_group = 3:5)
 #> Compiling input data, may take a minute or two...
-#> Time difference of 9.784899 secs
+#> Time difference of 9.523293 secs
 
 msgsi_out <- msgsi_mdl(msgsi_dat, nreps = 25, nburn = 15, thin = 1, nchains = 1)
 #> Running model... and gradtitude turns what we have into Weather Girl!
-#> Time difference of 1.611843 secs
-#> April-28-2026 18:28
+#> Time difference of 1.561952 secs
+#> April-29-2026 18:42
 
 # trace plot
 tr_plot(mdl_out = msgsi_out, trace_obj = "trace_comb", pop_info = msgsi_out$comb_groups)
