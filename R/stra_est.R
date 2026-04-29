@@ -96,6 +96,7 @@ stratified_estimator_msgsi <- function(mdl_out = NULL, path = NULL, mixvec, new_
                        ci05 = stats::quantile(p, 0.05),
                        ci95 = stats::quantile(p, 0.95),
                        `P=0` = mean(sstc < 0.5),
+                       `Z=0` = mean(sstc == 0),
                        .by = c(repunit))
 
   } else { # the old way
