@@ -387,18 +387,22 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
     lapply(p1_combo, function(rlist) coda::mcmc(rlist[keep_list,]))
     )
 
+  sstc_t1 <-
+    lapply(out_list0, function(ol) ol[[4]]) %>%
+    dplyr::bind_rows()
+
+  sstc_tbl1 <- sstc_t1 %>%
+    dplyr::filter(itr > nburn) %>%
+    dplyr::select(-c(itr, ch)) %>%
+    t() %>%
+    rowsum(., dat_in$groups_t1$repunit) %>%
+    t()
+
   idens_t1 <-
     lapply(out_list0, function(ol) ol[[6]]) %>%
     dplyr::bind_rows()
 
-  iden_tbl1 <- idens_t1 %>%
-    dplyr::filter(itr > nburn) %>%
-    dplyr::select(-c(itr, ch)) %>%
-    apply(., 1, function(ids) table(factor(ids, levels = seq(K + H)))) %>%
-    rowsum(., dat_in$groups_t1$repunit) %>%
-    t()
-
-  summ_pop1 <- summ_func(p1_combo, keep_list, mc_pop1, grp_names_t1, nchains, harvest, iden_tbl1)
+  summ_pop1 <- summ_func(p1_combo, keep_list, mc_pop1, grp_names_t1, nchains, harvest, sstc_tbl1)
 
   ## tier 2
   out_list2 <- lapply(out_list0, function(ol) ol[[2]])
@@ -416,18 +420,22 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
 
   harvest2 <- sum(summ_pop1$mean[sub_grp]) * harvest
 
+  sstc_t2 <-
+    lapply(out_list0, function(ol) ol[[5]]) %>%
+    dplyr::bind_rows()
+
+  sstc_tbl2 <- sstc_t2 %>%
+    dplyr::filter(itr > nburn) %>%
+    dplyr::select(-c(itr, ch)) %>%
+    t() %>%
+    rowsum(., dat_in$groups_t2$repunit) %>%
+    t()
+
   idens_t2 <-
     lapply(out_list0, function(ol) ol[[7]]) %>%
     dplyr::bind_rows()
 
-  iden_tbl2 <- idens_t2 %>%
-    dplyr::filter(itr > nburn) %>%
-    dplyr::select(-c(itr, ch)) %>%
-    apply(., 1, function(ids) table(factor(ids, levels = 1:K2))) %>%
-    rowsum(., dat_in$groups_t2$repunit) %>%
-    t()
-
-  summ_pop2 <- summ_func(p2_combo, keep_list, mc_pop2, grp_names_t2, nchains, harvest2, iden_tbl2)
+  summ_pop2 <- summ_func(p2_combo, keep_list, mc_pop2, grp_names_t2, nchains, harvest2, sstc_tbl2)
 
   ## combine tiers
   out_list <- lapply(out_list0, function(ol) ol[[3]])
@@ -446,9 +454,9 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
     lapply(p_combo, function(rlist) coda::mcmc(rlist[keep_list,]))
     )
 
-  iden_tbl_comb <- cbind(iden_tbl1[, grp_names_t1[-sub_grp]], iden_tbl2)
+  sstc_tbl_comb <- cbind(sstc_tbl1[, grp_names_t1[-sub_grp]], sstc_tbl2)
 
-  summ_pop <- summ_func(p_combo, keep_list, mc_pop, grp_names, nchains, harvest, iden_tbl_comb)
+  summ_pop <- summ_func(p_combo, keep_list, mc_pop, grp_names, nchains, harvest, sstc_tbl_comb)
 
   # get output together
   msgsi_out <- list()
@@ -473,13 +481,9 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
 
   msgsi_out$comb_groups <- dat_in$comb_groups
 
-  msgsi_out$sstc_trace_t1 <-
-    lapply(out_list0, function(ol) ol[[4]]) %>%
-    dplyr::bind_rows()
+  msgsi_out$sstc_trace_t1 <- sstc_t1
 
-  msgsi_out$sstc_trace_t2 <-
-    lapply(out_list0, function(ol) ol[[5]]) %>%
-    dplyr::bind_rows()
+  msgsi_out$sstc_trace_t2 <- sstc_t2
 
   if (iden_output == TRUE) {
     msgsi_out$idens_t1 <- idens_t1
