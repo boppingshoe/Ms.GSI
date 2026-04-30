@@ -11,6 +11,7 @@ You can install the development version of *Ms.GSI* from
 [GitHub](https://github.com/boppingshoe/Ms.GSI) with:
 
 ``` r
+
 # install.packages("devtools")
 devtools::install_github("boppingshoe/Ms.GSI", build_vignettes = TRUE)
 ```
@@ -30,6 +31,7 @@ we prepare the input data:
 
 ``` r
 
+
 library(Ms.GSI)
 
 msgsi_dat <-
@@ -48,6 +50,7 @@ iterations. We set the first 50 iterations in each chain as the warm-ups
 convergence diagnostics.
 
 ``` r
+
 
 msgsi_out <- msgsi_mdl(msgsi_dat, nreps = 150, nburn = 50, thin = 1, nchains = 4)
 #> Running model... and good things come to Best Dressed!
@@ -76,6 +79,7 @@ Summary for the stock-specific harvest is called separately:
 
 ``` r
 
+
 msgsi_harv_summ(msgsi_out, msgsi_dat)
 #> # A tibble: 12 × 6
 #>    repunit                  mean_harv median_harv sd_harv ci05_harv ci95_harv
@@ -97,6 +101,7 @@ msgsi_harv_summ(msgsi_out, msgsi_dat)
 Individual assignment summary:
 
 ``` r
+
 
 indiv_assign(msgsi_out, msgsi_dat)
 #> # A tibble: 150 × 13
@@ -123,6 +128,7 @@ There’s a function in the package to make trace plots and inspect mixing
 of chains.
 
 ``` r
+
 
 tr_plot(mdl_out = msgsi_out, trace_obj = "trace_comb", pop_info = msgsi_out$comb_groups)
 ```

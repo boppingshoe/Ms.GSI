@@ -80,10 +80,10 @@ Yukon, Coastal Western Alaska (Coastal West Alaska), and Others.
 First we will take a look at the baseline and mixture samples. *Ms.GSI*
 accepts the genotype information in two format: 1) GCL format or 2)
 package *rubias* format. The example data sets are in *rubias* format
-and naming convention, but procedures for GCL format are the
-same[¹](#fn1).
+and naming convention, but procedures for GCL format are the same[^1].
 
 ``` r
+
 
 print(dplyr::as_tibble(mix))
 #> # A tibble: 150 × 360
@@ -130,6 +130,7 @@ purpose, this data set will suffice.
 
 ``` r
 
+
 print(dplyr::as_tibble(base_templin))
 #> # A tibble: 29,363 × 60
 #>    sample_type repunit collection indiv   `GTH2B-550` `GTH2B-550.1` NOD1  NOD1.1
@@ -160,6 +161,7 @@ originally 380 loci in the Yukon River Chinook baseline, but we reduced
 the numbers to 177 in this demonstration.
 
 ``` r
+
 
 print(dplyr::as_tibble(base_yukon))
 #> # A tibble: 5,435 × 358
@@ -197,6 +199,7 @@ baseline.
 
 ``` r
 
+
 print(dplyr::as_tibble(templin_pops211))
 #> # A tibble: 211 × 3
 #>    collection       repunit             grpvec
@@ -228,6 +231,7 @@ Population information table for the Yukon (regional) baseline is in the
 same format, but not necessarily in the same order.
 
 ``` r
+
 
 print(dplyr::as_tibble(yukon_pops50))
 #> # A tibble: 50 × 3
@@ -274,13 +278,14 @@ baselines all have the correct loci.
 
 ``` r
 
+
 msgsi_dat <-
   prep_msgsi_data(mixture_data = mix,
   baseline1_data = base_templin, baseline2_data = base_yukon,
   pop1_info = templin_pops211, pop2_info = yukon_pops50, sub_group = 3:5,
   harvest_mean = 500, harvest_cv = 0.05)
 #> Compiling input data, may take a minute or two...
-#> Time difference of 10.07798 secs
+#> Time difference of 9.100319 secs
 ```
 
 [`prep_msgsi_data()`](https://boppingshoe.github.io/Ms.GSI/reference/prep_msgsi_data.md)
@@ -289,6 +294,7 @@ format the input data in this case. Bigger data sets may take longer.
 Here are the first few rows/items in the input data list:
 
 ``` r
+
 
 lapply(msgsi_dat, head)
 #> $x
@@ -461,7 +467,7 @@ theory but provide the option for those who want to try it.
 
 We demonstrate the model run with one chains of 150 iterations (first 50
 as warm-up runs, or burn-ins). We only run one chain in this example so
-it can pass CMD check while building the vignette document[²](#fn2). In
+it can pass CMD check while building the vignette document[^2]. In
 reality, you should **definitely** run multiple chains with more
 iterations. There are also options to keep the burn-ins and set random
 seed for reproducible results. We don’t show them in this example though
@@ -470,10 +476,11 @@ seed for reproducible results. We don’t show them in this example though
 
 ``` r
 
+
 msgsi_out <- msgsi_mdl(msgsi_dat, nreps = 150, nburn = 50, thin = 1, nchains = 1)
 #> Running model... and good things come to Femme Queen Vogue!
-#> Time difference of 2.456985 secs
-#> April-29-2026 18:42
+#> Time difference of 2.056266 secs
+#> April-30-2026 23:26
 ```
 
 ### Summarizing results
@@ -490,19 +497,20 @@ see the combined summary, `summ_comb`.
 
 ``` r
 
+
 msgsi_out$summ_comb
 #> # A tibble: 12 × 10
 #>    group          mean  median      sd    ci.05   ci.95    p0 GR     n_eff    z0
 #>    <chr>         <dbl>   <dbl>   <dbl>    <dbl>   <dbl> <dbl> <lgl>  <dbl> <dbl>
 #>  1 Russia      5.28e-2 5.15e-2 0.0201  2.40e- 2 0.0882   0    NA     54.4   0   
-#>  2 Coastal We… 7.89e-2 7.89e-2 0.0720  5.68e-11 0.217    0.23 NA      6.31  0.27
+#>  2 Coastal We… 7.89e-2 7.89e-2 0.0720  5.68e-11 0.217    0.23 NA      6.31  0.23
 #>  3 North Alas… 3.00e-2 2.38e-2 0.0307  2.15e-12 0.0952   0.28 NA      9.12  0.26
 #>  4 Northwest … 2.81e-1 2.77e-1 0.0553  2.01e- 1 0.367    0    NA     26.9   0   
-#>  5 Copper      5.86e-4 2.89e-6 0.00153 9.26e-20 0.00475  0.86 NA    100     0.99
-#>  6 Northeast … 2.75e-3 2.24e-5 0.00643 4.71e-18 0.0150   0.72 NA     15.1   0.84
-#>  7 Coastal So… 7.18e-4 2.04e-7 0.00174 5.07e-18 0.00453  0.8  NA    100     0.96
-#>  8 British Co… 1.20e-3 2.11e-6 0.00344 4.02e-21 0.00714  0.82 NA     41.9   0.93
-#>  9 WA/OR/CA    4.15e-4 7.78e-7 0.00142 5.66e-15 0.00200  0.88 NA    100     1   
+#>  5 Copper      5.86e-4 2.89e-6 0.00153 9.26e-20 0.00475  0.86 NA    100     0.88
+#>  6 Northeast … 2.75e-3 2.24e-5 0.00643 4.71e-18 0.0150   0.72 NA     15.1   0.76
+#>  7 Coastal So… 7.18e-4 2.04e-7 0.00174 5.07e-18 0.00453  0.8  NA    100     0.86
+#>  8 British Co… 1.20e-3 2.11e-6 0.00344 4.02e-21 0.00714  0.82 NA     41.9   0.85
+#>  9 WA/OR/CA    4.15e-4 7.78e-7 0.00142 5.66e-15 0.00200  0.88 NA    100     0.94
 #> 10 Lower Yukon 2.87e-1 2.96e-1 0.0905  1.25e- 1 0.415    0    NA      7.05  0   
 #> 11 Middle Yuk… 7.57e-2 7.41e-2 0.0230  4.52e- 2 0.118    0    NA    100     0   
 #> 12 Upper Yukon 1.89e-1 1.86e-1 0.0337  1.42e- 1 0.252    0    NA    100     0
@@ -512,11 +520,11 @@ Most column names are self explanatory, but others might need some
 additional descriptions. `ci.05` and `ci.95` are the lower and upper
 bounds of 90% credible interval. `p0` is the probability of an estimate
 equals zero. We estimate `p0` by calculating the portion of posterior
-samples that is less than $5 \times 10^{- 7}$, or 0.5/total harvest if
+samples that is less than $`5 \times 10^{-7}`$, or 0.5/total harvest if
 harvest information is provided. `GR` is the Gelman-Rubin statistic
-(a.k.a. $\widehat{R}$). In this example, Gelman-Rubin statistic is not
+(a.k.a. $`\hat R`$). In this example, Gelman-Rubin statistic is not
 calculated because we only run one chain. `n_eff` is the effective size,
-or $N_{eff}$. We will not discuss how to diagnose convergence in this
+or $`N_{eff}`$. We will not discuss how to diagnose convergence in this
 document. Please consult Gelman et al. 2014, Gelman & Rubin 1992, Brooks
 & Gelman 1998 and other literature on statistical methods. `z0` is the
 probability of an estimate equals zero based on history of individuals
@@ -540,6 +548,7 @@ and stratified estimator
 Grouping for stage one and two can also be found in the input data.
 
 ``` r
+
 
 msgsi_out$trace_comb
 #> # A tibble: 100 × 238
@@ -572,6 +581,7 @@ represents a reporting group in the baseline, and each row records the
 harvest count during each iteration in each chain.
 
 ``` r
+
 
 msgsi_out$sstc_trace_t2
 #> # A tibble: 100 × 52
@@ -607,6 +617,7 @@ catch.
 
 ``` r
 
+
 stratified_estimator_msgsi(msgsi_out, mixvec = "Bering example")
 #> # A tibble: 12 × 13
 #>    repunit     mean_sstc sd_sstc median_sstc ci05_sstc ci95_sstc    mean      sd
@@ -639,6 +650,7 @@ baseline files). Individuals are ordered in the same as the input data
 
 ``` r
 
+
 msgsi_out$idens_t1
 #> # A tibble: 100 × 152
 #>    fish_1 fish_2 fish_3 fish_4 fish_5 fish_6 fish_7 fish_8 fish_9 fish_10
@@ -669,6 +681,7 @@ that summarize the reporting group assignment probabilities for each
 individual in the mixture.
 
 ``` r
+
 
 indiv_assign(mdl_out = msgsi_out, mdl_dat = msgsi_dat)
 #> # A tibble: 150 × 13
@@ -705,6 +718,7 @@ you want to plot.
 
 ``` r
 
+
 tr_plot(mdl_out = msgsi_out, trace_obj = "trace_comb", pop_info = msgsi_out$comb_groups)
 ```
 
@@ -730,6 +744,7 @@ reporting groups or reorganizing collections. For example, we use the
 example model output with a new grouping:
 
 ``` r
+
 new_groups <- msgsi_out$summ_comb |>
   dplyr::select(group) |>
   dplyr::mutate(new_repunit = c(rep("Broad", 9), rep("Regional", 3))) |>
@@ -765,6 +780,7 @@ stratified_estimator_msgsi(mdl_out = msgsi_out, mixvec = "Bering example",
 The same can be done by specifying collections:
 
 ``` r
+
 new_groups_collection <- msgsi_out$comb_groups |>
   dplyr::left_join(new_groups, by = "repunit")
 
@@ -798,6 +814,7 @@ And for those prefer doing things the old way (by multiplying fishing
 effort by the stock proportions):
 
 ``` r
+
 stratified_estimator_msgsi(mdl_out = msgsi_out, mixvec = "Bering example",
                            new_pop_info = new_groups, new_pop_by = "repunit",
                            naive = TRUE, catchvec = 500, cv = 0.05)
@@ -826,101 +843,101 @@ identities to each individual based on its genetic make-up
 proportions based on the numbers of individuals assigned to each
 population. In the fishery context, genetic data of the individuals is
 called the mixture sample because it consists multi-locus genotype of
-individual fish collected from a mixed-stock fishery. $\mathbf{x}$
+individual fish collected from a mixed-stock fishery. $`\mathbf x`$
 denotes the mixture sample. In this document, a bold-font letter
 represents a *number set*, or a collection of distinct elements. For
-example, $\mathbf{x}$ is a set that contains individual $x$ elements.
-And $x_{m,l,j}$ is the count of allele $j$ in locus $l$ for individual
-fish $m$, where $m \in \{ 1,2,...,M\}$, $l \in \{ 1,2,...,L\}$, and
-$j \in \{ 1,2,...,J_{l}\}$ depends on locus $l$.
+example, $`\mathbf x`$ is a set that contains individual $`x`$ elements.
+And $`x_{m,l,j}`$ is the count of allele $`j`$ in locus $`l`$ for
+individual fish $`m`$, where $`m \in \{1,2,...,M\}`$,
+$`l \in \{1,2,...,L\}`$, and $`j \in \{1,2,...,J_l\}`$ depends on locus
+$`l`$.
 
 Genetic data of the populations is called the baseline sample because it
 consists genotype compositions of various baseline populations collected
 at their spawning locations. Researchers select sampling locations to
-best represent the populations in an area. $\mathbf{y}$ denotes the
-baseline sample. $y_{k,l,j}$ is the count of allele $j$ in locus $l$ for
-a sample of size $n_{k,l}$ collected from baseline population $k$, where
-$k \in \{ 1,2,...,K\}$.
+best represent the populations in an area. $`\mathbf y`$ denotes the
+baseline sample. $`y_{k,l,j}`$ is the count of allele $`j`$ in locus
+$`l`$ for a sample of size $`n_{k,l}`$ collected from baseline
+population $`k`$, where $`k \in \{1,2,...,K\}`$.
 
 For both mixture and baseline samples, it is assumed that allele counts
-in each locus follow a multinomial distribution[³](#fn3). Using another
+in each locus follow a multinomial distribution[^3]. Using another
 made-up example, in a baseline sample, there are two allele types in
 locus 1 for population 2. Counts for the two alleles are
-$y_{1,2,1},y_{1,2,2}$, and they follow a multinomial distribution with
-parameters $q_{1,2,1},q_{1,2,2}$ and size $n_{2,1}$. Note that
-$q_{1,2,1},q_{1,2,2}$ are the relative frequencies of the two alleles in
-locus 1 for population 2. In a Bayesian framework, we need to specify
-prior distributions for parameters; therefore, we place a
-Dirichlet[⁴](#fn4) prior distribution on $q_{1,2,1},q_{1,2,2}$ with
-hyperparameters[⁵](#fn5) $\beta_{1,1},\beta_{1,2}$. Usually we set the
-priors to be equal for all loci. In this example, let
-$\beta_{1,1} = \beta_{1,2} = 1/2$ based on the number of alleles for
-locus 1.
+$`y_{1,2,1}, y_{1,2,2}`$, and they follow a multinomial distribution
+with parameters $`q_{1,2,1}, q_{1,2,2}`$ and size $`n_{2,1}`$. Note that
+$`q_{1,2,1}, q_{1,2,2}`$ are the relative frequencies of the two alleles
+in locus 1 for population 2. In a Bayesian framework, we need to specify
+prior distributions for parameters; therefore, we place a Dirichlet[^4]
+prior distribution on $`q_{1,2,1}, q_{1,2,2}`$ with hyperparameters[^5]
+$`\beta_{1,1}, \beta_{1,2}`$. Usually we set the priors to be equal for
+all loci. In this example, let $`\beta_{1,1} = \beta_{1,2} = 1/2`$ based
+on the number of alleles for locus 1.
 
-$\mathbf{q}$ represents $q_{1,2,1}$ and $q_{1,2,2}$, together with
+$`\mathbf q`$ represents $`q_{1,2,1}`$ and $`q_{1,2,2}`$, together with
 allele frequencies of other loci and other populations. As you can see,
-$\mathbf{q}$ and $\mathbf{y}$ have the same dimension because each
+$`\mathbf q`$ and $`\mathbf y`$ have the same dimension because each
 relative frequency corresponds to an allele count. In the model, allele
-frequencies of baseline populations, $\mathbf{q}$, determine population
+frequencies of baseline populations, $`\mathbf q`$, determine population
 proportions. And population proportions determines the identities of
 individual fish. Individual identities are then tallied and summarized
-to update baseline allele frequencies. $\mathbf{y}$ can be expressed as
+to update baseline allele frequencies. $`\mathbf y`$ can be expressed as
 follows:
 
-$\mathbf{y}_{k} \sim Mult\left( \mathbf{n}_{k},\mathbf{q}_{k} \right)$
+$`\mathbf y_k \sim Mult(\mathbf n_k, \mathbf q_k)`$
 
-Prior distribution for $\mathbf{q}$:
+Prior distribution for $`\mathbf q`$:
 
-$\mathbf{q}_{k} \sim Dirich({\mathbf{β}})$,
+$`\mathbf q_k \sim Dirich(\mathbf \beta)`$,
 
-where ${\mathbf{β}} = 1/J_{l}$
+where $`\mathbf \beta = 1/J_l`$
 
 For mixture sample, allele counts in each locus of individual fish also
 follows a multinomial distributions. If a fish came from a certain
 population, its distribution of allele counts should resemble the allele
 frequencies of the baseline population which it came from. However, the
 identity of the individual fish is unknown so it needs to be estimated.
-Here we let $\mathbf{z}_{m}$ represent the population identify for the
-$m$^(th) mixture individual. $\mathbf{z}_{m}$ is composed of 0’s and an
-1 with a length $K$ (e.g. number of baseline populations). $z_{m,k} = 1$
-if individual $m$ belongs to population $k$, and $z_{m,k} = 0$
-otherwise. In a made-up example, $\mathbf{z}_{100} = \{ 0,0,1,0,0\}$
-means that there are five baseline populations, and individual fish
-\#100 comes from population 3.
+Here we let $`\mathbf z_m`$ represent the population identify for the
+$`m`$^(th) mixture individual. $`\mathbf z_m`$ is composed of 0’s and an
+1 with a length $`K`$ (e.g. number of baseline populations).
+$`z_{m,k} = 1`$ if individual $`m`$ belongs to population $`k`$, and
+$`z_{m,k} = 0`$ otherwise. In a made-up example,
+$`\mathbf z_{100} = \{0, 0, 1, 0, 0\}`$ means that there are five
+baseline populations, and individual fish \#100 comes from population 3.
 
-We place a multinomial prior on $z_{m,1},z_{m,2},...,z_{m,K}$ with size
-1 and probabilities equal to population proportions
-$p_{1},p_{2},...,p_{K}$. We specify a Dirichlet prior distribution on
-$p_{1},p_{2},...,p_{K}$ with hyperparameters
-$\alpha_{1},\alpha_{2},...,\alpha_{K}$, where
-$\alpha_{1} = \alpha_{2} = ... = \alpha_{K} = 1/K$. We usually set
-$\alpha$ to be equal for all reporting groups, but they can be set based
-on prior knowledge in population proportions. We express $\mathbf{z}$ as
-follows:
+We place a multinomial prior on $`z_{m,1}, z_{m,2}, ..., z_{m,K}`$ with
+size 1 and probabilities equal to population proportions
+$`p_1, p_2, ..., p_K`$. We specify a Dirichlet prior distribution on
+$`p_1, p_2, ..., p_K`$ with hyperparameters
+$`\alpha_1, \alpha_2, ..., \alpha_K`$, where
+$`\alpha_1 = \alpha_2 = ... = \alpha_K = 1/K`$. We usually set
+$`\alpha`$ to be equal for all reporting groups, but they can be set
+based on prior knowledge in population proportions. We express
+$`\mathbf z`$ as follows:
 
-$\mathbf{z}_{m} \sim Mult(\mathbf{1},\mathbf{p})$
+$`\mathbf z_m \sim Mult(\mathbf 1, \mathbf p)`$
 
-Prior distribution for $\mathbf{p}$:
+Prior distribution for $`\mathbf p`$:
 
-$\mathbf{p} \sim Dirich({\mathbf{α}})$,
+$`\mathbf p \sim Dirich(\mathbf \alpha)`$,
 
-where ${\mathbf{α}} = 1/K$
+where $`\mathbf \alpha = 1/K`$
 
 As mentioned, for mixture sample, allele counts in each locus of
 individual fish follows a multinomial distributions. The parameters are
 allele frequencies of the corresponding baseline population with size
 the numbers of ploidy for each respective locus. Remember that
-population identity $z_{m,k} = 1$ if individual $m$ belongs to
-population $k$, and $z_{m,k} = 0$ otherwise. When multiplying population
-identities, $z_{m,1},z_{m,2},...,z_{m,K}$, and allele frequencies of
-baseline populations,
-$\mathbf{q}_{1},\mathbf{q}_{2},...,\mathbf{q}_{K}$, only allele
-frequencies of baseline population which individual $m$ belong to would
-remain while the rest goes to zero. $\mathbf{x}$ is expressed below.
-${\mathbf{p}\mathbf{l}\mathbf{o}\mathbf{i}\mathbf{d}\mathbf{y}} = ploidy_{1},ploidy_{2},...,ploidy_{L}$
-denotes ploidy for each locus.
+population identity $`z_{m,k} = 1`$ if individual $`m`$ belongs to
+population $`k`$, and $`z_{m,k} = 0`$ otherwise. When multiplying
+population identities, $`z_{m,1}, z_{m,2}, ..., z_{m,K}`$, and allele
+frequencies of baseline populations,
+$`\mathbf q_1, \mathbf q_2, ..., \mathbf q_K`$, only allele frequencies
+of baseline population which individual $`m`$ belong to would remain
+while the rest goes to zero. $`\mathbf x`$ is expressed below.
+$`\mathbf{ploidy} = ploidy_1, ploidy_2, ..., ploidy_L`$ denotes ploidy
+for each locus.
 
-$\mathbf{x}_{m} \sim Mult\left( {\mathbf{p}\mathbf{l}\mathbf{o}\mathbf{i}\mathbf{d}\mathbf{y}},\mathbf{z}_{m} \cdot \mathbf{q} \right)$
+$`\mathbf x_m \sim Mult(\mathbf{ploidy}, \mathbf z_m \cdot \mathbf q)`$
 
 Moran and Anderson (2018) implement a genetic mixture analysis as a *R*
 package, *rubias*. Their program has been widely used by researchers
@@ -928,20 +945,21 @@ around the world, including here at the GCL. *rubias* utilizes a model
 structure called the conditional genetic stock identification model, or
 the conditional GSI model, that is modified from the Pella-Masuda model.
 The main difference between the two models is that, in the conditional
-model, $\mathbf{q}$ is integrated out of the distribution of mixture
-sample, $\mathbf{x}_{m}$. That is, baseline allele frequencies are not
-being updated in the model. The result of that, $\mathbf{x}_{m}$ takes a
+model, $`\mathbf q`$ is integrated out of the distribution of mixture
+sample, $`\mathbf x_m`$. That is, baseline allele frequencies are not
+being updated in the model. The result of that, $`\mathbf x_m`$ takes a
 form of a compound Dirichlet-multinomial distribution (Johnson at el.
 1997):
 
-$\mathbf{x}_{m} \sim CDM\left( {\mathbf{p}\mathbf{l}\mathbf{o}\mathbf{i}\mathbf{d}\mathbf{y}},\mathbf{z}_{m} \cdot \mathbf{v} \right)$,
+$`\mathbf x_m \sim CDM(\mathbf{ploidy}, \mathbf z_m \cdot \mathbf v)`$,
 
-where $\mathbf{v}$ is ${\mathbf{β}} + \mathbf{y}$. We are not going to
-attempt proving the theory behind the conditional model in this document
-(details can be found in Moran & Anderson 2018). But since $\mathbf{q}$
-has been integrated out of $\mathbf{x}_{m}$, the process for estimating
-parameters is simpler and more streamlined. We have implemented
-conditional GSI in each stage of our integrated multistage model.
+where $`\mathbf v`$ is $`\mathbf \beta + \mathbf y`$. We are not going
+to attempt proving the theory behind the conditional model in this
+document (details can be found in Moran & Anderson 2018). But since
+$`\mathbf q`$ has been integrated out of $`\mathbf x_m`$, the process
+for estimating parameters is simpler and more streamlined. We have
+implemented conditional GSI in each stage of our integrated multistage
+model.
 
 ### Extend to multistage
 
@@ -956,20 +974,20 @@ the conditions of the *Ms.GSI* model to allow multiple regional
 baselines to be included, although we programmed *Ms.GSI* to deal with
 only one regional baseline vs. one broad-scale baseline.
 
-Let there be $B$ populations in the broad-scale baseline and indexed as
-$b = 1,2,...,B$. Each of these broad-scale populations may belong to
-exactly 0 or 1 sub-region for which regional baselines might be
-available. These regional baselines have different sets of genetic
+Let there be $`B`$ populations in the broad-scale baseline and indexed
+as $`b = 1, 2, ..., B`$. Each of these broad-scale populations may
+belong to exactly 0 or 1 sub-region for which regional baselines might
+be available. These regional baselines have different sets of genetic
 markers than the broad-scale baseline and typically include additional
 populations that are not represented in the broad-scale baseline. Allow
-for there to be $R$ disjoint sub-regions indexed by $r$, with each
+for there to be $`R`$ disjoint sub-regions indexed by $`r`$, with each
 sub-region represented by a distinctive regional baseline. We employ a
-superscript $^{(r)}$ upon variables to indicate a quantity associated
-with regional baseline $r$. Populations in different sub-regions cannot
-overlap, and each population only occurs once among the regional
-baselines. Let $k$ index the populations within these $R$ regional
-baselines and $K_{r}$ denotes the number of populations within regional
-baseline $r$.
+superscript $`^{(r)}`$ upon variables to indicate a quantity associated
+with regional baseline $`r`$. Populations in different sub-regions
+cannot overlap, and each population only occurs once among the regional
+baselines. Let $`k`$ index the populations within these $`R`$ regional
+baselines and $`K_r`$ denotes the number of populations within regional
+baseline $`r`$.
 
 In the *Ms.GSI* framework, the two stages are connected because the
 regional group membership of an individual is conditional on whether the
@@ -977,39 +995,38 @@ broad-scale group membership of that individual belongs to the area of
 that particular sub-region. The following describes the conditional
 relationship between the broad-scale and the regional baselines:
 
-$\mathbf{z}_{m}^{(r)}|\mathbf{z}_{m},\mathcal{B}^{(r)} = \begin{cases}
-\mathbf{z}_{m}^{(r)} & {{\text{if}\mspace{6mu}}\sum_{b \in \mathcal{B}^{(r)}}z_{m,b} = 1} \\
-\mathbf{0} & \text{otherwise}
-\end{cases}$,
+$`\mathbf z^{(r)}_m | \mathbf z_m, \mathbf {\mathscr B}^{(r)} = \begin{cases} \mathbf z^{(r)}_m & \text{if } \sum_{b \in \mathbf{\mathscr B}^{(r)}} z_{m,b}  = 1\\ \mathbf 0 & \text{otherwise} \end{cases}`$,
 
-where $\mathbf{z}_{m}$ and $\mathbf{z}_{m}^{(r)}$ are vectors of
-indicators ($0$ or $1$) identifying the broad-scale and regional
-populations that individual $m$ belongs to. $\mathcal{B}^{(r)}$ denotes
-the broad-scale populations that belong to the areas represented by the
-reporting groups of region $r$, and $\mathbf{0}$ is a vector of all
-zeros.
+where $`\mathbf z_m`$ and $`\mathbf z^{(r)}_m`$ are vectors of
+indicators ($`0`$ or $`1`$) identifying the broad-scale and regional
+populations that individual $`m`$ belongs to.
+$`\mathbf{\mathscr B}^{(r)}`$ denotes the broad-scale populations that
+belong to the areas represented by the reporting groups of region $`r`$,
+and $`\mathbf 0`$ is a vector of all zeros.
 
 Ultimately, we want to estimate the fraction of individuals in the
 mixture that come from each of the sub-regional populations, as well as
 from any of the populations in the broad-scale baseline that are not
-associated with a regional baseline. $p_{k}^{(r)}$ denotes the mixture
-proportion of the $k$^(th) population in region $r$, and $p_{b}$ denotes
-the mixture proportion of population $b$ in the broad-scale baseline.
-Thus, we endeavor to estimate the mixture proportions $p_{k}^{(r)}$ for
-each $(r,k)$ such that $r = 1,2,...,R$ and $k = 1,2,...,K_{r}$ along
-with $p_{b}$, where $b \in \mathcal{B}_{*}$, with $\mathcal{B}_{*}$
+associated with a regional baseline. $`p^{(r)}_k`$ denotes the mixture
+proportion of the $`k`$^(th) population in region $`r`$, and $`p_b`$
+denotes the mixture proportion of population $`b`$ in the broad-scale
+baseline. Thus, we endeavor to estimate the mixture proportions
+$`p^{(r)}_k`$ for each $`(r, k)`$ such that $`r = 1, 2, ..., R`$ and
+$`k = 1, 2, ..., K_r`$ along with $`p_b`$, where
+$`b \in \mathbf{\mathscr B_{*}}`$, with $`\mathbf{\mathscr B_{*}}`$
 denoting the broad-scale populations that do not belong to any areas
 represented by regional baselines. Lastly, we multiply
-$\mathbf{p}^{(r)}$ by $\sum_{b \in \mathcal{B}^{(r)}}p_{b}$ for each
-region $r$, so the scaled $\mathbf{p}^{(r)}$ for all regions and
-$p_{b}$, where $b \in \mathcal{B}_{*}$ would sum to one.
+$`\mathbf {p}^{(r)}`$ by $`\sum_{b \in \mathbf{\mathscr B}^{(r)}} p_b`$
+for each region $`r`$, so the scaled $`\mathbf{p}^{(r)}`$ for all
+regions and $`p_b`$, where $`b \in \mathbf{\mathscr B_{*}}`$ would sum
+to one.
 
 ### Gibbs Sampler: where the fun go round and round
 
 Deriving the values of parameters in each stage of the integrated
 multistage model requires finding the joint posterior distribution of
 Pella-Masuda model in each stage,
-$\mathbf{p},\mathbf{q},\mathbf{z},\mathbf{y},{\mathbf{α}},{\mathbf{β}}$.
+$`\mathbf p, \mathbf q,\mathbf z, \mathbf y, \mathbf\alpha, \mathbf\beta`$.
 In this section, we will introduce the concepts and algorithm to sample
 from this posterior distribution in a single baseline Pella-Masuda
 model, which then can be extend to an integrated multistage framework.
@@ -1026,69 +1043,68 @@ Bayesian data analysis (see Carlin & Louis 2009; Robert & Casella 2010;
 Gelman et al. 2014)
 
 To illustrate, suppose we would like to determine the joint posterior
-distribution of interest, $p\left( {\mathbf{θ}}|\mathbf{y} \right)$,
-where ${\mathbf{θ}} = \{\theta_{1},\theta_{2},...,\theta_{K}\}$. Most
-likely the multivariate $p\left( {\mathbf{θ}}|\mathbf{y} \right)$ would
-be too complicated to sample from. However, if we can figure out how to
-break up the joint posterior distribution into individual full
-conditional distributions, each parameter in $\mathbf{θ}$ can be sampled
-one by one sequentially using a Gibbs sampler algorithm. The process
-begins with an arbitrary set of starting values
-$\theta_{2}^{(0)},\theta_{3}^{(0)},...,\theta_{K}^{(0)}$ and proceeds as
+distribution of interest, $`p(\mathbf \theta|\mathbf y)`$, where
+$`\mathbf \theta = \{\theta_1, \theta_2,..., \theta_K\}`$. Most likely
+the multivariate $`p(\mathbf \theta|\mathbf y)`$ would be too
+complicated to sample from. However, if we can figure out how to break
+up the joint posterior distribution into individual full conditional
+distributions, each parameter in $`\mathbf \theta`$ can be sampled one
+by one sequentially using a Gibbs sampler algorithm. The process begins
+with an arbitrary set of starting values
+$`\theta^{(0)}_2, \theta^{(0)}_3,..., \theta^{(0)}_K`$ and proceeds as
 follows:
 
-For $t = 1,2,...,T$, repeat
+For $`t = 1,2,...,T`$, repeat
 
-1.  Draw $\theta_{1}^{(t)}$ from
-    $p\left( \theta_{1}|\theta_{2}^{(t - 1)},\theta_{3}^{(t - 1)},...,\theta_{k}^{(t - 1)},\mathbf{y} \right)$
+1.  Draw $`\theta^{(t)}_1`$ from
+    $`p(\theta_1|\theta^{(t-1)}_2, \theta^{(t-1)}_3,..., \theta^{(t-1)}_k, \mathbf y)`$
 
-2.  Draw $\theta_{2}^{(t)}$ from
-    $p\left( \theta_{2}|\theta_{1}^{(t)},\theta_{3}^{(t - 1)},...,\theta_{k}^{(t - 1)},\mathbf{y} \right)$
+2.  Draw $`\theta^{(t)}_2`$ from
+    $`p(\theta_2|\theta^{(t)}_1, \theta^{(t-1)}_3,..., \theta^{(t-1)}_k, \mathbf y)`$
 
     ⋮
 
 &nbsp;
 
-11. Draw $\theta_{k}^{(t)}$ from
-    $p\left( \theta_{k}|\theta_{1}^{(t)},\theta_{2}^{(t)},...,\theta_{k - 1}^{(t)},\mathbf{y} \right)$
+11. Draw $`\theta^{(t)}_k`$ from
+    $`p(\theta_k|\theta^{(t)}_1, \theta^{(t)}_2,..., \theta^{(t)}_{k-1}, \mathbf y)`$
 
 This would work best if the full conditionals are some known
 distributions that we can easily sample from (although it’s not
 required). In our case with Pella-Masuda model, we rely on two main
 concepts, the Bayes theorem and conjugacy, to do the trick. Briefly, for
-estimating parameters $\mathbf{θ}$ from data $\mathbf{D}$, according to
-Bayes Rule,
-$p\left( {\mathbf{θ}}|\mathbf{D} \right) = \frac{p\left( \mathbf{D}|{\mathbf{θ}} \right)p({\mathbf{θ}})}{p(\mathbf{D})}$.
-$p\left( {\mathbf{θ}}|\mathbf{D} \right)$ is the joint posterior
-distribution for parameters $\mathbf{θ}$,
-$p\left( \mathbf{D}|{\mathbf{θ}} \right)$ is the likelihood of observing
-the data given the parameters, $p({\mathbf{θ}})$ is the prior
-distribution of the parameters, and $p(\mathbf{D})$ is the constant
-marginal distribution of the data. $p(\mathbf{D})$ is often
-mathematically difficult to obtain; however, because $p(\mathbf{D})$ is
-a constant number, we can ignore it by reducing the posterior
-distribution to
-$p\left( {\mathbf{θ}}|\mathbf{D} \right) \propto p\left( \mathbf{D}|{\mathbf{θ}} \right)p({\mathbf{θ}})$.
+estimating parameters $`\mathbf\theta`$ from data $`\mathbf D`$,
+according to Bayes Rule,
+$`p(\mathbf\theta|\mathbf D) = \displaystyle \frac{p(\mathbf D|\mathbf\theta)p(\mathbf\theta)}{p(\mathbf D)}`$.
+$`p(\mathbf\theta|\mathbf D)`$ is the joint posterior distribution for
+parameters $`\mathbf\theta`$, $`p(\mathbf D|\mathbf\theta)`$ is the
+likelihood of observing the data given the parameters,
+$`p(\mathbf\theta)`$ is the prior distribution of the parameters, and
+$`p(\mathbf D)`$ is the constant marginal distribution of the data.
+$`p(\mathbf D)`$ is often mathematically difficult to obtain; however,
+because $`p(\mathbf D)`$ is a constant number, we can ignore it by
+reducing the posterior distribution to
+$`p(\mathbf\theta|\mathbf D) \propto p(\mathbf D|\mathbf\theta)p(\mathbf\theta)`$.
 
 So, how does Bayes Rule help us estimating parameters in the
 Pella-Masuda model? First, the joint posterior distribution has to be
 split up into smaller pieces. That is, we separate the joint posterior
 into likelihood of the data and priors for the parameters:
 
-$p(\mathbf{p},\mathbf{q},\mathbf{z},\mathbf{y},{\mathbf{α}},{\mathbf{β}})$
+$`p(\mathbf p, \mathbf q, \mathbf z, \mathbf y, \mathbf\alpha, \mathbf\beta)`$
 
-$\propto p\left( \mathbf{x}|\mathbf{z},\mathbf{q} \right)p\left( \mathbf{y}|\mathbf{q} \right) \cdot p\left( \mathbf{p}|{\mathbf{α}} \right)p\left( \mathbf{q}|{\mathbf{β}} \right)p\left( \mathbf{z}|\mathbf{p} \right)$
+$`\propto p(\mathbf x|\mathbf z, \mathbf q) p(\mathbf y|\mathbf q) \cdot p(\mathbf p|\mathbf\alpha) p(\mathbf q|\mathbf\beta) p(\mathbf z|\mathbf p)`$
 
 With some re-arrangements and hand-waving, we arrive at the full
-conditional distributions for $\mathbf{q}$ and $\mathbf{p}$:
+conditional distributions for $`\mathbf q`$ and $`\mathbf p`$:
 
-$p\left( \mathbf{x}|\mathbf{z},\mathbf{q} \right)p\left( \mathbf{y}|\mathbf{q} \right) \cdot p\left( \mathbf{p}|{\mathbf{α}} \right)p\left( \mathbf{q}|{\mathbf{β}} \right)p\left( \mathbf{z}|\mathbf{p} \right)$
+$`p(\mathbf x|\mathbf z, \mathbf q) p(\mathbf y|\mathbf q) \cdot p(\mathbf p|\mathbf\alpha) p(\mathbf q|\mathbf\beta) p(\mathbf z|\mathbf p)`$
 
-$= p\left( \mathbf{x}|\mathbf{z},\mathbf{q} \right)p\left( \mathbf{y}|\mathbf{q} \right)p\left( \mathbf{q}|{\mathbf{β}} \right) \cdot p\left( \mathbf{z}|\mathbf{p} \right)p\left( \mathbf{p}|{\mathbf{α}} \right)$
+$`= p(\mathbf x|\mathbf z, \mathbf q) p(\mathbf y|\mathbf q) p(\mathbf q|\mathbf\beta) \cdot p(\mathbf z|\mathbf p) p(\mathbf p|\mathbf\alpha)`$
 
-$\propto p\left( \mathbf{x},\mathbf{y},\mathbf{z}|\mathbf{q} \right)p\left( \mathbf{q}|{\mathbf{β}} \right) \cdot p\left( \mathbf{z}|\mathbf{p} \right)p\left( \mathbf{p}|{\mathbf{α}} \right)$
+$`\propto p(\mathbf x,\mathbf y,\mathbf z|\mathbf q) p(\mathbf q|\mathbf\beta) \cdot p(\mathbf z|\mathbf p) p(\mathbf p|\mathbf\alpha)`$
 
-$\propto p\left( \mathbf{q}|\mathbf{x},\mathbf{y},\mathbf{z},{\mathbf{β}} \right) \cdot p\left( \mathbf{p}|\mathbf{z},{\mathbf{α}} \right)$
+$`\propto p(\mathbf q|\mathbf x,\mathbf y,\mathbf z,\mathbf\beta) \cdot p(\mathbf p|\mathbf z,\mathbf\alpha)`$
 
 Next, we take advantage of a mathematical property called *conjugacy* to
 help us determine the conditional distributions. Based on this property,
@@ -1101,164 +1117,158 @@ many conjugate families, and Dirichlet and multinomial are another
 example.
 
 Utilizing conjugacy property, we will determine each of the full
-conditional distributions for $\mathbf{q}$ and $\mathbf{p}$.
+conditional distributions for $`\mathbf q`$ and $`\mathbf p`$.
 
-#### Conditional distribution p(q\|x, y, z, $\beta$)
+#### Conditional distribution p(q\|x, y, z, $`\beta`$)
 
 We determine that
-$p\left( \mathbf{q}|\mathbf{x},\mathbf{y},\mathbf{z},{\mathbf{β}} \right)$
-is Dirichlet-distributed because Dirichlet prior
-$p\left( \mathbf{q}|{\mathbf{β}} \right)$ is a conjugate family for the
-multinomial likelihoods
-$p\left( \mathbf{x}|\mathbf{z},\mathbf{q} \right)$ and
-$p\left( \mathbf{y}|\mathbf{q} \right)$. To determine the exact
-parameterization for the posterior distribution, we need to derive the
-prior and likelihoods first.
+$`p(\mathbf q|\mathbf x, \mathbf y, \mathbf z, \mathbf \beta)`$ is
+Dirichlet-distributed because Dirichlet prior
+$`p(\mathbf q|\mathbf \beta)`$ is a conjugate family for the multinomial
+likelihoods $`p(\mathbf x|\mathbf z, \mathbf q)`$ and
+$`p(\mathbf y|\mathbf q)`$. To determine the exact parameterization for
+the posterior distribution, we need to derive the prior and likelihoods
+first.
 
-Likelihood $p\left( \mathbf{x}|\mathbf{z},\mathbf{q} \right)$ can be
-derived in two steps. The first step we conditioned the likelihood on
-$\mathbf{z}$ so that
+Likelihood $`p(\mathbf x|\mathbf z, \mathbf q)`$ can be derived in two
+steps. The first step we conditioned the likelihood on $`\mathbf z`$ so
+that
 
-$p\left( \mathbf{x}|\mathbf{z},\mathbf{q} \right) \propto \prod_{m = 1}^{M}\prod_{k = 1}^{K}\left\lbrack f\left( \mathbf{x}_{m}|\mathbf{q}_{k} \right) \right\rbrack^{z_{m,k}}$,
+$`p(\mathbf x|\mathbf z, \mathbf q) \propto \displaystyle \prod^{M}_{m=1} \prod^{K}_{k=1} [f(\mathbf x_m|\mathbf q_k)]^{z_{m,k}}`$,
 
-where $f\left( \mathbf{x}_{m}|\mathbf{q}_{k} \right)$ is the relative
-frequency of multi-locus genotype for individual $m$ in population $k$.
-In the next step, we derive
-$f\left( \mathbf{x}_{m}|\mathbf{q}_{k} \right)$:
+where $`f(\mathbf x_m|\mathbf q_k)`$ is the relative frequency of
+multi-locus genotype for individual $`m`$ in population $`k`$. In the
+next step, we derive $`f(\mathbf x_m|\mathbf q_k)`$:
 
-$f\left( \mathbf{x}_{m}|\mathbf{q}_{k} \right) \propto \prod_{l = 1}^{L}\prod_{j = 1}^{J_{l}}q_{k,l,j}^{x_{m,l,j}}$
+$`f(\mathbf x_m|\mathbf q_k) \propto \displaystyle \prod^{L}_{l=1} \prod^{J_l}_{j=1} q^{x_{m,l,j}}_{k,l,j}`$
 
 Then we combine the two,
 
-$p\left( \mathbf{x}|\mathbf{z},\mathbf{q} \right) \propto \prod_{m = 1}^{M}\prod_{k = 1}^{K}\left\lbrack f\left( \mathbf{x}_{m}|\mathbf{q}_{k} \right) \right\rbrack^{z_{m,k}}$
+$`p(\mathbf x|\mathbf z, \mathbf q) \propto \displaystyle \prod^{M}_{m=1} \prod^{K}_{k=1} [f(\mathbf x_m|\mathbf q_k)]^{z_{m,k}}`$
 
-$\propto \prod_{m = 1}^{M}\prod_{k = 1}^{K}\left\lbrack \prod_{l = 1}^{L}\prod_{j = 1}^{J_{l}}q_{k,l,j}^{x_{m,l,j} \cdot z_{m,k}} \right\rbrack$
+$`\propto \displaystyle \prod^{M}_{m=1} \prod^{K}_{k=1} [\displaystyle \prod^{L}_{l=1} \prod^{J_l}_{j=1} q^{x_{m,l,j} \cdot z_{m,k}}_{k,l,j}]`$
 
-$\propto \prod_{k = 1}^{K}\prod_{l = 1}^{L}\prod_{j = 1}^{J_{l}}q_{k,l,j}^{\sum_{m = 1}^{M}{(x_{m,l,j} \cdot z_{m,k})}}$
+$`\propto \displaystyle \prod^{K}_{k=1} \prod^{L}_{l=1} \prod^{J_l}_{j=1} q^{\sum^{M}_{m=1} (x_{m,l,j} \cdot z_{m,k})}_{k,l,j}`$
 
-Deriving likelihood $p\left( \mathbf{y}|\mathbf{q} \right)$ is more
-straightforward. It is the product of relative frequency of multi-locus
-genotype for each population:
+Deriving likelihood $`p(\mathbf y|\mathbf q)`$ is more straightforward.
+It is the product of relative frequency of multi-locus genotype for each
+population:
 
-$p\left( \mathbf{y}|\mathbf{q} \right) \propto \prod_{k = 1}^{K}\prod_{l = 1}^{L}\prod_{j = 1}^{J_{l}}q_{k,l,j}^{y_{k,l,j}}$
+$`p(\mathbf y|\mathbf q) \propto \displaystyle \prod^{K}_{k=1} \prod^{L}_{l=1} \prod^{J_l}_{j=1} q^{y_{k,l,j}}_{k,l,j}`$
 
-And $p\left( q|{\mathbf{β}} \right)$ is Dirichlet prior distribution.
-Its probability density has a kernel[⁶](#fn6) of
-$\mathbf{q}^{{\mathbf{β}} - 1}$. We can express the likelihood as
+And $`p(q|\mathbf \beta)`$ is Dirichlet prior distribution. Its
+probability density has a kernel[^6] of
+$`\mathbf q^{\mathbf \beta - 1}`$. We can express the likelihood as
 
-$p\left( \mathbf{q}|{\mathbf{β}} \right) \propto \prod_{k = 1}^{K}\prod_{l = 1}^{L}\prod_{j = 1}^{J_{l}}q_{k,l,j}^{\beta_{l,j} - 1}$.
+$`p(\mathbf q|\mathbf \beta) \propto \displaystyle \prod^{K}_{k=1} \prod^{L}_{l=1} \prod^{J_l}_{j=1} q^{\beta_{l,j} - 1}_{k,l,j}`$.
 
 Put all the likelihoods together,
 
-$p\left( \mathbf{q}|\mathbf{x},\mathbf{y},\mathbf{z},{\mathbf{β}} \right) \propto p\left( \mathbf{x}|\mathbf{z},\mathbf{q} \right)p\left( \mathbf{y}|\mathbf{q} \right)p\left( \mathbf{q}|{\mathbf{β}} \right)$
+$`p(\mathbf q|\mathbf x,\mathbf y,\mathbf z,\mathbf\beta) \propto p(\mathbf x|\mathbf z, \mathbf q) p(\mathbf y|\mathbf q) p(\mathbf q|\mathbf\beta)`$
 
-$\propto \prod_{k = 1}^{K}\prod_{l = 1}^{L}\prod_{j = 1}^{J_{l}}q_{k,l,j}^{\sum_{m = 1}^{M}{(x_{m,l,j} \cdot z_{m,k})}} \cdot \prod_{k = 1}^{K}\prod_{l = 1}^{L}\prod_{j = 1}^{J_{l}}q_{k,l,j}^{y_{k,l,j}} \cdot \prod_{k = 1}^{K}\prod_{l = 1}^{L}\prod_{j = 1}^{J_{l}}q_{k,l,j}^{\beta_{l,j} - 1}$
+$`\propto \displaystyle \prod^{K}_{k=1} \prod^{L}_{l=1} \prod^{J_l}_{j=1} q^{\sum^{M}_{m=1} (x_{m,l,j} \cdot z_{m,k})}_{k,l,j} \cdot \displaystyle \prod^{K}_{k=1} \prod^{L}_{l=1} \prod^{J_l}_{j=1} q^{y_{k,l,j}}_{k,l,j} \cdot \displaystyle \prod^{K}_{k=1} \prod^{L}_{l=1} \prod^{J_l}_{j=1} q^{\beta_{l,j} - 1}_{k,l,j}`$
 
-$= \prod_{k = 1}^{K}\prod_{l = 1}^{L}\prod_{j = 1}^{J_{l}}q_{k,l,j}^{\sum_{m = 1}^{M}{(x_{m,l,j} \cdot z_{m,k})} + y_{k,l,j} + \beta_{l,j} - 1}$
+$`= \displaystyle \prod^{K}_{k=1} \prod^{L}_{l=1} \prod^{J_l}_{j=1} q^{\sum^{M}_{m=1} (x_{m,l,j} \cdot z_{m,k}) + y_{k,l,j} + \beta_{l,j} - 1}_{k,l,j}`$
 
 It is *elementary* to recognize that
-$\prod_{k = 1}^{K}\prod_{l = 1}^{L}\prod_{j = 1}^{J_{l}}q_{k,l,j}^{\sum_{m = 1}^{M}{(x_{m,l,j} \cdot z_{m,k})} + y_{k,l,j} + \beta_{l,j} - 1}$
+$`\displaystyle \prod^{K}_{k=1} \prod^{L}_{l=1} \prod^{J_l}_{j=1} q^{\sum^{M}_{m=1} (x_{m,l,j} \cdot z_{m,k}) + y_{k,l,j} + \beta_{l,j} - 1}_{k,l,j}`$
 is the kernel for Dirichlet distribution. Hence,
 
-$\mathbf{q}_{k,l}|\mathbf{x},\mathbf{y},\mathbf{z},{\mathbf{β}} \sim Dirich\left( \sum_{m = 1}^{M}x_{m,l,j}z_{m,k} + y_{k,l,j} + \beta_{l,j} \right)$.
+$`\mathbf q_{k,l}|\mathbf x,\mathbf y,\mathbf z,\mathbf\beta \sim Dirich(\displaystyle \sum^{M}_{m=1} x_{m,l,j} z_{m,k} + y_{k,l,j} + \beta_{l,j})`$.
 
-#### Conditional distribution p(p\|z, $\alpha$)
+#### Conditional distribution p(p\|z, $`\alpha`$)
 
 Using the same logic as previously,
-$p\left( \mathbf{p}|\mathbf{z},{\mathbf{α}} \right)$ is also
-Dirichlet-distributed due to a Dirichlet prior
-$p\left( \mathbf{p}|{\mathbf{α}} \right)$ and a multinomial likelihood
-$p\left( \mathbf{z}|\mathbf{p} \right)$.
+$`p(\mathbf p|\mathbf z,\mathbf\alpha)`$ is also Dirichlet-distributed
+due to a Dirichlet prior $`p(\mathbf p|\mathbf\alpha)`$ and a
+multinomial likelihood $`p(\mathbf z|\mathbf p)`$.
 
-$p\left( \mathbf{p}|\mathbf{z},{\mathbf{α}} \right) \propto p\left( \mathbf{z}|\mathbf{p} \right)p\left( \mathbf{p}|{\mathbf{α}} \right)$
+$`p(\mathbf p|\mathbf z,\mathbf\alpha) \propto p(\mathbf z|\mathbf p) p(\mathbf p|\mathbf\alpha)`$
 
-$\propto \prod_{m = 1}^{M}\prod_{k = 1}^{K}p_{k}^{z_{m,k}} \cdot \prod_{k = 1}^{K}p_{k}^{\alpha_{k} - 1}$
+$`\propto \displaystyle \prod^{M}_{m=1} \prod^{K}_{k=1} p^{z_{m,k}}_k \cdot \prod^{K}_{k=1} p^{\alpha_k - 1}_k`$
 
-$\propto \prod_{k = 1}^{K}p_{k}^{\sum_{m = 1}^{M}z_{m,k} + \alpha_{k} - 1}$
+$`\propto \displaystyle \prod^{K}_{k=1} p^{\sum^M_{m=1}z_{m,k} + \alpha_k - 1}_k`$
 
 Once again, we recognize it as the kernel for Dirichlet distribution:
 
-$\mathbf{p}|\mathbf{z},{\mathbf{α}} \sim Dirich\left( \sum_{m = 1}^{M}z_{m,k} + \alpha_{k} \right)$
+$`\mathbf p|\mathbf z,\mathbf\alpha \sim Dirich(\displaystyle \sum^M_{m=1}z_{m,k} + \alpha_k)`$
 
 #### Algorithm
 
 There is one more distribution to figure out before we can start our
 Gibbs sampler routine (and you thought we’re all set, lol). We would
 need to know how to sample
-$\mathbf{z}_{m}|\mathbf{p},\mathbf{q},\mathbf{x}_{m}$, the population
-identity for individual fish $m$ (in components 1 and 2) given the
-population proportions and genotype. If the probability of fish $m$
-belong to population $k$ is $p_{k}$, and the likelihood of observing
-relative frequency of genotype for fish $m$ in population $k$ is
-$f\left( \mathbf{x}_{m}|\mathbf{q}_{k} \right)$, then the probability of
-fish $m$ belong to population $k$ given the population proportions and
-genotype is
-$\frac{p_{k} \cdot f\left( \mathbf{x}_{m}|\mathbf{q}_{k} \right)}{\sum_{k\prime = 1}^{K}p_{k\prime} \cdot f\left( \mathbf{x}_{m}|\mathbf{q}_{k\prime} \right)}$.
+$`\mathbf z_m|\mathbf p, \mathbf q, \mathbf x_m`$, the population
+identity for individual fish $`m`$ (in components 1 and 2) given the
+population proportions and genotype. If the probability of fish $`m`$
+belong to population $`k`$ is $`p_k`$, and the likelihood of observing
+relative frequency of genotype for fish $`m`$ in population $`k`$ is
+$`f(\mathbf x_m|\mathbf q_k)`$, then the probability of fish $`m`$
+belong to population $`k`$ given the population proportions and genotype
+is
+$`\displaystyle \frac{p_k \cdot f(\mathbf x_m|\mathbf q_k)}{\sum^K_{k'=1}p_{k'} \cdot f(\mathbf x_m|\mathbf q_{k'})}`$.
 The denominator should sum to one, so we only need to calculate the
 numerator.
 
-$\mathbf{z}_{m}|\mathbf{p},\mathbf{q},\mathbf{x}_{m}$ has the following
+$`\mathbf z_m|\mathbf p, \mathbf q, \mathbf x_m`$ has the following
 distribution:
 
-$\mathbf{z}_{m}|\mathbf{p},\mathbf{q},\mathbf{x}_{m} \sim Mult\left( 1,\mathbf{w}_{m} \right)$,
+$`\mathbf z_m|\mathbf p, \mathbf q, \mathbf x_m \sim Mult(1, \mathbf{w}_m)`$,
 
-where
-$w_{m,k} = p_{k} \cdot f\left( \mathbf{x}_{m}|\mathbf{q}_{k} \right)$.
-We draw the initial values for $\mathbf{q}_{k}$ based on its prior
-distribution.
+where $`w_{m,k} = p_k \cdot f(\mathbf x_m|\mathbf q_k)`$. We draw the
+initial values for $`\mathbf q_k`$ based on its prior distribution.
 
 Once we figured out all the pieces in the Gibbs sampler for the single
 baseline framework, we can extend the concept to a multistage framework.
 Conceptually, we use a Gibbs sampler to sample from the full
-conditionals of $\mathbf{q}$, $\mathbf{p}$, $\mathbf{z}$,
-$\mathbf{q}^{(r)}$, $\mathbf{p}^{(r)}$, and $\mathbf{z}^{(r)}$. The full
-conditional distributions of the broad-scale baseline in the multistage
-framework stay the same as their counterparts in a single baseline
-framework. The full conditional distributions for the Gibbs sampler at
-the regional stage are:
+conditionals of $`\mathbf q`$, $`\mathbf p`$, $`\mathbf z`$,
+$`\mathbf q^{(r)}`$, $`\mathbf p^{(r)}`$, and $`\mathbf z^{(r)}`$. The
+full conditional distributions of the broad-scale baseline in the
+multistage framework stay the same as their counterparts in a single
+baseline framework. The full conditional distributions for the Gibbs
+sampler at the regional stage are:
 
-$\mathbf{q}_{k,l}^{(r)}|\mathbf{x}^{(r)},\mathbf{y}^{(r)},\mathbf{z}^{(r)},{\mathbf{β}}^{(r)} \sim Dirich\left( \sum_{m = 1}^{M}x_{m,l,j}^{(r)}z_{m,k}^{(r)} + y_{k,l,j}^{(r)} + \beta_{l,j}^{(r)} \right)$,
+$`\mathbf q^{(r)}_{k,l} | \mathbf x^{(r)},\mathbf y^{(r)},\mathbf z^{(r)},\mathbf\beta^{(r)} \sim Dirich(\displaystyle \sum^{M}_{m=1} x^{(r)}_{m,l,j} z^{(r)}_{m,k} + y^{(r)}_{k,l,j} + \beta^{(r)}_{l,j})`$,
 
-$\mathbf{p}^{(r)}|\mathbf{z}^{(r)},\mathbf{z},\mathcal{B}^{(r)},{\mathbf{α}}^{(r)} \sim Dirich\left( \sum_{m = 1}^{M}\left( z_{m,k}^{(r)}|z_{m,b},\mathcal{B}_{m,b}^{(r)} \right) + \alpha_{k}^{(r)} \right)$,
+$`\mathbf p^{(r)} | \mathbf z^{(r)}, \mathbf z, \mathbf{\mathscr B}^{(r)}, \mathbf \alpha^{(r)} \sim Dirich(\displaystyle \sum^M_{m=1} (z^{(r)}_{m,k} | z_{m,b}, \mathscr B^{(r)}_{m,b}) + \alpha^{(r)}_k)`$,
 
 and
-$\mathbf{z}_{m}^{(r)}|\mathbf{p}^{(r)},\mathbf{q}^{(r)},\mathbf{x}_{m}^{(r)} \sim Mult\left( 1,\mathbf{w}_{m}^{(r)} \right)$,
+$`\mathbf z^{(r)}_m | \mathbf p^{(r)}, \mathbf q^{(r)}, \mathbf x^{(r)}_m \sim Mult(1, \mathbf{w}^{(r)}_m)`$,
 
 where
-$w_{m,k}^{(r)} \propto \left( p_{k}^{(r)} \cdot \prod_{l = 1}^{L}\prod_{j = 1}^{J_{l}}{q^{(r)}}_{k,l,j}^{x_{m,l,j}} \right)$.
+$`w^{(r)}_{m,k} \propto (p^{(r)}_k \cdot \displaystyle \prod^{L}_{l=1} \prod^{J_l}_{j=1} {q^{(r)}}^{x_{m,l,j}}_{k,l,j})`$.
 
 We initiate the Gibbs sampler with starting values for
-$\mathbf{p}^{(0)}$, $\mathbf{q}^{(0)}$,
-${\mathbf{p}^{(\mathbf{r})}}^{(0)}$ and
-${\mathbf{q}^{(\mathbf{r})}}^{(0)}$ based on their prior distributions.
-We use subscript $^{(t)}$ to denote $t$^(th) iteration of the Gibbs
+$`\mathbf p^{(0)}`$, $`\mathbf q^{(0)}`$, $`\mathbf {p^{(r)}}^{(0)}`$
+and $`\mathbf {q^{(r)}}^{(0)}`$ based on their prior distributions. We
+use subscript $`^{(t)}`$ to denote $`t`$^(th) iteration of the Gibbs
 sampler. Sampling for the fully Bayesian model proceeds as follows:
 
-For $t = 1,2,...,T$, repeat
+For $`t = 1,2,...,T`$, repeat
 
 1.  Determine the group memberships of mixture individuals at the
     broad-scale stage,
-    $\mathbf{z}_{m}^{(t)}|\mathbf{p}^{(t - 1)},\mathbf{q}^{(t - 1)},\mathbf{x}_{m} \sim Mult\left( 1,\mathbf{w}_{m} \right)$.
+    $`\mathbf z^{(t)}_m | \mathbf p^{(t-1)}, \mathbf q^{(t-1)}, \mathbf x_m \sim Mult(1, \mathbf{w}_m)`$.
 
 2.  Determine the group memberships of mixture individuals for each
     sub-region at the regional stage,
-    ${\mathbf{z}_{m}^{(r)}}^{(t)}|{\mathbf{p}^{(r)}}^{(t - 1)},{\mathbf{q}^{(r)}}^{(t - 1)},\mathbf{x}_{m}^{(r)} \sim Mult\left( 1,\mathbf{w}_{m}^{(r)} \right)$,
-    $r = 1,2,...,R$.
+    $`{\mathbf z^{(r)}_m}^{(t)} | {\mathbf p^{(r)}}^{(t-1)}, {\mathbf q^{(r)}}^{(t-1)}, \mathbf x_m^{(r)} \sim Mult(1, \mathbf{w}^{(r)}_m)`$,
+    $`r = 1, 2, ..., R`$.
 
-3.  Draw updated values, $\mathbf{q}^{(t)}$, $\mathbf{p}^{(t)}$,
-    ${\mathbf{q}^{(r)}}^{(t)}$ and ${\mathbf{p}^{(r)}}^{(t)}$ from
-    $p\left( \mathbf{q}|\mathbf{x},\mathbf{y},\mathbf{z}^{(t)},{\mathbf{β}} \right)$,
-    $p\left( \mathbf{p}|\mathbf{z}^{(t)},{\mathbf{α}} \right)$,
-    $p\left( \mathbf{q}^{(r)}|\mathbf{x}^{(r)},\mathbf{y}^{(r)},{\mathbf{z}^{(r)}}^{(t)},{\mathbf{β}}^{(r)} \right)$
+3.  Draw updated values, $`\mathbf q^{(t)}`$, $`\mathbf p^{(t)}`$,
+    $`{{\mathbf q}^{(r)}}^{(t)}`$ and $`{{\mathbf p}^{(r)}}^{(t)}`$ from
+    $`p(\mathbf q | \mathbf x, \mathbf y, \mathbf z^{(t)}, \mathbf \beta)`$,
+    $`p(\mathbf p | \mathbf z^{(t)}, \mathbf \alpha)`$,
+    $`p(\mathbf q^{(r)} | \mathbf x^{(r)}, \mathbf y^{(r)}, {\mathbf z^{(r)}}^{(t)}, \mathbf \beta^{(r)})`$
     and
-    $p\left( \mathbf{p}^{(r)}|{\mathbf{z}^{(\mathbf{r})}}^{(t)},\mathbf{z}^{(t)},\mathcal{B}^{(r)},{\mathbf{α}}^{(r)} \right)$
+    $`p(\mathbf p^{(r)} | \mathbf {z^{(r)}}^{(t)}, \mathbf z^{(t)}, \mathbf{\mathscr B}^{(r)}, \mathbf \alpha^{(r)})`$
     respectively.
 
-$T$ should be large enough to ensure the simulations converge to the
+$`T`$ should be large enough to ensure the simulations converge to the
 posterior distribution. Usually it takes thousands of iterations.
 Implementing the conditional GSI model only requires a slight
-modification from the above algorithm. $\mathbf{q}$ and
-$\mathbf{q}^{(r)}$ only need to be calculated once at the initial step
+modification from the above algorithm. $`\mathbf q`$ and
+$`\mathbf q^{(r)}`$ only need to be calculated once at the initial step
 without further updates, otherwise the procedures remain the same.
 
 ## References
@@ -1299,36 +1309,34 @@ Templin, W. D., J. E. Seeb, J. R. Jasper, A. W. Barclay, L. W. Seeb.
 for migratory studies. *Mol Ecol Resour*. 11(Suppl 1):226-246.
 <doi:10.1111/j.1755-0998.2010.02968.x>.
 
-------------------------------------------------------------------------
+[^1]: Note for the GCL folks: you don’t need to transform GCL data sets
+    to *rubias* format. *Ms.GSI* got you covered!
 
-1.  Note for the GCL folks: you don’t need to transform GCL data sets to
-    *rubias* format. *Ms.GSI* got you covered!
-
-2.  The package we use to build *Ms.GSI* has an automated checking
+[^2]: The package we use to build *Ms.GSI* has an automated checking
     process. For some reason, automated check would fail if we ran
     multiple chains in our examples. Probably something to do with the
     parallel process we included in our function.
 
-3.  What is a multinomial distribution? They are the counts of multiple
-    categories based on their corresponding probabilities. For example,
-    we randomly toss 10 Swedish Fish to three kids. Each time we toss a
-    fish, the probability of kid \#1 catching it is 0.3, kid \#2, 0.3,
-    and kid \#3, 0.4. The numbers of fish caught by the three kids are
-    multinomially distributed with probabilities = {0.3, 0.3, 0.4} and a
-    total size 10.
+[^3]: What is a multinomial distribution? They are the counts of
+    multiple categories based on their corresponding probabilities. For
+    example, we randomly toss 10 Swedish Fish to three kids. Each time
+    we toss a fish, the probability of kid \#1 catching it is 0.3, kid
+    \#2, 0.3, and kid \#3, 0.4. The numbers of fish caught by the three
+    kids are multinomially distributed with probabilities = {0.3, 0.3,
+    0.4} and a total size 10.
 
-4.  What is a Dirichlet distribution? Using the same example for
+[^4]: What is a Dirichlet distribution? Using the same example for
     multinomial distribution, the fish catching probabilities of all
     three kids are Dirichlet-distributed with fish counts of all three
     kids as parameters. It is worth noting that the parameters do not
     have to be integers as long as they are \> 0.
 
-5.  A hyperparameter is a parameter of a prior distribution.
+[^5]: A hyperparameter is a parameter of a prior distribution.
 
-6.  Without involving too much math, *kernel* here refers to what is
+[^6]: Without involving too much math, *kernel* here refers to what is
     left over after factoring out the constant from a probability
     density function (PDF). For example, The PDF of Dirichlet
     distribution is
-    $\frac{1}{B({\mathbf{α}})}\prod_{i = 1}^{K}x_{i}^{\alpha_{i} - 1}$.
-    Beta function $B({\mathbf{α}})$ can be factored out, and
-    $\prod_{i = 1}^{K}x_{i}^{\alpha_{i} - 1}$ is the kernel.
+    $`\frac{1}{B(\mathbf \alpha)} \displaystyle \prod^K_{i=1} x^{\alpha_i - 1}_i`$.
+    Beta function $`B(\mathbf \alpha)`$ can be factored out, and
+    $`\displaystyle \prod^K_{i=1} x^{\alpha_i - 1}_i`$ is the kernel.
