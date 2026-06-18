@@ -1,3 +1,7 @@
+# Ms.GSI 0.2.0.9000
+
+* Bug fix for `stratified_estimator_msgsi()`. Burn-in's were not properly filtered in summaries.
+
 # Ms.GSI 0.2.0
 
 * In the previous version, accounting of stock-specific total catch for tier 2 of the model was incorrect, which caused discrepancy in stock proportions calculated using `stratified_estimator_msgsi()`. The errors have been corrected.

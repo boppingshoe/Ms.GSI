@@ -64,7 +64,7 @@ stratified_estimator_msgsi <- function(mdl_out = NULL, path = NULL, mixvec, new_
         nburn <- readr::read_csv(file = file.path(path, mixvec[i], "msgsi_specs.csv"),
                                  col_types = readr::cols(.default = "c")) %>%
           dplyr::filter(name == "nburn") %>%
-          dplyr::pull(value)
+          dplyr::pull(value) %>% as.numeric()
       } else {
         sstc_trace_t1 <- mdl_out$sstc_trace_t1
         sstc_trace_t2 <- mdl_out$sstc_trace_t2
