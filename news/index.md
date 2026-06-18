@@ -1,5 +1,11 @@
 # Changelog
 
+## Ms.GSI 0.2.0.9000
+
+- Bug fix for
+  [`stratified_estimator_msgsi()`](https://boppingshoe.github.io/Ms.GSI/reference/stratified_estimator_msgsi.md).
+  Burn-in’s were not properly filtered in summaries.
+
 ## Ms.GSI 0.2.0
 
 - In the previous version, accounting of stock-specific total catch for
