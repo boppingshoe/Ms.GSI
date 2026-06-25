@@ -53,7 +53,7 @@ stratified_estimator_msgsi <- function(mdl_out = NULL, path = NULL, mixvec, new_
 
   # calculations ----
   if (isFALSE(naive)) {
-    lapply(1:length(mixvec), function(i) {
+    sstc_all_mix_combo <- lapply(1:length(mixvec), function(i) {
 
       if (is.null(mdl_out)) {
 
@@ -84,7 +84,20 @@ stratified_estimator_msgsi <- function(mdl_out = NULL, path = NULL, mixvec, new_
 
     }) %>% dplyr::bind_rows() %>%
       dplyr::summarise(sstc = sum(sstc), .by = c(itr, ch, repunit)) %>%
-      dplyr::mutate(p = sstc / sum(sstc), .by = c(itr, ch)) %>%
+      dplyr::mutate(p = sstc / sum(sstc), .by = c(itr, ch))
+
+    n_ch <- length(unique(sstc_all_mix_combo$ch))
+
+    mc_sstc <- coda::as.mcmc.list(
+      lapply(1:n_ch, function(chain) {
+        dplyr::filter(sstc_all_mix_combo, ch == chain) %>%
+          tidyr::pivot_wider(id_cols = -p, names_from = repunit, values_from = sstc) %>%
+          dplyr::select(-c(itr, ch)) %>%
+          coda::mcmc()
+      })
+    )
+
+    sstc_all_mix_combo %>%
       dplyr::summarise(mean_sstc = mean(sstc),
                        sd_sstc = stats::sd(sstc),
                        median_sstc = stats::median(sstc),
@@ -97,7 +110,19 @@ stratified_estimator_msgsi <- function(mdl_out = NULL, path = NULL, mixvec, new_
                        ci95 = stats::quantile(p, 0.95),
                        `P=0` = mean(sstc < 0.5),
                        `Z=0` = mean(sstc == 0),
-                       .by = c(repunit))
+                       .by = c(repunit)) %>%
+      dplyr::left_join(
+        data.frame(
+          GR = { if (n_ch > 1) {
+            coda::gelman.diag(mc_sstc,
+                              transform = FALSE,
+                              autoburnin = FALSE,
+                              multivariate = FALSE)$psrf[,"Point est."]
+          } else NA },
+          n_eff = coda::effectiveSize(mc_sstc)
+        ) %>%
+          tibble::rownames_to_column(var = "repunit"), by = dplyr::join_by(repunit)
+      )
 
   } else { # the old way
 
@@ -114,7 +139,7 @@ stratified_estimator_msgsi <- function(mdl_out = NULL, path = NULL, mixvec, new_
 
     if (is.null(cv)) cv <- rep(0, length(catchvec))
 
-    lapply(1:length(mixvec), function(i) {
+    all_mix_combo <- lapply(1:length(mixvec), function(i) {
       if (is.null(mdl_out)) {
         nburn <- readr::read_csv(file = file.path(path, mixvec[i], "msgsi_specs.csv"),
                                  col_types = readr::cols(.default = "c")) %>%
@@ -139,7 +164,20 @@ stratified_estimator_msgsi <- function(mdl_out = NULL, path = NULL, mixvec, new_
       tidyr::pivot_longer(-c(itr, ch, mix, harvest), names_to = "collection") %>%
       dplyr::left_join(grp_info, by = "collection") %>%
       dplyr::summarise(harv_p = sum(value), .by = c(repunit, itr, ch)) %>%
-      dplyr::mutate(p = harv_p / sum(harv_p), .by = c(itr, ch)) %>%
+      dplyr::mutate(p = harv_p / sum(harv_p), .by = c(itr, ch))
+
+    n_ch <- length(unique(all_mix_combo$ch))
+
+    mc_p <- coda::as.mcmc.list(
+      lapply(1:n_ch, function(chain) {
+        dplyr::filter(all_mix_combo, ch == chain) %>%
+          tidyr::pivot_wider(id_cols = -harv_p, names_from = repunit, values_from = p) %>%
+          dplyr::select(-c(itr, ch)) %>%
+          coda::mcmc()
+      })
+    )
+
+    all_mix_combo %>%
       dplyr::summarise(mean_harv = mean(harv_p),
                        sd_harv = stats::sd(harv_p),
                        median_harv = stats::median(harv_p),
@@ -151,7 +189,19 @@ stratified_estimator_msgsi <- function(mdl_out = NULL, path = NULL, mixvec, new_
                        ci05 = stats::quantile(p, 0.05),
                        ci95 = stats::quantile(p, 0.95),
                        `P=0` = mean(harv_p < 0.5),
-                       .by = c(repunit))
+                       .by = c(repunit)) %>%
+      dplyr::left_join(
+        data.frame(
+          GR = { if (n_ch > 1) {
+            coda::gelman.diag(mc_p,
+                              transform = FALSE,
+                              autoburnin = FALSE,
+                              multivariate = FALSE)$psrf[,"Point est."]
+          } else NA },
+          n_eff = coda::effectiveSize(mc_p)
+        ) %>%
+          tibble::rownames_to_column(var = "repunit"), by = dplyr::join_by(repunit)
+      )
 
   }
 
