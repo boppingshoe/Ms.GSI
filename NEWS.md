@@ -1,3 +1,7 @@
+
+* Added Gelman-Rubin shrink factor (*GR*) in stratified estimator function. GR is calculated using combined strata and new grouping.
+* SSTC traces have new columns indicating assignment counts (*ac*) and posterior predictive remaining counts (*pprc*). See vignettes for details.
+
 # Ms.GSI 0.2.0.9000
 
 * Bug fix for `stratified_estimator_msgsi()`. Burn-in's were not properly filtered in summaries.
