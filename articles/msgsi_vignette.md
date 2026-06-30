@@ -285,7 +285,7 @@ msgsi_dat <-
   pop1_info = templin_pops211, pop2_info = yukon_pops50, sub_group = 3:5,
   harvest_mean = 500, harvest_cv = 0.05)
 #> Compiling input data, may take a minute or two...
-#> Time difference of 10.38292 secs
+#> Time difference of 10.13061 secs
 ```
 
 [`prep_msgsi_data()`](https://boppingshoe.github.io/Ms.GSI/reference/prep_msgsi_data.md)
@@ -479,8 +479,8 @@ seed for reproducible results. We don’t show them in this example though
 
 msgsi_out <- msgsi_mdl(msgsi_dat, nreps = 150, nburn = 50, thin = 1, nchains = 1)
 #> Running model... and good things come to Femme Queen Vogue!
-#> Time difference of 2.406614 secs
-#> June-18-2026 20:32
+#> Time difference of 3.041892 secs
+#> June-30-2026 23:31
 ```
 
 ### Summarizing results
@@ -500,20 +500,20 @@ see the combined summary, `summ_comb`.
 
 msgsi_out$summ_comb
 #> # A tibble: 12 × 10
-#>    group          mean  median      sd    ci.05   ci.95    p0 GR     n_eff    z0
-#>    <chr>         <dbl>   <dbl>   <dbl>    <dbl>   <dbl> <dbl> <lgl>  <dbl> <dbl>
-#>  1 Russia      5.28e-2 5.15e-2 0.0201  2.40e- 2 0.0882   0    NA     54.4   0   
-#>  2 Coastal We… 7.89e-2 7.89e-2 0.0720  5.68e-11 0.217    0.23 NA      6.31  0.23
-#>  3 North Alas… 3.00e-2 2.38e-2 0.0307  2.15e-12 0.0952   0.28 NA      9.12  0.26
-#>  4 Northwest … 2.81e-1 2.77e-1 0.0553  2.01e- 1 0.367    0    NA     26.9   0   
-#>  5 Copper      5.86e-4 2.89e-6 0.00153 9.26e-20 0.00475  0.86 NA    100     0.88
-#>  6 Northeast … 2.75e-3 2.24e-5 0.00643 4.71e-18 0.0150   0.72 NA     15.1   0.76
-#>  7 Coastal So… 7.18e-4 2.04e-7 0.00174 5.07e-18 0.00453  0.8  NA    100     0.86
-#>  8 British Co… 1.20e-3 2.11e-6 0.00344 4.02e-21 0.00714  0.82 NA     41.9   0.85
-#>  9 WA/OR/CA    4.15e-4 7.78e-7 0.00142 5.66e-15 0.00200  0.88 NA    100     0.94
-#> 10 Lower Yukon 2.87e-1 2.96e-1 0.0905  1.25e- 1 0.415    0    NA      7.05  0   
-#> 11 Middle Yuk… 7.57e-2 7.41e-2 0.0230  4.52e- 2 0.118    0    NA    100     0   
-#> 12 Upper Yukon 1.89e-1 1.86e-1 0.0337  1.42e- 1 0.252    0    NA    100     0
+#>    group          mean  median      sd    ci.05   ci.95    p0    z0 GR     n_eff
+#>    <chr>         <dbl>   <dbl>   <dbl>    <dbl>   <dbl> <dbl> <dbl> <lgl>  <dbl>
+#>  1 Russia      5.28e-2 5.15e-2 0.0201  2.40e- 2 0.0882   0     0    NA     54.4 
+#>  2 Coastal We… 7.89e-2 7.89e-2 0.0720  5.68e-11 0.217    0.23  0.23 NA      6.31
+#>  3 North Alas… 3.00e-2 2.38e-2 0.0307  2.15e-12 0.0952   0.28  0.26 NA      9.12
+#>  4 Northwest … 2.81e-1 2.77e-1 0.0553  2.01e- 1 0.367    0     0    NA     26.9 
+#>  5 Copper      5.86e-4 2.89e-6 0.00153 9.26e-20 0.00475  0.86  0.88 NA    100   
+#>  6 Northeast … 2.75e-3 2.24e-5 0.00643 4.71e-18 0.0150   0.72  0.76 NA     15.1 
+#>  7 Coastal So… 7.18e-4 2.04e-7 0.00174 5.07e-18 0.00453  0.8   0.86 NA    100   
+#>  8 British Co… 1.20e-3 2.11e-6 0.00344 4.02e-21 0.00714  0.82  0.85 NA     41.9 
+#>  9 WA/OR/CA    4.15e-4 7.78e-7 0.00142 5.66e-15 0.00200  0.88  0.94 NA    100   
+#> 10 Lower Yukon 2.87e-1 2.96e-1 0.0905  1.25e- 1 0.415    0     0    NA      7.05
+#> 11 Middle Yuk… 7.57e-2 7.41e-2 0.0230  4.52e- 2 0.118    0     0    NA    100   
+#> 12 Upper Yukon 1.89e-1 1.86e-1 0.0337  1.42e- 1 0.252    0     0    NA    100
 ```
 
 Most column names are self explanatory, but others might need some
@@ -575,35 +575,36 @@ msgsi_out$trace_comb
 
 #### Stock-specific total catch
 
-The output also includes the trace history of total catch for each
-reporting group (i.e., stock-specific total catch). Each column
-represents a reporting group in the baseline, and each row records the
-harvest count during each iteration in each chain.
+The output also includes the trace history of harvest count for each
+reporting group. The output is in the long-form format of tidyverse;
+there are three columns (*ac*, *pprc*, and *sstc*) that represent
+fishery harvest. Following the same vocabulary as the `rubias` package,
+*ac* column represents assignment counts and is summarized based on
+individual assignments of the mixture samples to each collection. *pprc*
+represents posterior predictive remaining counts and is summarized based
+on Monte Carlo simulations of the individual assignments of the
+un-sampled harvest. And *sstc* represent total stock specific counts and
+is the sum of *ac* and *pprc*. Other columns identify the collection,
+reporting unit, MCMC chain and iteration of each harvest count.
 
 ``` r
 
 
 msgsi_out$sstc_trace_t2
-#> # A tibble: 100 × 52
-#>    CHSID92j K100MILECR16.K100MILECR15 KANDR02.KANDR03 KANVI03.KANVI07 KBEAV97
-#>       <dbl>                     <dbl>           <dbl>           <dbl>   <dbl>
-#>  1        0                         0               0              15       0
-#>  2        0                         0               0              19       0
-#>  3        0                         0               0               8       0
-#>  4        0                         0               0               8       0
-#>  5        0                         0               0              19       0
-#>  6        0                         0               0              12       0
-#>  7        0                         0               0              21       0
-#>  8        0                         0               0               6       0
-#>  9        0                         0               0              18       0
-#> 10        0                         0               0              12       0
-#> # ℹ 90 more rows
-#> # ℹ 47 more variables: KBIGS87.KBIGS07 <dbl>, KBLIN03.KBLIN08 <dbl>,
-#> #   KCHAN04 <dbl>, KCHAT01.KCHAT07 <dbl>, KCHAU01.KCHAU03 <dbl>,
-#> #   KCHENA01 <dbl>, KCOLEE11.KCOLEE13.KCOLEE17 <dbl>, KGISA01 <dbl>,
-#> #   KGLEN03.KGLEN04.KGLEN05 <dbl>, KGOODP06.KGOODP07.KGOODP11.KGOODP12 <dbl>,
-#> #   KHENS01 <dbl>, KHENS07.KHENS15 <dbl>, KHOOL16.KHOOL17 <dbl>,
-#> #   KKANDI07.KKANDI08.KKANDI09.KKANDI10 <dbl>, KKANT05 <dbl>, …
+#> # A tibble: 5,000 × 8
+#>       ac  pprc  sstc collection                  itr    ch repunit      grpvec
+#>    <int> <int> <int> <chr>                     <dbl> <int> <chr>         <dbl>
+#>  1     0     0     0 CHSID92j                     51     1 Upper Yukon       3
+#>  2     0     0     0 K100MILECR16.K100MILECR15    51     1 Upper Yukon       3
+#>  3     0     0     0 KANDR02.KANDR03              51     1 Lower Yukon       1
+#>  4     6     9    15 KANVI03.KANVI07              51     1 Lower Yukon       1
+#>  5     0     0     0 KBEAV97                      51     1 Middle Yukon      2
+#>  6     0     0     0 KBIGS87.KBIGS07              51     1 Upper Yukon       3
+#>  7     0     0     0 KBLIN03.KBLIN08              51     1 Upper Yukon       3
+#>  8     0     0     0 KCHAN04                      51     1 Middle Yukon      2
+#>  9     0     0     0 KCHAT01.KCHAT07              51     1 Middle Yukon      2
+#> 10     0     0     0 KCHAU01.KCHAU03              51     1 Upper Yukon       3
+#> # ℹ 4,990 more rows
 ```
 
 Stock-specific total catch and proportions of the reporting groups for
@@ -619,7 +620,7 @@ catch.
 
 
 stratified_estimator_msgsi(msgsi_out, mixvec = "Bering example")
-#> # A tibble: 12 × 13
+#> # A tibble: 12 × 15
 #>    repunit     mean_sstc sd_sstc median_sstc ci05_sstc ci95_sstc    mean      sd
 #>    <chr>           <dbl>   <dbl>       <dbl>     <dbl>     <dbl>   <dbl>   <dbl>
 #>  1 Northeast …      1.35   3.47          0         0         9   2.64e-3 0.00678
@@ -634,8 +635,8 @@ stratified_estimator_msgsi(msgsi_out, mixvec = "Bering example")
 #> 10 Upper Yukon     94.6   14.7          94        73       121.  1.89e-1 0.0282 
 #> 11 Lower Yukon    145.    46.6         151        66.8     209.  2.89e-1 0.0910 
 #> 12 Middle Yuk…     37.1   10.5          36.5      22        55.0 7.40e-2 0.0202 
-#> # ℹ 5 more variables: median <dbl>, ci05 <dbl>, ci95 <dbl>, `P=0` <dbl>,
-#> #   `Z=0` <dbl>
+#> # ℹ 7 more variables: median <dbl>, ci05 <dbl>, ci95 <dbl>, `P=0` <dbl>,
+#> #   `Z=0` <dbl>, GR <lgl>, n_eff <dbl>
 ```
 
 #### Individual assignments
@@ -769,12 +770,13 @@ new_groups
 
 stratified_estimator_msgsi(mdl_out = msgsi_out, mixvec = "Bering example",
                            new_pop_info = new_groups, new_pop_by = "repunit")
-#> # A tibble: 2 × 13
+#> # A tibble: 2 × 15
 #>   repunit  mean_sstc sd_sstc median_sstc ci05_sstc ci95_sstc  mean     sd median
 #>   <chr>        <dbl>   <dbl>       <dbl>     <dbl>     <dbl> <dbl>  <dbl>  <dbl>
 #> 1 Broad         224.    49.5         215      164.      324. 0.448 0.0953  0.431
 #> 2 Regional      277.    51.2         278      189.      353. 0.552 0.0953  0.569
-#> # ℹ 4 more variables: ci05 <dbl>, ci95 <dbl>, `P=0` <dbl>, `Z=0` <dbl>
+#> # ℹ 6 more variables: ci05 <dbl>, ci95 <dbl>, `P=0` <dbl>, `Z=0` <dbl>,
+#> #   GR <lgl>, n_eff <dbl>
 ```
 
 The same can be done by specifying collections:
@@ -802,12 +804,13 @@ new_groups_collection
 
 stratified_estimator_msgsi(mdl_out = msgsi_out, mixvec = "Bering example",
                            new_pop_info = new_groups_collection, new_pop_by = "collection")
-#> # A tibble: 2 × 13
+#> # A tibble: 2 × 15
 #>   repunit  mean_sstc sd_sstc median_sstc ci05_sstc ci95_sstc  mean     sd median
 #>   <chr>        <dbl>   <dbl>       <dbl>     <dbl>     <dbl> <dbl>  <dbl>  <dbl>
 #> 1 Broad         224.    49.5         215      164.      324. 0.448 0.0953  0.431
 #> 2 Regional      277.    51.2         278      189.      353. 0.552 0.0953  0.569
-#> # ℹ 4 more variables: ci05 <dbl>, ci95 <dbl>, `P=0` <dbl>, `Z=0` <dbl>
+#> # ℹ 6 more variables: ci05 <dbl>, ci95 <dbl>, `P=0` <dbl>, `Z=0` <dbl>,
+#> #   GR <lgl>, n_eff <dbl>
 ```
 
 And for those prefer doing things the old way (by multiplying fishing
@@ -818,12 +821,13 @@ effort by the stock proportions):
 stratified_estimator_msgsi(mdl_out = msgsi_out, mixvec = "Bering example",
                            new_pop_info = new_groups, new_pop_by = "repunit",
                            naive = TRUE, catchvec = 500, cv = 0.05)
-#> # A tibble: 2 × 12
+#> # A tibble: 2 × 15
 #>   repunit  mean_harv sd_harv median_harv ci05_harv ci95_harv  mean     sd median
 #>   <chr>        <dbl>   <dbl>       <dbl>     <dbl>     <dbl> <dbl>  <dbl>  <dbl>
 #> 1 Broad         224.    50.5        211.      161.      325. 0.448 0.0948  0.424
 #> 2 Regional      275.    48.4        279.      194.      346. 0.552 0.0948  0.576
-#> # ℹ 3 more variables: ci05 <dbl>, ci95 <dbl>, `P=0` <dbl>
+#> # ℹ 6 more variables: ci05 <dbl>, ci95 <dbl>, `P=0` <dbl>, `Z=0` <dbl>,
+#> #   GR <lgl>, n_eff <dbl>
 ```
 
 ## Methods (math!)
