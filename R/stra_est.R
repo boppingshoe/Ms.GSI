@@ -52,50 +52,50 @@ stratified_estimator_msgsi <- function(mdl_out = NULL, path = NULL, mixvec, new_
   }
 
   # calculations ----
+  sstc_all_mix_combo <- lapply(1:length(mixvec), function(i) {
+
+    if (is.null(mdl_out)) {
+      sstc_trace_t1 <- readr::read_csv(file = file.path(path, mixvec[i], "sstc_trace_t1.csv"),
+                                       col_types = readr::cols(.default = "?"))
+      sstc_trace_t2 <- readr::read_csv(file = file.path(path, mixvec[i], "sstc_trace_t2.csv"),
+                                       col_types = readr::cols(.default = "?"))
+      nburn <- readr::read_csv(file = file.path(path, mixvec[i], "msgsi_specs.csv"),
+                               col_types = readr::cols(.default = "c")) %>%
+        dplyr::filter(name == "nburn") %>%
+        dplyr::pull(value) %>% as.numeric()
+
+    } else {
+
+      sstc_trace_t1 <- mdl_out$sstc_trace_t1
+      sstc_trace_t2 <- mdl_out$sstc_trace_t2
+      nburn <- as.numeric(mdl_out$specs["nburn"])
+    }
+
+    sstc_trace_t1 %>%
+      dplyr::filter(!collection %in% sstc_trace_t2$collection) %>%
+      dplyr::bind_rows(sstc_trace_t2) %>%
+      dplyr::filter(collection %in% grp_info$collection,
+                    itr > nburn) %>%
+      dplyr::rename(repunit_old = repunit) %>%
+      dplyr::left_join(grp_info, by = "collection") %>%
+      dplyr::mutate(mix = mixvec[i])
+
+  }) %>% dplyr::bind_rows() %>%
+    dplyr::summarise(sstc = sum(sstc),
+                     ac = sum(ac), .by = c(itr, ch, repunit)) %>%
+    dplyr::mutate(p = sstc / sum(sstc), .by = c(itr, ch))
+
   if (isFALSE(naive)) {
-    sstc_all_mix_combo <- lapply(1:length(mixvec), function(i) {
-
-      if (is.null(mdl_out)) {
-
-        sstc_trace_t1 <- readr::read_csv(file = file.path(path, mixvec[i], "sstc_trace_t1.csv"),
-                                         col_types = readr::cols(.default = "d"))
-        sstc_trace_t2 <- readr::read_csv(file = file.path(path, mixvec[i], "sstc_trace_t2.csv"),
-                                         col_types = readr::cols(.default = "d"))
-        nburn <- readr::read_csv(file = file.path(path, mixvec[i], "msgsi_specs.csv"),
-                                 col_types = readr::cols(.default = "c")) %>%
-          dplyr::filter(name == "nburn") %>%
-          dplyr::pull(value) %>% as.numeric()
-      } else {
-        sstc_trace_t1 <- mdl_out$sstc_trace_t1
-        sstc_trace_t2 <- mdl_out$sstc_trace_t2
-        nburn <- as.numeric(mdl_out$specs["nburn"])
-      }
-
-      coll_names_t1 <- names(sstc_trace_t1)[names(sstc_trace_t1) %in% grp_info$collection & !names(sstc_trace_t1) %in% names(sstc_trace_t2)]
-
-      sstc_trace_t1[, c(coll_names_t1, "itr", "ch")] %>%
-        dplyr::left_join(sstc_trace_t2, by = dplyr::join_by(itr, ch)) %>%
-        tidyr::pivot_longer(-c(itr, ch), names_to = "collection") %>%
-        dplyr::filter(collection %in% grp_info$collection,
-                      itr > nburn) %>%
-        dplyr::left_join(grp_info, by = "collection") %>%
-        dplyr::summarise(sstc = sum(value), .by = c(itr, ch, repunit)) %>%
-        dplyr::mutate(mix = mixvec[i])
-
-    }) %>% dplyr::bind_rows() %>%
-      dplyr::summarise(sstc = sum(sstc), .by = c(itr, ch, repunit)) %>%
-      dplyr::mutate(p = sstc / sum(sstc), .by = c(itr, ch))
-
     n_ch <- length(unique(sstc_all_mix_combo$ch))
 
     mc_sstc <- coda::as.mcmc.list(
       lapply(1:n_ch, function(chain) {
         dplyr::filter(sstc_all_mix_combo, ch == chain) %>%
-          tidyr::pivot_wider(id_cols = -p, names_from = repunit, values_from = sstc) %>%
+          tidyr::pivot_wider(id_cols = -c(p, ac), names_from = repunit, values_from = sstc) %>%
           dplyr::select(-c(itr, ch)) %>%
           coda::mcmc()
       })
-    )
+    ) # mcmc list
 
     sstc_all_mix_combo %>%
       dplyr::summarise(mean_sstc = mean(sstc),
@@ -109,7 +109,7 @@ stratified_estimator_msgsi <- function(mdl_out = NULL, path = NULL, mixvec, new_
                        ci05 = stats::quantile(p, 0.05),
                        ci95 = stats::quantile(p, 0.95),
                        `P=0` = mean(sstc < 0.5),
-                       `Z=0` = mean(sstc == 0),
+                       `Z=0` = mean(ac == 0),
                        .by = c(repunit)) %>%
       dplyr::left_join(
         data.frame(
@@ -191,6 +191,11 @@ stratified_estimator_msgsi <- function(mdl_out = NULL, path = NULL, mixvec, new_
                        `P=0` = mean(harv_p < 0.5),
                        .by = c(repunit)) %>%
       dplyr::left_join(
+        sstc_all_mix_combo %>%
+          dplyr::summarise(`Z=0` = mean(ac == 0),
+                           .by = c(repunit)),
+        by = dplyr::join_by(repunit)) %>%
+      dplyr::left_join(
         data.frame(
           GR = { if (n_ch > 1) {
             coda::gelman.diag(mc_p,
@@ -200,14 +205,14 @@ stratified_estimator_msgsi <- function(mdl_out = NULL, path = NULL, mixvec, new_
           } else NA },
           n_eff = coda::effectiveSize(mc_p)
         ) %>%
-          tibble::rownames_to_column(var = "repunit"), by = dplyr::join_by(repunit)
-      )
+          tibble::rownames_to_column(var = "repunit"),
+        by = dplyr::join_by(repunit))
 
   }
 
 }
 
 
-utils::globalVariables(c("new_repunit", "mix", "harvest", "sstc", "harv_p"))
+utils::globalVariables(c("new_repunit", "mix", "harvest", "sstc", "harv_p", "ac", "pprc"))
 
 

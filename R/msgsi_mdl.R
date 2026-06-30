@@ -315,7 +315,11 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
       iden_harv <-
         sample(K + H, max(0, n_harv - nrow(x)), replace = TRUE, prob = p) %>%
         factor(levels = seq(K + H))
-      sstc <- table(c(iden, iden_harv)) # t1 stock-specific total catch
+
+      sstc_tib <- tibble::tibble(ac = as.vector(table(iden)),
+                                 pprc = as.vector(table(iden_harv))) %>%
+        dplyr::mutate(sstc = ac + pprc,
+                      collection = dat_in$y$collection)
 
       p <- rdirich(table(iden) + p_prior)
 
@@ -328,7 +332,11 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
         sample(K2, max(0, sum(iden_harv %in% which(grps %in% sub_grp))),
                replace = TRUE, prob = p2) %>%
         factor(levels = seq(K2))
-      sstc2 <- table(c(iden2[iden %in% which(grps %in% sub_grp)], iden_harv2)) # t2 stock-specific total catch
+
+      sstc_tib2 <- tibble::tibble(ac = as.vector(table(iden2[iden %in% which(grps %in% sub_grp)])),
+                                  pprc = as.vector(table(iden_harv2))) %>%
+        dplyr::mutate(sstc = ac + pprc,
+                      collection = dat_in$y2$collection)
 
       p2 <- rdirich(table(iden2[iden %in% which(grps %in% sub_grp)]) + p2_prior)
 
@@ -344,10 +352,10 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
                                           c(dat_in$y2$collection, "itr", "ch"))
           pp2_out[[it]] <- stats::setNames(c(p[which(!grps %in% sub_grp)], p2 * sum(p[which(grps %in% sub_grp)]), it, ch), c(dat_in$y$collection[which(!grps %in% sub_grp)], dat_in$y2$collection, "itr", "ch"))
 
-          sstc1_out[[it]] <-
-            stats::setNames(c(sstc, it, ch), c(dat_in$y$collection, "itr", "ch"))
-          sstc2_out[[it]] <-
-            stats::setNames(c(sstc2, it, ch), c(dat_in$y2$collection, "itr", "ch"))
+          sstc1_out[[it]] <- sstc_tib %>%
+            dplyr::mutate(itr = it, ch = ch)
+          sstc2_out[[it]] <- sstc_tib2 %>%
+            dplyr::mutate(itr = it, ch = ch)
 
           iden1_out[[it]] <-
             stats::setNames(c(iden, it, ch), c(dat_in$x$indiv, "itr", "ch"))
@@ -389,14 +397,15 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
 
   sstc_t1 <-
     lapply(out_list0, function(ol) ol[[4]]) %>%
-    dplyr::bind_rows()
+    dplyr::bind_rows() %>%
+    dplyr::filter(itr > n_burn) %>% # n_burn = 0 if keep_burn is true
+    dplyr::left_join(dat_in$groups_t1, by = "collection")
 
   sstc_tbl1 <- sstc_t1 %>%
     dplyr::filter(itr > nburn) %>%
-    dplyr::select(-c(itr, ch)) %>%
-    t() %>%
-    rowsum(., dat_in$groups_t1$repunit) %>%
-    t()
+    dplyr::summarise(sstc = sum(sstc), .by = c(repunit, itr, ch)) %>%
+    tidyr::pivot_wider(names_from = repunit, values_from = sstc) %>%
+    dplyr::select(-c(itr, ch)) %>% as.matrix()
 
   idens_t1 <-
     lapply(out_list0, function(ol) ol[[6]]) %>%
@@ -422,14 +431,15 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
 
   sstc_t2 <-
     lapply(out_list0, function(ol) ol[[5]]) %>%
-    dplyr::bind_rows()
+    dplyr::bind_rows() %>%
+    dplyr::filter(itr > n_burn) %>%
+    dplyr::left_join(dat_in$groups_t2, by = "collection")
 
   sstc_tbl2 <- sstc_t2 %>%
     dplyr::filter(itr > nburn) %>%
-    dplyr::select(-c(itr, ch)) %>%
-    t() %>%
-    rowsum(., dat_in$groups_t2$repunit) %>%
-    t()
+    dplyr::summarise(sstc = sum(sstc), .by = c(repunit, itr, ch)) %>%
+    tidyr::pivot_wider(names_from = repunit, values_from = sstc) %>%
+    dplyr::select(-c(itr, ch)) %>% as.matrix()
 
   idens_t2 <-
     lapply(out_list0, function(ol) ol[[7]]) %>%
@@ -542,6 +552,10 @@ summ_func <- function(combo_file, keeplist, mc_file, groupnames, n_ch, harv, ide
         else mean(value < (0.5/ max(1, harv)))},
       .by = name
     ) %>%
+    dplyr::left_join({
+      apply(iden_tbl, 2, function(ct) mean(ct == 0)) %>%
+        tibble::enframe(value = 'z0')
+    }, by = "name") %>%
     dplyr::mutate(
       GR = { if (n_ch > 1) {
         coda::gelman.diag(mc_file,
@@ -551,10 +565,6 @@ summ_func <- function(combo_file, keeplist, mc_file, groupnames, n_ch, harv, ide
       } else NA },
       n_eff = coda::effectiveSize(mc_file) # in alphabetical order like tidyverse summarise()
     ) %>%
-    dplyr::left_join({
-      apply(iden_tbl, 2, function(ct) mean(ct == 0)) %>%
-        tibble::enframe(value = 'z0')
-    }, by = "name") %>%
     dplyr::mutate(name_fac = factor(name, levels = groupnames)) %>%
     dplyr::arrange(name_fac) %>%
     dplyr::select(-name_fac) %>%
@@ -562,7 +572,7 @@ summ_func <- function(combo_file, keeplist, mc_file, groupnames, n_ch, harv, ide
 
 }
 
-utils::globalVariables(c(".", "ch", "chain", "itr", "name", "name_fac", "value", "id1", "id2", "weight"))
+utils::globalVariables(c(".", "ch", "chain", "itr", "name", "name_fac", "value", "id1", "id2", "weight", "ac", "pprc"))
 
 
 
