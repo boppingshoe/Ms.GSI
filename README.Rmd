@@ -62,7 +62,7 @@ Summary for the stock-specific harvest is called separately:
 
 ```{r example_harv_summ}
 
-msgsi_harv_summ(msgsi_out, msgsi_dat)
+stratified_estimator_msgsi(msgsi_out, mixvec = "example")
 
 ```
 

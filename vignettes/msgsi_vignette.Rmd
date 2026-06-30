@@ -169,7 +169,7 @@ msgsi_out$trace_comb
 ```
 
 ### Stock-specific total catch
-The output also includes the trace history of total catch for each reporting group (i.e., stock-specific total catch). Each column represents a reporting group in the baseline, and each row records the harvest count during each iteration in each chain.
+The output also includes the trace history of harvest count for each reporting group. The output is in the long-form format of tidyverse; there are three columns (*ac*, *pprc*, and *sstc*) that represent fishery harvest. Following the same vocabulary as the `rubias` package, *ac* column represents assignment counts and is summarized based on individual assignments of the mixture samples to each collection. *pprc* represents posterior predictive remaining counts and is summarized based on Monte Carlo simulations of the individual assignments of the un-sampled harvest. And *sstc* represent total stock specific counts and is the sum of *ac* and *pprc*. Other columns identify the collection, reporting unit, MCMC chain and iteration of each harvest count.
 
 ```{r}
 

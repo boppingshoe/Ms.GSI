@@ -45,7 +45,7 @@ msgsi_dat <-
   pop1_info = templin_pops211, pop2_info = yukon_pops50, sub_group = 3:5,
   harvest_mean = 500, harvest_cv = 0.05)
 #> Compiling input data, may take a minute or two...
-#> Time difference of 7.764232 secs
+#> Time difference of 6.868659 secs
 ```
 
 Using the prepared input data, we run the model with four chains of 150
@@ -57,48 +57,50 @@ convergence diagnostics.
 ``` r
 
 msgsi_out <- msgsi_mdl(msgsi_dat, nreps = 150, nburn = 50, thin = 1, nchains = 4)
-#> Running model... and good things come to Best Dressed!
-#> Time difference of 1.927239 secs
-#> March-26-2026 13:23
+#> Running model... and your attitude determines your Snow Ball!
+#> Time difference of 3.246345 secs
+#> June-30-2026 14:24
 
 msgsi_out$summ_comb
 #> # A tibble: 12 × 10
-#>    group           mean  median      sd    ci.05   ci.95    p0    GR n_eff    z0
+#>    group           mean  median      sd    ci.05   ci.95    p0    z0    GR n_eff
 #>    <chr>          <dbl>   <dbl>   <dbl>    <dbl>   <dbl> <dbl> <dbl> <dbl> <dbl>
-#>  1 Russia       4.77e-2 4.42e-2 0.0202  2.13e- 2 0.0874   0.01  1.02 259.  0    
-#>  2 Coastal Wes… 1.25e-1 1.10e-1 0.0979  1.58e-10 0.292    0.2   1.85  36.2 0.182
-#>  3 North Alask… 4.69e-2 4.44e-2 0.0237  1.41e- 2 0.0873   0.08  1.01 143.  0    
-#>  4 Northwest G… 3.37e-1 3.31e-1 0.0610  2.41e- 1 0.444    0     1.22 124.  0    
-#>  5 Copper       1.24e-3 1.29e-6 0.00437 1.99e-19 0.00849  1     1.20 253.  0.945
-#>  6 Northeast G… 2.54e-3 5.27e-6 0.00874 1.11e-17 0.0152   1     1.20 125.  0.89 
-#>  7 Coastal Sou… 2.32e-3 3.15e-5 0.00512 3.89e-16 0.0122   1     1.04 148.  0.818
-#>  8 British Col… 7.83e-4 1.39e-6 0.00267 4.98e-19 0.00429  1     1.10 319.  0.978
-#>  9 WA/OR/CA     5.70e-4 2.08e-6 0.00166 8.82e-20 0.00379  1     1.01 248.  0.99 
-#> 10 Lower Yukon  1.75e-1 1.82e-1 0.0970  2.88e- 2 0.335    0     2.03  45.8 0    
-#> 11 Middle Yukon 7.21e-2 7.06e-2 0.0225  4.12e- 2 0.112    0     1.01 331.  0    
-#> 12 Upper Yukon  1.88e-1 1.87e-1 0.0333  1.40e- 1 0.247    0     1.00 457.  0
+#>  1 Russia       4.99e-2 4.69e-2 0.0207  2.05e- 2 0.0887  0     0      1.03 230. 
+#>  2 Coastal Wes… 6.35e-2 1.38e-2 0.0801  3.09e-16 0.219   0.402 0.408  1.95  43.7
+#>  3 North Alask… 3.67e-2 3.15e-2 0.0296  5.12e- 6 0.0943  0.09  0.085  1.13  94.6
+#>  4 Northwest G… 3.15e-1 3.13e-1 0.0534  2.33e- 1 0.406   0     0      1.01 128. 
+#>  5 Copper       9.25e-4 8.21e-6 0.00303 1.92e-18 0.00573 0.818 0.86   1.09 261. 
+#>  6 Northeast G… 7.75e-4 7.37e-7 0.00267 2.54e-17 0.00447 0.855 0.872  1.01 306. 
+#>  7 Coastal Sou… 1.49e-3 3.19e-6 0.00404 4.75e-18 0.00985 0.792 0.792  1.04 151. 
+#>  8 British Col… 6.82e-4 1.82e-6 0.00243 5.09e-19 0.00343 0.858 0.902  1.01 292. 
+#>  9 WA/OR/CA     6.11e-4 5.41e-7 0.00214 1.16e-17 0.00404 0.87  0.9    1.01 338. 
+#> 10 Lower Yukon  2.69e-1 2.72e-1 0.0901  1.22e- 1 0.412   0     0      1.58 101. 
+#> 11 Middle Yukon 7.42e-2 7.26e-2 0.0218  4.03e- 2 0.113   0     0      1.01 400  
+#> 12 Upper Yukon  1.87e-1 1.85e-1 0.0320  1.35e- 1 0.243   0     0      1.01 400
 ```
 
 Summary for the stock-specific harvest is called separately:
 
 ``` r
 
-msgsi_harv_summ(msgsi_out, msgsi_dat)
-#> # A tibble: 12 × 6
-#>    repunit                  mean_harv median_harv sd_harv ci05_harv ci95_harv
-#>    <chr>                        <dbl>       <dbl>   <dbl>     <dbl>     <dbl>
-#>  1 Northeast Gulf of Alaska     1.12            0   4.00         0       7.05
-#>  2 Coastal Southeast Alaska     1.06            0   2.53         0       6   
-#>  3 Coastal West Alaska         63.5            59  49.0          0     149   
-#>  4 WA/OR/CA                     0.23            0   0.827        0       1   
-#>  5 Northwest Gulf of Alaska   170.            167  29.6        128.    222.  
-#>  6 British Columbia             0.288           0   1.09         0       2   
-#>  7 Russia                      24.4            22   9.25        13      41   
-#>  8 North Alaska Peninsula      23.8            22  11.0          8      44.0 
-#>  9 Copper                       0.612           0   2.14         0       5   
-#> 10 Upper Yukon                 56.6            56  18.3         30      85.0 
-#> 11 Lower Yukon                140.            138  28.1        106     192.  
-#> 12 Middle Yukon                22.9            22   8.19        12      38
+stratified_estimator_msgsi(msgsi_out, mixvec = "example")
+#> # A tibble: 12 × 15
+#>    repunit     mean_sstc sd_sstc median_sstc ci05_sstc ci95_sstc    mean      sd
+#>    <chr>           <dbl>   <dbl>       <dbl>     <dbl>     <dbl>   <dbl>   <dbl>
+#>  1 Northeast …     0.285   0.975         0           0      2    5.71e-4 0.00194
+#>  2 Coastal So…     0.648   1.78          0           0      4    1.30e-3 0.00351
+#>  3 Coastal We…    31.8    40.2           7.5         0    113.   6.37e-2 0.0801 
+#>  4 WA/OR/CA        0.225   0.947         0           0      1    4.50e-4 0.00185
+#>  5 Northwest …   156.     26.5         155         115    199.   3.15e-1 0.0493 
+#>  6 British Co…     0.232   0.970         0           0      1.05 4.71e-4 0.00195
+#>  7 Russia         24.4     9.20         23          12     41.0  4.92e-2 0.0181 
+#>  8 North Alas…    18.4    14.1          16           0     43    3.72e-2 0.0283 
+#>  9 Copper          0.37    1.45          0           0      2    7.44e-4 0.00292
+#> 10 Upper Yukon    93.1    13.7          93          71    117    1.88e-1 0.0266 
+#> 11 Lower Yukon   133.     42.8         135          64    203    2.70e-1 0.0867 
+#> 12 Middle Yuk…    36.8     9.59         36          23     55    7.42e-2 0.0190 
+#> # ℹ 7 more variables: median <dbl>, ci05 <dbl>, ci95 <dbl>, `P=0` <dbl>,
+#> #   `Z=0` <dbl>, GR <dbl>, n_eff <dbl>
 ```
 
 Individual assignment summary:
@@ -109,16 +111,16 @@ indiv_assign(msgsi_out, msgsi_dat)
 #> # A tibble: 150 × 13
 #>    ID      Russia `Coastal West Alaska` `North Alaska Peninsula`
 #>  * <chr>    <dbl>                 <dbl>                    <dbl>
-#>  1 fish_1  0                     0.485                    0     
-#>  2 fish_2  0                     0.3                      0.0875
-#>  3 fish_3  0.01                  0.0575                   0.405 
-#>  4 fish_4  0                     0.415                    0.0275
-#>  5 fish_5  0                     0.457                    0.01  
-#>  6 fish_6  0                     0.31                     0     
-#>  7 fish_7  0.09                  0.172                    0.178 
-#>  8 fish_8  0.155                 0.225                    0.0325
-#>  9 fish_9  0.0075                0.258                    0.005 
-#> 10 fish_10 0.0425                0.155                    0.06  
+#>  1 fish_1  0                     0.128                    0     
+#>  2 fish_2  0.0025                0.0975                   0.0275
+#>  3 fish_3  0.03                  0.035                    0.255 
+#>  4 fish_4  0                     0.222                    0.0225
+#>  5 fish_5  0                     0.1                      0     
+#>  6 fish_6  0                     0.185                    0.0025
+#>  7 fish_7  0.11                  0.0775                   0.075 
+#>  8 fish_8  0.145                 0.055                    0.035 
+#>  9 fish_9  0.01                  0.09                     0.0025
+#> 10 fish_10 0.0775                0.06                     0.0525
 #> # ℹ 140 more rows
 #> # ℹ 9 more variables: `Northwest Gulf of Alaska` <dbl>, Copper <dbl>,
 #> #   `Northeast Gulf of Alaska` <dbl>, `Coastal Southeast Alaska` <dbl>,
