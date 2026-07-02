@@ -285,7 +285,7 @@ msgsi_dat <-
   pop1_info = templin_pops211, pop2_info = yukon_pops50, sub_group = 3:5,
   harvest_mean = 500, harvest_cv = 0.05)
 #> Compiling input data, may take a minute or two...
-#> Time difference of 10.13061 secs
+#> Time difference of 10.55765 secs
 ```
 
 [`prep_msgsi_data()`](https://boppingshoe.github.io/Ms.GSI/reference/prep_msgsi_data.md)
@@ -479,8 +479,8 @@ seed for reproducible results. We don’t show them in this example though
 
 msgsi_out <- msgsi_mdl(msgsi_dat, nreps = 150, nburn = 50, thin = 1, nchains = 1)
 #> Running model... and good things come to Femme Queen Vogue!
-#> Time difference of 3.041892 secs
-#> June-30-2026 23:31
+#> Time difference of 3.196053 secs
+#> July-02-2026 19:00
 ```
 
 ### Summarizing results
