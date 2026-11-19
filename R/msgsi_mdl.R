@@ -261,6 +261,7 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
 
       p_out <- p2_out <- pp2_out <- sstc1_out <- sstc2_out <- list()
       if (iden_output == TRUE) iden1_out <- iden2_out <- list()
+      i_out <- list()
 
     ## gibbs loop ##
     for (rep in seq(nreps + nadapt)) {
@@ -301,15 +302,6 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
         sample(K, 1, FALSE, (p * freq[m, ])[seq.int(K)])
       }))
 
-      i <- 1
-      while (sum(iden %in% which(grps %in% sub_grp)) < 1 & i < 100) {
-        iden[na_i] <- unlist( lapply(na_i, function(m) {
-          sample(K, 1, FALSE, (p * freq[m, ])[seq.int(K)])
-        }))
-
-        i <- i + 1
-      } # do this to help prevent no iden == sub_grp (when 1st tier markers are shit)
-
       # tier 1 stock-specific harvest estimate
       n_harv <- resample(harvest, 1)
       iden_harv <-
@@ -329,7 +321,7 @@ msgsi_mdl <- function(dat_in, nreps, nburn, thin, nchains, nadapt = 0, keep_burn
 
       # tier 2 stock-specific harvest estimate
       iden_harv2 <-
-        sample(K2, max(0, sum(iden_harv %in% which(grps %in% sub_grp))),
+        sample(K2, sum(iden_harv %in% which(grps %in% sub_grp)),
                replace = TRUE, prob = p2) %>%
         factor(levels = seq(K2))
 

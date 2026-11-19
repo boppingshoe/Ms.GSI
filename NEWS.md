@@ -1,3 +1,5 @@
+* Got rid of an old "safety" feature that was not needed and slowing things down (when there's no fish in tier 2)
+
 # Ms.GSI 0.2.0.9001
 
 * Added Gelman-Rubin shrink factor (*GR*) in stratified estimator function. GR is calculated using combined strata and new grouping.
